@@ -38,19 +38,19 @@
           </div>
           <div class="goals-section">
             <ul class="userDataUl">
-              <li class="lbl-user">
+              <li class="lbl-user" i18n>
                 <img src="../../assets/images/kcal.svg" alt="goal" class="profile-icons">
                 Meta calórica: {{ goals.calorias }}
               </li>
-              <li class="lbl-user">
+              <li class="lbl-user" i18n>
                 <img src="../../assets/images/protein.svg" alt="goal" class="profile-icons">
                 Meta proteíca: {{ goals.proteinas }} g
               </li>
-              <li class="lbl-user">
+              <li class="lbl-user" i18n>
                 <img src="../../assets/images/carb.svg" alt="goal" class="profile-icons">
                 Meta de carbo: {{ goals.carbo }} g
               </li>
-              <li class="lbl-user">
+              <li class="lbl-user" i18n>
                 <img src="../../assets/images/fat.svg" alt="goal" class="profile-icons">
                 Meta gordura: {{ goals.gordura }} g
               </li>
@@ -60,22 +60,22 @@
 
       <!-- Campos de edição -->
       <div *ngIf="isEditing" class="goals-section">
-        <h3>Informações Pessoais</h3>
+        <h3 i18n>Informações Pessoais</h3>
         <input type="text" class="input-field" formControlName="name"/>
         <input type="text" class="input-field" formControlName="email"/>
         <input type="text" class="input-field" formControlName="age"/>
         <input type="text" class="input-field" formControlName="weight"/>
         <input type="text" class="input-field" formControlName="height"/>
-        <h3>Metas</h3>
-        <input type="number" class="input-field" placeholder="Calorias" [value]="goals.calorias" (input)="onGoalInput($event, 'calorias')" />
-        <input type="number" class="input-field" placeholder="Proteinas (g)" [value]="goals.proteinas" (input)="onGoalInput($event, 'proteinas')" />
-        <input type="number" class="input-field" placeholder="Carbo (g)" [value]="goals.carbo" (input)="onGoalInput($event, 'carbo')" />
-        <input type="number" class="input-field" placeholder="Gordura (g)" [value]="goals.gordura" (input)="onGoalInput($event, 'gordura')" />
+        <h3 i18n>Metas</h3>
+        <input type="number" class="input-field" i18n placeholder="Calorias" [value]="goals.calorias" (input)="onGoalInput($event, 'calorias')" />
+        <input type="number" class="input-field" i18n placeholder="Proteinas (g)" [value]="goals.proteinas" (input)="onGoalInput($event, 'proteinas')" />
+        <input type="number" class="input-field" i18n placeholder="Carbo (g)" [value]="goals.carbo" (input)="onGoalInput($event, 'carbo')" />
+        <input type="number" class="input-field" i18n placeholder="Gordura (g)" [value]="goals.gordura" (input)="onGoalInput($event, 'gordura')" />
       </div>
 
-      <button type="button" class="submit-btn" *ngIf="isEditing" (click)="onSubmit()">Salvar</button>
-      <button type="button" class="cancel-btn" *ngIf="isEditing" (click)="cancelEdit()">Cancelar</button>
-      <button type="button" class="delete-btn" *ngIf="isEditing">Deletar Conta</button>
+      <button type="button" class="submit-btn" *ngIf="isEditing" (click)="onSubmit()" i18n>Salvar</button>
+      <button type="button" class="cancel-btn" *ngIf="isEditing" (click)="cancelEdit()" i18n>Cancelar</button>
+      <button type="button" class="delete-btn" *ngIf="isEditing" i18n>Deletar Conta</button>
       
     </form>
   </div>

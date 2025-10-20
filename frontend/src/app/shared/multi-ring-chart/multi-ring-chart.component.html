@@ -58,6 +58,7 @@
 
     <!-- Valores alinhados com cada anel -->
     <image href="../../../assets/images/kcal.svg"
+    i18n
     x="51"
     y="51.3"
     width="10"
@@ -69,6 +70,7 @@
     </text>
 
     <image href="../../../assets/images/protein.svg"
+    i18n
     x="51"
     y="67.3"
     width="10"
@@ -80,6 +82,7 @@
     </text>
 
     <image href="../../../assets/images/carb.svg"
+    i18n
     x="51"
     y="83.4"
     width="10"
@@ -91,6 +94,7 @@
     </text>
 
     <image href="../../../assets/images/fat.svg"
+    i18n
     x="51"
     y="98.5"
     width="10"
@@ -114,7 +118,7 @@
   @if (showDailyPopup) {
     <div class="popup-overlay" (click)="closePopup()">
       <div class="popup" (click)="$event.stopPropagation()">
-        <h3>Registros de hoje</h3>
+        <h3 i18n>Registros de hoje</h3>
         
         <ul class="food-list">
           @for (food of dailyFoods; track food._id) {
@@ -133,8 +137,8 @@
                     min="1" />
                     
                   <div class="actions">
-                    <button (click)="saveEditedFood()" class="btn-edit">Salvar</button>
-                    <button (click)="selectedFoodToEdit = null" class="btn-cancel">Cancelar</button>
+                    <button (click)="saveEditedFood()" class="btn-edit" i18n>Salvar</button>
+                    <button (click)="selectedFoodToEdit = null" class="btn-cancel" i18n>Cancelar</button>
                   </div>
                 </div>
               } @else {
@@ -142,8 +146,8 @@
                 <div class="view-mode">
                   <span>{{ food.description }} — {{ food.grams | number:'1.2-2' }}g ({{ food.calorias | number:'1.2-2' }} kcal)</span>
                   <div class="actions">
-                    <button (click)="editFood(food)" class="btn-edit">Editar</button>
-                    <button (click)="deleteFood(food._id)" class="btn-delete">Deletar</button>
+                    <button (click)="editFood(food)" class="btn-edit" i18n>Editar</button>
+                    <button (click)="deleteFood(food._id)" class="btn-delete" i18n>Deletar</button>
                   </div>
                 </div>
               }
@@ -151,7 +155,7 @@
           }
         </ul>
 
-        <button (click)="closePopup()" class="btn-close">Fechar</button>
+        <button (click)="closePopup()" class="btn-close" i18n>Fechar</button>
       </div>
     </div>
   }

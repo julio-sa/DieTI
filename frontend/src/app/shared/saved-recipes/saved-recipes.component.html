@@ -1,5 +1,5 @@
 <div class="saved-recipes-container">
-  <h2 class="title">Pratos</h2>
+  <h2 class="title" i18n>Pratos</h2>
 
   <!-- Seta para voltar -->
   <div class="back-arrow" (click)="goBack()">&#x276E;</div>
@@ -8,7 +8,7 @@
   <img src="assets/images/logo.svg" alt="DieTI" class="logo-image" />
 
   @if (recipes.length === 0) {
-    <p>Parece que ainda não há pratos salvos.</p>
+    <p i18n>Parece que ainda não há pratos salvos.</p>
   } @else {
     @for (recipe of recipes; track recipe._id) {
       <div class="recipe-card" [class.favorited]="isFavorite(recipe)">
@@ -27,8 +27,9 @@
           
           <!-- Busca de novo ingrediente -->
           <div class="add-ingredients">
-            <label>Adicionar Ingrediente:</label>
+            <label i18n>Adicionar Ingrediente:</label>
             <input 
+              i18n
               class="ingredient-add-field"
               type="text"
               [(ngModel)]="searchQuery"
@@ -39,6 +40,7 @@
               placeholder="Pesquisar ingrediente..."/>
 
             <input 
+                i18n
                 class="quantity-field" 
                 type="number" 
                 #gramsInput 
@@ -54,7 +56,8 @@
                       gramsInput.value=''; 
                       hasValue=false; 
                       selectedItemIndex = 0"
-              class="btn-add">Ok</button>
+              class="btn-add"
+              i18n>Ok</button>
           </div>
 
           @if (searchResults.length > 0) {
@@ -74,7 +77,7 @@
 
           <!-- Lista de ingredientes editáveis -->
           <div class="ingredients-list">
-            <h3>Ingredientes:</h3>
+            <h3 i18n>Ingredientes:</h3>
             @for (item of recipe.editingIngredients; track $index) {
               <div class="ingredient-item">
                 <span>{{ item.description }}</span>
@@ -84,7 +87,7 @@
                   (change)="updateIngredientGrams(recipe, $index, item.grams)"
                   class="quantity-field" 
                   min="1" />
-                <button (click)="removeIngredientFromRecipe(recipe, $index)" class="btn-remove">Remover</button>
+                <button (click)="removeIngredientFromRecipe(recipe, $index)" class="btn-remove" i18n>Remover</button>
               </div>
             }
           </div>
@@ -92,46 +95,46 @@
           <!-- Totais -->
           <div class="totals">
             <ul class="total-list">
-              <li class="item">Calorias: {{ recipe.calorias | number:'1.0-1' }} kcal</li>
-              <li class="item">Proteinas: {{ recipe.proteinas | number:'1.0-1' }}g</li>
-              <li class="item">Carbo: {{ recipe.carbo | number:'1.0-1' }}g</li>
-              <li class="item">Gordura: {{ recipe.gordura | number:'1.0-1' }}g</li>
+              <li class="item" i18n>Calorias: {{ recipe.calorias | number:'1.0-1' }} kcal</li>
+              <li class="item" i18n>Proteinas: {{ recipe.proteinas | number:'1.0-1' }}g</li>
+              <li class="item" i18n>Carbo: {{ recipe.carbo | number:'1.0-1' }}g</li>
+              <li class="item" i18n>Gordura: {{ recipe.gordura | number:'1.0-1' }}g</li>
             </ul>
           </div>
 
           <!-- Botões de ação -->
           <div class="edit-actions">
-            <button (click)="saveEditedRecipe(recipe)" class="btn-save">Salvar</button>
-            <button (click)="cancelEdit(recipe)" class="btn-cancel">Cancelar</button>
-            <button (click)="deleteRecipe(recipe._id)" class="btn-delete">Deletar Prato</button>
+            <button (click)="saveEditedRecipe(recipe)" class="btn-save" i18n>Salvar</button>
+            <button (click)="cancelEdit(recipe)" class="btn-cancel" i18n>Cancelar</button>
+            <button (click)="deleteRecipe(recipe._id)" class="btn-delete" i18n>Deletar Prato</button>
           </div>
 
         } @else {
           <!-- Visualização -->
           <h3>{{ recipe.name }}</h3>
           <p class="item">
-            <strong>Calorias:</strong> 
+            <strong i18n>Calorias:</strong> 
             {{ recipe.calorias | number:'1.0-0' }} kcal 
-            <span class="per-100g">(por 100g)</span>
+            <span class="per-100g" i18n>(por 100g)</span>
           </p>
           <p class="item">
-            <strong>Proteínas:</strong> 
+            <strong i18n>Proteínas:</strong> 
             {{ recipe.proteinas | number:'1.1-1' }}g 
-            <span class="per-100g">(por 100g)</span>
+            <span class="per-100g" i18n>(por 100g)</span>
           </p>
           <p class="item">
-            <strong>Carboidratos:</strong> 
+            <strong i18n>Carboidratos:</strong> 
             {{ recipe.carbo | number:'1.1-1' }}g 
-            <span class="per-100g">(por 100g)</span>
+            <span class="per-100g" i18n>(por 100g)</span>
           </p>
           <p class="item">
-            <strong>Gordura:</strong> 
+            <strong i18n>Gordura:</strong> 
             {{ recipe.gordura | number:'1.1-1' }}g 
-            <span class="per-100g">(por 100g)</span>
+            <span class="per-100g" i18n>(por 100g)</span>
           </p>
 
           <details>
-            <summary>Lista de Ingredientes</summary>
+            <summary i18n>Lista de Ingredientes</summary>
             <ul>
               @for (ing of recipe.ingredients; track $index) {
                 <li>{{ ing.description || ing.food?.description }} — {{ ing.grams }}g</li>
@@ -140,8 +143,8 @@
           </details>
 
           <div class="card-actions">
-            <button (click)="startEditing(recipe)" class="btn-edit">Editar</button>
-            <button (click)="deleteRecipe(recipe._id)" class="btn-delete">Deletar</button>
+            <button (click)="startEditing(recipe)" class="btn-edit" i18n>Editar</button>
+            <button (click)="deleteRecipe(recipe._id)" class="btn-delete" i18n>Deletar</button>
           </div>
         }
       </div>

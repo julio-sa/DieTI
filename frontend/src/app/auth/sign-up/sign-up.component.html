@@ -10,49 +10,49 @@
   <form class="sign-up-form" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
     <div class="input-group">
       <!-- NAME -->
-      <input type="text" id="name" #nameInput formControlName="name" class="input-field" placeholder="Nome">
-      <div *ngIf="registerForm.get('name')?.touched && registerForm.get('name')?.invalid" class="error-msg">
+      <input i18n type="text" id="name" #nameInput formControlName="name" class="input-field" placeholder="Nome">
+      <div *ngIf="registerForm.get('name')?.touched && registerForm.get('name')?.invalid" class="error-msg" i18n>
         Nome é requerido.
       </div>
 
       <!-- EMAIL -->
-      <input type="email" id="email" formControlName="email" class="input-field" placeholder="Email">
-      <div *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.invalid" class="error-msg">
+      <input i18n type="email" id="email" formControlName="email" class="input-field" placeholder="Email">
+      <div *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.invalid" class="error-msg" i18n>
         Um email válido é requerido.
       </div>
 
       <!-- AGE -->
-      <input type="number" id="age" formControlName="age" class="input-field" placeholder="Idade">
-      <div *ngIf="registerForm.get('age')?.touched && registerForm.get('age')?.invalid" class="error-msg">
+      <input i18n type="number" id="age" formControlName="age" class="input-field" placeholder="Idade">
+      <div *ngIf="registerForm.get('age')?.touched && registerForm.get('age')?.invalid" class="error-msg" i18n>
         Idade é requerida.
       </div>
 
       <!-- WEIGHT -->
-      <input type="number" id="weight" formControlName="weight" class="input-field" placeholder="Peso (kg)">
-      <div *ngIf="registerForm.get('weight')?.touched && registerForm.get('weight')?.invalid" class="error-msg">
+      <input i18n type="number" id="weight" formControlName="weight" class="input-field" placeholder="Peso (kg)">
+      <div *ngIf="registerForm.get('weight')?.touched && registerForm.get('weight')?.invalid" class="error-msg" i18n>
         Peso é requerido.
       </div>
 
       <!-- HEIGHT -->
-      <input type="number" id="height" formControlName="height" class="input-field" placeholder="Altura (cm)">
-      <div *ngIf="registerForm.get('height')?.touched && registerForm.get('height')?.invalid" class="error-msg">
+      <input i18n type="number" id="height" formControlName="height" class="input-field" placeholder="Altura (cm)">
+      <div *ngIf="registerForm.get('height')?.touched && registerForm.get('height')?.invalid" class="error-msg" i18n>
         Altura é requerida.
       </div>
 
       <!-- PASSWORD -->
-      <input type="password" id="password" formControlName="password" class="input-field" placeholder="Senha">
-      <div *ngIf="registerForm.get('password')?.touched && registerForm.get('password')?.invalid" class="error-msg">
+      <input i18n type="password" id="password" formControlName="password" class="input-field" placeholder="Senha">
+      <div *ngIf="registerForm.get('password')?.touched && registerForm.get('password')?.invalid" class="error-msg" i18n>
         Senha deve ter no mínimo 6 caracteres.
       </div>
 
       <!-- CONFIRM PASSWORD -->
-      <input type="password" id="confirmPassword" formControlName="confirmPassword" class="input-field"
+      <input i18n type="password" id="confirmPassword" formControlName="confirmPassword" class="input-field"
         placeholder="Confirme a senha">
-      <div *ngIf="registerForm.errors?.['mismatch'] && registerForm.get('confirmPassword')?.touched" class="error-msg">
+      <div *ngIf="registerForm.errors?.['mismatch'] && registerForm.get('confirmPassword')?.touched" class="error-msg" i18n>
         Senhas não conferem.
       </div>
 
-      <button type="submit" class="submit-btn">Criar Conta</button>
+      <button type="submit" class="submit-btn" i18n>Criar Conta</button>
     </div>
   </form>
 </div>

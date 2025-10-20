@@ -9,7 +9,7 @@
   <div class="form-group">
     <!-- Nome da receita -->
     <div class="recipe-name-group">
-      <label class="recipe-name">Nome do Prato:</label>
+      <label class="recipe-name" i18n>Nome do Prato:</label>
       <input 
         class="input-field"
         type="text" 
@@ -20,8 +20,9 @@
 
     <!-- Busca de alimento -->
     <div class="add-ingredients">
-      <label>Adicionar Ingrediente:</label>
+      <label i18n>Adicionar Ingrediente:</label>
       <input 
+        i18n
         class="ingredient-add-field"
         type="text"
         [(ngModel)]="searchQuery"
@@ -32,6 +33,7 @@
         placeholder="Pesquisar ingrediente..."/>
 
       <input 
+          i18n
           class="quantity-field" 
           type="number" 
           #gramsInput 
@@ -49,7 +51,7 @@
                 hasValue=false; 
                 selectedItemIndex = 0"
         class="btn-add" 
-        [disabled]="!hasValue || !selectedFood">Ok</button>
+        [disabled]="!hasValue || !selectedFood" i18n>Ok</button>
     </div>
     @if (searchResults.length > 0) {
         <div class="search-results" 
@@ -70,10 +72,10 @@
   <!-- Lista de ingredientes -->
   @if (ingredients.length > 0) {
     <div class="ingredients-list">
-      <h3>Ingredientes:</h3>
+      <h3 i18n>Ingredientes:</h3>
       @for (item of ingredients; track $index) {
         <div class="ingredient-item">
-          <button (click)="removeIngredient($index)" class="btn-remove">Remover</button>
+          <button (click)="removeIngredient($index)" class="btn-remove" i18n>Remover</button>
           <span>{{ item.food.description }}  —  {{ item.grams }}g</span>
         </div>
       }
@@ -83,18 +85,18 @@
   <!-- Totais -->
   @if (ingredients.length > 0) {
     <div class="totals">
-      <h3>Total:</h3>
+      <h3 i18n>Total:</h3>
       <ul class="total-list">
-        <li class="item">Calorias: {{ total.calorias | number:'1.0-1' }} kcal</li>
-        <li class="item">Proteínas: {{ total.proteinas | number:'1.0-1' }}g</li>
-        <li class="item">Carboidratos: {{ total.carbo | number:'1.0-1' }}g</li>
-        <li class="item">Gordura: {{ total.gordura | number:'1.0-1' }}g</li>
+        <li class="item" i18n>Calorias: {{ total.calorias | number:'1.0-1' }} kcal</li>
+        <li class="item" i18n>Proteínas: {{ total.proteinas | number:'1.0-1' }}g</li>
+        <li class="item" i18n>Carboidratos: {{ total.carbo | number:'1.0-1' }}g</li>
+        <li class="item" i18n>Gordura: {{ total.gordura | number:'1.0-1' }}g</li>
       </ul>
     </div>
   }
 
   <!-- Botão de salvar -->
-  <button (click)="saveRecipe()" class="btn-save" [disabled]="!recipeName || ingredients.length === 0">
+  <button (click)="saveRecipe()" class="btn-save" [disabled]="!recipeName || ingredients.length === 0" i18n>
     Salvar Prato
   </button>
 </div>

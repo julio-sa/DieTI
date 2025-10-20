@@ -1,34 +1,34 @@
 <!-- Seleção de métrica -->
 <div class="controls">
     <select [(ngModel)]="metric" (change)="onMetricChange()" class="metric-select">
-        <option value="calorias">
+        <option value="calorias" i18n>
             Calorias
         </option>
-        <option value="proteinas">
+        <option value="proteinas" i18n>
             Proteínas
         </option>
-        <option value="carbo">
+        <option value="carbo" i18n>
             Carbo
         </option>
-        <option value="gordura">
+        <option value="gordura" i18n>
             Gordura
         </option>
     </select>
 
     <select [(ngModel)]="selectedPeriod" (change)="loadHistory()" class="period-select">
-        <option value="7 dias">
+        <option value="7 dias" i18n>
             7 dias
         </option>
-        <option value="1 mês">
+        <option value="1 mês" i18n>
             1 mês
         </option>
-        <option value="3 meses">
+        <option value="3 meses" i18n>
             1 trimestre
         </option>
-        <option value="6 meses">
+        <option value="6 meses" i18n>
             1 semestre
         </option>
-        <option value="1 ano">
+        <option value="1 ano" i18n>
             1 ano
         </option>
     </select>
@@ -98,13 +98,13 @@
     @if (showHistoricalPopup) {
     <div class="popup-overlay" (click)="showHistoricalPopup = false">
         <div class="popup" (click)="$event.stopPropagation()">
-        <h3>Alimentos – {{ historicalDate }}</h3>
+        <h3 i18n>Alimentos – {{ historicalDate }}</h3>
         <ul class="food-list">
             @for (food of historicalFoods; track $index) {
             <li>{{ food.description }} — {{ food.grams }}g ({{ food.calories }} kcal)</li>
             }
         </ul>
-        <button (click)="showHistoricalPopup = false">Fechar</button>
+        <button (click)="showHistoricalPopup = false" i18n>Fechar</button>
         </div>
     </div>
     }

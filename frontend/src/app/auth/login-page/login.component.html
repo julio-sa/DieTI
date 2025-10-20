@@ -10,21 +10,21 @@
   <!-- Formulário -->
   <form class="login-form" (ngSubmit)="onSubmit()">
     <div class="input-group">
-      <input type="email" id="email" [(ngModel)]="email" name="email" class="input-field" placeholder="Email"
+      <input i18n type="email" id="email" [(ngModel)]="email" name="email" class="input-field" placeholder="Email"
         required />
     </div>
 
     <div class="input-group">
-      <input type="password" id="password" [(ngModel)]="password" name="password" class="input-field"
-        placeholder="Password" required />
+      <input i18n type="password" id="password" [(ngModel)]="password" name="password" class="input-field"
+        placeholder="Senha" required />
     </div>
 
     <div class="forgot-password">
-      <button type="button" id="forgot-password" (click)="goToPasswordRecovery()">
+      <button type="button" id="forgot-password" (click)="goToPasswordRecovery()" i18n>
         Esqueci minha senha
       </button>
     </div>
 
-    <button type="submit" class="submit-btn">Entrar</button>
+    <button type="submit" class="submit-btn" i18n>Entrar</button>
   </form>
 </div>

@@ -8,22 +8,22 @@
   <!-- Side menu -->
   <div class="side-menu" [class.active]="activeMenu">
     <div class="menu-header">
-      <h1>Menu</h1>
+      <h1 i18n>Menu</h1>
     </div>
     <ul class="menu-items">
-      <li><button class="menu-item" [routerLink]="['/profile']">Perfil</button></li>
-      <li><button class="menu-item" [routerLink]="['/create-recipe']">Criar Prato</button></li>
-      <li><button class="menu-item" [routerLink]="['/saved-recipes']">Pratos Salvos</button></li>
-      <li><button class="menu-item">Configurações</button></li>
-      <li><button class="menu-item" [routerLink]="['/sign-in']">Sair</button></li>
+      <li><button class="menu-item" [routerLink]="['/profile']" i18n>Perfil</button></li>
+      <li><button class="menu-item" [routerLink]="['/create-recipe']" i18n>Criar Prato</button></li>
+      <li><button class="menu-item" [routerLink]="['/saved-recipes']" i18n>Pratos Salvos</button></li>
+      <li><button class="menu-item" i18n>Configurações</button></li>
+      <li><button class="menu-item" [routerLink]="['/sign-in']" i18n>Sair</button></li>
     </ul>
   </div>
 
   <!-- Botão de instalação PWA -->
   @if (showInstallPrompt) {
   <div class="install-prompt">
-    <p>Instalar DieTI no seu dispositivo?</p>
-    <button (click)="installApp()" class="btn-install">Instalar</button>
+    <p i18n>Instalar DieTI no seu dispositivo?</p>
+    <button (click)="installApp()" class="btn-install" i18n>Instalar</button>
     <button (click)="showInstallPrompt = false" class="btn-dismiss">×</button>
   </div>
   }
@@ -31,7 +31,7 @@
   <img src="assets/images/logo.svg" alt="Dieti" class="logo-image" />
 
   @if (!isOnline) {
-    <div class="offline-banner">
+    <div class="offline-banner" i18n>
       📴 Offline: Alimentos serão sincronizados depois
     </div>
   }
@@ -39,6 +39,7 @@
   <div class="input-group">
     <div class="input-food">
       <input #foodInput
+            i18n
             name="food" 
             type="text" 
             [(ngModel)]="searchQuery"
@@ -71,7 +72,7 @@
 
               <!-- Mostra se é receita -->
               @if (food.type === 'recipe') {
-                <span class="tag">Prato</span>
+                <span class="tag" i18n>Prato</span>
               }
             </div>
           }
@@ -105,13 +106,13 @@
     <div class="popup-overlay">
       <div class="popup">
         <h3>@if (selectedFood) { {{ selectedFood.description }} } @else { {{ selectedRecipe?.name }} }</h3>
-        <label>
+        <label i18n>
           Gramas:
           <input type="number" [(ngModel)]="grams" min="1" />
         </label>
         <div class="popup-actions">
-          <button (click)="addFood()" class="btn-primary">Adicionar</button>
-          <button (click)="closePopup()" class="btn-cancel">Cancelar</button>
+          <button (click)="addFood()" class="btn-primary"   i18n>Adicionar</button>
+          <button (click)="closePopup()" class="btn-cancel" i18n>Cancelar</button>
         </div>
       </div>
     </div>
@@ -132,7 +133,7 @@
       
       <div class="favorites-container"
         [style.display]="isLeftActive ? 'block' : 'none'">
-        <h4 [routerLink]="['/saved-recipes']">Favoritos</h4>
+        <h4 [routerLink]="['/saved-recipes']" i18n>Favoritos</h4>
         <div class="favorites-scroll">
           @for (recipe of favoriteRecipes; track recipe._id) {
             <div class="favorite-item" (click)="selectFavoriteRecipe(recipe)">
