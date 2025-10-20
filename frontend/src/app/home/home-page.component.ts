@@ -366,7 +366,7 @@ export class HomePageComponent implements AfterViewInit {
     if (this.isOnline) {
       this.http.post('http://localhost:8000/food/add', foodData).subscribe({
         next: () => {
-          this.onDataChanged(); // Carrega do backend
+          this.onDataChanged();
         },
         error: (err) => this.queueOffline(foodData, consumed)
       });
@@ -425,8 +425,6 @@ export class HomePageComponent implements AfterViewInit {
 
   // Método para abrir o popup com a receita
   selectFavoriteRecipe(recipe: any) {
-    console.log('Receita selecionada:', recipe); // 🔍 Depure aqui
-
     this.selectedRecipe = recipe;
     this.grams = 100;
     this.popupVisible = true;

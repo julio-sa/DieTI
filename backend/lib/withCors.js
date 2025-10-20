@@ -1,6 +1,6 @@
 export default function withCors(handler) {
   return async (req, res) => {
-    console.log("Executando CORS middleware"); // <-- Adicione isso para testar
+    console.log("Executando CORS middleware");
 
     res.setHeader("Access-Control-Allow-Credentials", "true");
     res.setHeader("Access-Control-Allow-Origin", "http://localhost:4200");

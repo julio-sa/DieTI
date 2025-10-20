@@ -1,4 +1,3 @@
-// src/app/shared/progress-ring/progress-ring.component.ts
 import { Component, Input, OnInit } from '@angular/core';
 
 @Component({

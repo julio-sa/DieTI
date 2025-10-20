@@ -25,7 +25,6 @@ async function connectDB() {
     const opts = {
       // Opções padrão do Mongoose 7+
       bufferCommands: false, // Desativa bufferização de comandos quando desconectado
-      // Outras opções podem ser adicionadas conforme necessário
     };
 
     cached.promise = mongoose.connect(MONGO_URI, opts).then((mongoose) => {

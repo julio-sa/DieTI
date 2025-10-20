@@ -1,4 +1,3 @@
-// taco.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
@@ -12,7 +11,7 @@ export interface NutritionalInfo {
   proteinas_g: number | null;
   gordura_g: number | null;
   carbo_g: number | null;
-  type?: 'taco' | 'recipe'; // opcional: para diferenciar na UI
+  type?: 'taco' | 'recipe';
 }
 
 @Injectable({

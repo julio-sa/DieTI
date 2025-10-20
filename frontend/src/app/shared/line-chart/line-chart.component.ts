@@ -135,7 +135,7 @@ export class LineChartComponent implements OnInit, OnChanges {
   }
 
   reload(): void {
-    this.loadHistory(); // Isso já chama animateData()
+    this.loadHistory();
   }
   // Método chamado ao passar o mouse sobre um ponto    
   onPointHover(event: MouseEvent, item: IntakeData, index: number) {

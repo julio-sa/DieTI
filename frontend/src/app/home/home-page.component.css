@@ -374,7 +374,7 @@ h4 {
   position: relative;
   display: flex;
   align-items: flex-start;
-  gap: 200px; /* Espaço entre gráfico e barras */
+  gap: 200px;
 }
 
 .multi-ring-chart {
@@ -390,7 +390,7 @@ h4 {
   flex-direction: column;
   margin-top: 45px;
   margin-right: -10px;
-  gap: 20px; /* Reduzido o espaço entre itens */
+  gap: 20px;
 }
 
 .legend-item {

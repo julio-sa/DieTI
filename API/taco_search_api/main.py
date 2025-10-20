@@ -280,7 +280,7 @@ async def get_daily_food(user_id: str):
         for food in foods:
             food["_id"] = str(food["_id"])
 
-        return foods  # Agora é serializável
+        return foods
 
     except Exception as e:
         print("Erro em /food/daily:", str(e))
@@ -349,7 +349,7 @@ async def delete_food(food_id: str):
     # Remove do log diário
     await daily_log_intake_collection.delete_one({"_id": ObjectId(food_id)})
 
-    # ✅ Recalcula e atualiza DAILY_INTAKE (consumo do dia)
+    # Recalcula e atualiza DAILY_INTAKE (consumo do dia)
     cursor = daily_log_intake_collection.find({"user_id": user_id, "date": today})
     total = {"calorias": 0, "proteinas": 0, "carbo": 0, "gordura": 0}
     async for item in cursor:
@@ -364,7 +364,7 @@ async def delete_food(food_id: str):
         upsert=True
     )
 
-    # ✅ Atualiza o histórico SEMANAL (7 dias)
+    # Atualiza o histórico SEMANAL (7 dias)
     await update_historical_intake(user_id, today)
 
     return {"msg": "Deleted and totals recalculated"}
@@ -399,7 +399,7 @@ async def get_historical_food(user_id: str, date: str):
     if not foods:
         raise HTTPException(status_code=404, detail="No food found for this date")
 
-    # ✅ Converte _id para string
+    # Converte _id para string
     for food in foods:
         food["_id"] = str(food["_id"])
 
@@ -519,10 +519,10 @@ async def reset_password(request: dict):
         await collection_reset_tokens.delete_one({"email": email})
         raise HTTPException(status_code=400, detail="Código expirado")
 
-    # ✅ Gera hash da nova senha
+    # Gera hash da nova senha
     hashed_password = pwd_context.hash(new_password)
 
-    # ✅ Atualiza a senha do usuário
+    # Atualiza a senha do usuário
     result = await users_collection.update_one(
         {"email": email},
         {"$set": {"password": hashed_password}}
@@ -531,7 +531,7 @@ async def reset_password(request: dict):
     if result.matched_count == 0:
         raise HTTPException(status_code=500, detail="Falha ao atualizar senha")
 
-    # ✅ Remove o código usado
+    # Remove o código usado
     await collection_reset_tokens.delete_one({"email": email})
 
     return {"msg": "Senha redefinida com sucesso"}

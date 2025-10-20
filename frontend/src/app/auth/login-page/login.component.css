@@ -48,7 +48,7 @@
   background: none;
   border: none;
   font-size: 12px;
-  color: #666; /* cinza consistente com o resto */
+  color: #666;
   text-align: left;
   margin-top: -10px;
   margin-bottom: 20px;
@@ -104,116 +104,4 @@
 
 .input-field::placeholder {
   color: #999;
-}
-
-/* Responsividade */
-@media (max-width: 1080px) {
-  .page-container {
-    padding: 10px;
-    width: 100%;
-  }
-  .logo-image {
-    width: 100%;
-    max-width: 300px;
-    margin-bottom: 120px;
-  }
-  .input-group {
-    max-width: 280px;
-  }
-  .options-row {
-    max-width: 280px; /* Alinha com input-group */
-  }
-  .submit-btn {
-    max-width: 280px;
-    padding: 12px;
-    font-size: 16px;
-  }
-  .input-field {
-    padding: 10px;
-  }
-  .forgot-password {
-    font-size: 12px;
-  }
-  .forgot-password input[type="checkbox"] {
-    width: 14px;
-    height: 14px;
-  }
-}
-
-@media (max-width: 600px) {
-  .page-container {
-    padding: 5px;
-    width: 100%;
-  }
-  .logo-image {
-    width: 100%;
-    max-width: 250px;
-    margin-bottom: 80px;
-  }
-  .input-group {
-    max-width: 250px;
-  }
-  .options-row {
-    max-width: 250px; /* Alinha com input-group */
-  }
-  .submit-btn {
-    max-width: 250px;
-    padding: 10px;
-    font-size: 14px;
-  }
-  .input-field {
-    padding: 8px;
-    font-size: 14px;
-  }
-  .forgot-password {
-    font-size: 10px;
-  }
-  .forgot-password input[type="checkbox"] {
-    width: 12px;
-    height: 12px;
-  }
-  .back-arrow {
-    top: 10px;
-    left: 10px;
-    font-size: 20px;
-  }
-}
-
-@media (max-width: 400px) {
-  .page-container {
-    padding: 5px;
-    width: 100%;
-  }
-  .logo-image {
-    width: 100%;
-    max-width: 200px;
-    margin-bottom: 50px;
-  }
-  .input-group {
-    max-width: 220px;
-  }
-  .options-row {
-    max-width: 220px; /* Alinha com input-group */
-  }
-  .submit-btn {
-    max-width: 220px;
-    padding: 8px;
-    font-size: 12px;
-  }
-  .input-field {
-    padding: 6px;
-    font-size: 12px;
-  }
-  .forgot-password {
-    font-size: 9px;
-  }
-  .forgot-password input[type="checkbox"] {
-    width: 10px;
-    height: 10px;
-  }
-  .back-arrow {
-    top: 5px;
-    left: 5px;
-    font-size: 18px;
-  }
 }

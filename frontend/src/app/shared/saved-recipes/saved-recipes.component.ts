@@ -1,9 +1,8 @@
-// src/app/shared/saved-recipes/saved-recipes.component.ts
 import { Component, ElementRef, QueryList, ViewChildren, ViewChild, ChangeDetectorRef } from '@angular/core';
-import { CommonModule } from '@angular/common'; // ✅ FormsModule adicionado
+import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { TacoService, NutritionalInfo } from '../taco.service'; // ✅ Caminho corrigido
+import { TacoService, NutritionalInfo } from '../taco.service';
 import { FormsModule } from '@angular/forms';
 
 interface RecipeIngredient {
@@ -19,7 +18,7 @@ interface RecipeIngredient {
 @Component({
   standalone: true,
   selector: 'app-saved-recipes',
-  imports: [CommonModule, FormsModule], // ✅ Imports corretos
+  imports: [CommonModule, FormsModule],
   templateUrl: './saved-recipes.component.html',
   styleUrls: ['./saved-recipes.component.css']
 })
@@ -101,7 +100,7 @@ export class SavedRecipesComponent {
       .subscribe(() => {
         recipe.name = recipe.editingName;
         recipe.ingredients = [...recipe.editingIngredients];
-        this.updateTotals(recipe); // ✅ updateTotals, não recalculateTotals
+        this.updateTotals(recipe);
         this.editingRecipeId = null;
       }, err => {
         console.error('Erro ao salvar edição', err);
