@@ -1,0 +1,771 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xliff version="2.0" xmlns="urn:oasis:names:tc:xliff:document:2.0" srcLang="pt-BR" trgLang="en-US">
+  <file id="ngi18n" original="ng.template">
+    <unit id="2447098460563240385">
+      <notes>
+        <note category="location">src/app/auth/login-page/login.component.html:24,25</note>
+      </notes>
+      <segment>
+        <source>Esqueci minha senha</source>
+        <target>Forgot my password</target>
+      </segment>
+    </unit>
+    <unit id="600376029726528115">
+      <notes>
+        <note category="location">src/app/auth/login-page/login.component.html:28,29</note>
+        <note category="location">src/app/sign-in/sign-in.component.html:6,7</note>
+      </notes>
+      <segment>
+        <source>Entrar</source>
+        <target>Sign In</target>
+      </segment>
+    </unit>
+    <unit id="4040135084209079717">
+      <notes>
+        <note category="location">src/app/auth/password-recovery/password-recovery.component.html:2,4</note>
+      </notes>
+      <segment>
+        <source>Recuperar Senha</source>
+        <target>Recover Password</target>
+      </segment>
+    </unit>
+    <unit id="6631334172623029500">
+      <notes>
+        <note category="location">src/app/auth/password-recovery/password-recovery.component.html:10,11</note>
+      </notes>
+      <segment>
+        <source>Email:</source>
+        <target>Email:</target>
+      </segment>
+    </unit>
+    <unit id="8659120787933298559">
+      <notes>
+        <note category="location">src/app/auth/password-recovery/password-recovery.component.html:24</note>
+      </notes>
+      <segment>
+        <source>Por favor, insira um email válido.</source>
+        <target>Please enter a valid email.</target>
+      </segment>
+    </unit>
+    <unit id="4494534617592511957">
+      <notes>
+        <note category="location">src/app/auth/password-recovery/password-recovery.component.html:30,31</note>
+      </notes>
+      <segment>
+        <source>Enviar Código</source>
+        <target>Send Code</target>
+      </segment>
+    </unit>
+    <unit id="3246983524331482603">
+      <notes>
+        <note category="location">src/app/auth/password-recovery/password-recovery.component.html:36,37</note>
+        <note category="location">src/app/auth/recovery-code/recovery-code.component.html:79,80</note>
+      </notes>
+      <segment>
+        <source>Voltar ao Login</source>
+        <target>Back to Login</target>
+      </segment>
+    </unit>
+    <unit id="1940061705173375993">
+      <notes>
+        <note category="location">src/app/auth/recovery-code/recovery-code.component.html:2,4</note>
+      </notes>
+      <segment>
+        <source>Código de Recuperação</source>
+        <target>Recovery Code</target>
+      </segment>
+    </unit>
+    <unit id="490718755281137004">
+      <notes>
+        <note category="location">src/app/auth/recovery-code/recovery-code.component.html:10,11</note>
+      </notes>
+      <segment>
+        <source>Código:</source>
+        <target>Code:</target>
+      </segment>
+    </unit>
+    <unit id="1298779034457241177">
+      <notes>
+        <note category="location">src/app/auth/recovery-code/recovery-code.component.html:24</note>
+      </notes>
+      <segment>
+        <source>Código inválido. Deve ter 6 dígitos.</source>
+        <target>Invalid code. Must be 6 digits.</target>
+      </segment>
+    </unit>
+    <unit id="144645485970201878">
+      <notes>
+        <note category="location">src/app/auth/recovery-code/recovery-code.component.html:30,31</note>
+      </notes>
+      <segment>
+        <source>Nova Senha:</source>
+        <target>New Password:</target>
+      </segment>
+    </unit>
+    <unit id="71484804207411675">
+      <notes>
+        <note category="location">src/app/auth/recovery-code/recovery-code.component.html:43</note>
+      </notes>
+      <segment>
+        <source>A senha deve ter pelo menos 6 caracteres.</source>
+        <target>Password must be at least 6 characters.</target>
+      </segment>
+    </unit>
+    <unit id="8048556884578976792">
+      <notes>
+        <note category="location">src/app/auth/recovery-code/recovery-code.component.html:49,50</note>
+      </notes>
+      <segment>
+        <source>Confirmar Senha:</source>
+        <target>Confirm Password:</target>
+      </segment>
+    </unit>
+    <unit id="2387324203344904008">
+      <notes>
+        <note category="location">src/app/auth/recovery-code/recovery-code.component.html:62</note>
+      </notes>
+      <segment>
+        <source>Este campo é obrigatório.</source>
+        <target>This field is required.</target>
+      </segment>
+    </unit>
+    <unit id="1514677279607076684">
+      <notes>
+        <note category="location">src/app/auth/recovery-code/recovery-code.component.html:67</note>
+      </notes>
+      <segment>
+        <source>As senhas não coincidem.</source>
+        <target>Passwords do not match.</target>
+      </segment>
+    </unit>
+    <unit id="7396576843480070904">
+      <notes>
+        <note category="location">src/app/auth/recovery-code/recovery-code.component.html:73,74</note>
+      </notes>
+      <segment>
+        <source>Redefinir Senha</source>
+        <target>Reset Password</target>
+      </segment>
+    </unit>
+    <unit id="8322202406682628595">
+      <notes>
+        <note category="location">src/app/auth/sign-up/sign-up.component.html:15,16</note>
+      </notes>
+      <segment>
+        <source>Nome é requerido.</source>
+        <target>Name is required.</target>
+      </segment>
+    </unit>
+    <unit id="3111603238013874892">
+      <notes>
+        <note category="location">src/app/auth/sign-up/sign-up.component.html:21,22</note>
+      </notes>
+      <segment>
+        <source>Um email válido é requerido.</source>
+        <target>A valid email is required.</target>
+      </segment>
+    </unit>
+    <unit id="7912572593217084886">
+      <notes>
+        <note category="location">src/app/auth/sign-up/sign-up.component.html:27,28</note>
+      </notes>
+      <segment>
+        <source>Idade é requerida.</source>
+        <target>Age is required.</target>
+      </segment>
+    </unit>
+    <unit id="3286292030164225064">
+      <notes>
+        <note category="location">src/app/auth/sign-up/sign-up.component.html:33,34</note>
+      </notes>
+      <segment>
+        <source>Peso é requerido.</source>
+        <target>Weight is required.</target>
+      </segment>
+    </unit>
+    <unit id="5587148076739435797">
+      <notes>
+        <note category="location">src/app/auth/sign-up/sign-up.component.html:39,40</note>
+      </notes>
+      <segment>
+        <source>Altura é requerida.</source>
+        <target>Height is required.</target>
+      </segment>
+    </unit>
+    <unit id="2050535248994491752">
+      <notes>
+        <note category="location">src/app/auth/sign-up/sign-up.component.html:45,46</note>
+      </notes>
+      <segment>
+        <source>Senha deve ter no mínimo 6 caracteres.</source>
+        <target>Password must be at least 6 characters.</target>
+      </segment>
+    </unit>
+    <unit id="1333474314726162594">
+      <notes>
+        <note category="location">src/app/auth/sign-up/sign-up.component.html:52,53</note>
+      </notes>
+      <segment>
+        <source>Senhas não conferem.</source>
+        <target>Passwords do not match.</target>
+      </segment>
+    </unit>
+    <unit id="5798680892819429658">
+      <notes>
+        <note category="location">src/app/auth/sign-up/sign-up.component.html:55,56</note>
+      </notes>
+      <segment>
+        <source>Criar Conta</source>
+        <target>Create Account</target>
+      </segment>
+    </unit>
+    <unit id="6840399328806100907">
+      <notes>
+        <note category="location">src/app/create-recipe/create-recipe.component.html:12,13</note>
+      </notes>
+      <segment>
+        <source>Nome do Prato:</source>
+        <target>Dish Name:</target>
+      </segment>
+    </unit>
+    <unit id="3118319209432502711">
+      <notes>
+        <note category="location">src/app/create-recipe/create-recipe.component.html:23,24</note>
+        <note category="location">src/app/shared/saved-recipes/saved-recipes.component.html:30,31</note>
+      </notes>
+      <segment>
+        <source>Adicionar Ingrediente:</source>
+        <target>Add Ingredient:</target>
+      </segment>
+    </unit>
+    <unit id="8720977247725652816">
+      <notes>
+        <note category="location">src/app/create-recipe/create-recipe.component.html:54,55</note>
+        <note category="location">src/app/shared/saved-recipes/saved-recipes.component.html:60,61</note>
+      </notes>
+      <segment>
+        <source>Ok</source>
+        <target>OK</target>
+      </segment>
+    </unit>
+    <unit id="8791960779174966047">
+      <notes>
+        <note category="location">src/app/create-recipe/create-recipe.component.html:75,76</note>
+        <note category="location">src/app/shared/saved-recipes/saved-recipes.component.html:80,81</note>
+      </notes>
+      <segment>
+        <source>Ingredientes:</source>
+        <target>Ingredients:</target>
+      </segment>
+    </unit>
+    <unit id="4860999273696670525">
+      <notes>
+        <note category="location">src/app/create-recipe/create-recipe.component.html:78,79</note>
+        <note category="location">src/app/shared/saved-recipes/saved-recipes.component.html:90,91</note>
+      </notes>
+      <segment>
+        <source>Remover</source>
+        <target>Remove</target>
+      </segment>
+    </unit>
+    <unit id="7349530031233006058">
+      <notes>
+        <note category="location">src/app/create-recipe/create-recipe.component.html:88,89</note>
+      </notes>
+      <segment>
+        <source>Total:</source>
+        <target>Total:</target>
+      </segment>
+    </unit>
+    <unit id="3289911229106138254">
+      <notes>
+        <note category="location">src/app/create-recipe/create-recipe.component.html:90,91</note>
+        <note category="location">src/app/shared/saved-recipes/saved-recipes.component.html:98,99</note>
+      </notes>
+      <segment>
+        <source>Calorias: <ph id="0" equiv="INTERPOLATION" disp="{{ total.calorias | number:'1.0-1' }}"/> kcal</source>
+        <target>Calories: <ph id="0" equiv="INTERPOLATION" disp="{{ total.calorias | number:'1.0-1' }}"/> kcal</target>
+      </segment>
+    </unit>
+    <unit id="6605866992448637612">
+      <notes>
+        <note category="location">src/app/create-recipe/create-recipe.component.html:91,92</note>
+      </notes>
+      <segment>
+        <source>Proteínas: <ph id="0" equiv="INTERPOLATION" disp="{{ total.proteinas | number:'1.0-1' }}"/>g</source>
+        <target>Proteins: <ph id="0" equiv="INTERPOLATION" disp="{{ total.proteinas | number:'1.0-1' }}"/>g</target>
+      </segment>
+    </unit>
+    <unit id="8931945733002983548">
+      <notes>
+        <note category="location">src/app/create-recipe/create-recipe.component.html:92,93</note>
+      </notes>
+      <segment>
+        <source>Carboidratos: <ph id="0" equiv="INTERPOLATION" disp="{{ total.carbo | number:'1.0-1' }}"/>g</source>
+        <target>Carbohydrates: <ph id="0" equiv="INTERPOLATION" disp="{{ total.carbo | number:'1.0-1' }}"/>g</target>
+      </segment>
+    </unit>
+    <unit id="2856013444431919849">
+      <notes>
+        <note category="location">src/app/create-recipe/create-recipe.component.html:93,94</note>
+        <note category="location">src/app/shared/saved-recipes/saved-recipes.component.html:101,102</note>
+      </notes>
+      <segment>
+        <source>Gordura: <ph id="0" equiv="INTERPOLATION" disp="{{ total.gordura | number:'1.0-1' }}"/>g</source>
+        <target>Fat: <ph id="0" equiv="INTERPOLATION" disp="{{ total.gordura | number:'1.0-1' }}"/>g</target>
+      </segment>
+    </unit>
+    <unit id="206666907296149979">
+      <notes>
+        <note category="location">src/app/create-recipe/create-recipe.component.html:100,101</note>
+      </notes>
+      <segment>
+        <source>Salvar Prato</source>
+        <target>Save Dish</target>
+      </segment>
+    </unit>
+    <unit id="2102825898069375693">
+      <notes>
+        <note category="location">src/app/home/home-page.component.html:11,12</note>
+      </notes>
+      <segment>
+        <source>Menu</source>
+        <target>Menu</target>
+      </segment>
+    </unit>
+    <unit id="5797087197643200257">
+      <notes>
+        <note category="location">src/app/home/home-page.component.html:14</note>
+      </notes>
+      <segment>
+        <source>Perfil</source>
+        <target>Profile</target>
+      </segment>
+    </unit>
+    <unit id="2841225477628010560">
+      <notes>
+        <note category="location">src/app/home/home-page.component.html:15</note>
+      </notes>
+      <segment>
+        <source>Criar Prato</source>
+        <target>Create Dish</target>
+      </segment>
+    </unit>
+    <unit id="8306389074242070891">
+      <notes>
+        <note category="location">src/app/home/home-page.component.html:16</note>
+      </notes>
+      <segment>
+        <source>Pratos Salvos</source>
+        <target>Saved Dishes</target>
+      </segment>
+    </unit>
+    <unit id="8486008966550715052">
+      <notes>
+        <note category="location">src/app/home/home-page.component.html:17</note>
+      </notes>
+      <segment>
+        <source>Configurações</source>
+        <target>Settings</target>
+      </segment>
+    </unit>
+    <unit id="4711539933884989412">
+      <notes>
+        <note category="location">src/app/home/home-page.component.html:18</note>
+      </notes>
+      <segment>
+        <source>Sair</source>
+        <target>Logout</target>
+      </segment>
+    </unit>
+    <unit id="6933977712174605155">
+      <notes>
+        <note category="location">src/app/home/home-page.component.html:25,26</note>
+      </notes>
+      <segment>
+        <source>Instalar DieTI no seu dispositivo?</source>
+        <target>Install DieTI on your device?</target>
+      </segment>
+    </unit>
+    <unit id="7880161727844701063">
+      <notes>
+        <note category="location">src/app/home/home-page.component.html:26,27</note>
+      </notes>
+      <segment>
+        <source>Instalar</source>
+        <target>Install</target>
+      </segment>
+    </unit>
+    <unit id="863021531327409146">
+      <notes>
+        <note category="location">src/app/home/home-page.component.html:35,36</note>
+      </notes>
+      <segment>
+        <source> 📴 Offline: Alimentos serão sincronizados depois </source>
+        <target> 📴 Offline: Foods will be synced later </target>
+      </segment>
+    </unit>
+    <unit id="8595327580084595459">
+      <notes>
+        <note category="location">src/app/home/home-page.component.html:75,76</note>
+      </notes>
+      <segment>
+        <source>Prato</source>
+        <target>Dish</target>
+      </segment>
+    </unit>
+    <unit id="6229193446189431640">
+      <notes>
+        <note category="location">src/app/home/home-page.component.html:110,112</note>
+      </notes>
+      <segment>
+        <source>Gramas: <ph id="0" equiv="TAG_INPUT" disp="<input type=&quot;number&quot; [(ngModel)]=&quot;grams&quot; min=&quot;1&quot; />"/></source>
+        <target>Grams: <ph id="0" equiv="TAG_INPUT" disp="<input type=&quot;number&quot; [(ngModel)]=&quot;grams&quot; min=&quot;1&quot; />"/></target>
+      </segment>
+    </unit>
+    <unit id="2145082911125334103">
+      <notes>
+        <note category="location">src/app/home/home-page.component.html:114,115</note>
+      </notes>
+      <segment>
+        <source>Adicionar</source>
+        <target>Add</target>
+      </segment>
+    </unit>
+    <unit id="6402951927316857780">
+      <notes>
+        <note category="location">src/app/home/home-page.component.html:115,116</note>
+        <note category="location">src/app/profile/profile.component.html:77,78</note>
+        <note category="location">src/app/shared/multi-ring-chart/multi-ring-chart.component.html:141,142</note>
+        <note category="location">src/app/shared/saved-recipes/saved-recipes.component.html:108,109</note>
+      </notes>
+      <segment>
+        <source>Cancelar</source>
+        <target>Cancel</target>
+      </segment>
+    </unit>
+    <unit id="8307013293442796509">
+      <notes>
+        <note category="location">src/app/home/home-page.component.html:136,137</note>
+      </notes>
+      <segment>
+        <source>Favoritos</source>
+        <target>Favorites</target>
+      </segment>
+    </unit>
+    <unit id="4138352246566201061">
+      <notes>
+        <note category="location">src/app/profile/profile.component.html:42,44</note>
+      </notes>
+      <segment>
+        <source><ph id="0" equiv="TAG_IMG" type="image" disp="<img src=&quot;../../assets/images/kcal.svg&quot; alt=&quot;goal&quot; class=&quot;profile-icons&quot;>"/> Meta calórica: <ph id="1" equiv="INTERPOLATION" disp="{{ goals.calorias }}"/> </source>
+        <target><ph id="0" equiv="TAG_IMG" type="image" disp="<img src=&quot;../../assets/images/kcal.svg&quot; alt=&quot;goal&quot; class=&quot;profile-icons&quot;>"/> Calorie goal: <ph id="1" equiv="INTERPOLATION" disp="{{ goals.calorias }}"/> </target>
+      </segment>
+    </unit>
+    <unit id="4148119904647220455">
+      <notes>
+        <note category="location">src/app/profile/profile.component.html:46,48</note>
+      </notes>
+      <segment>
+        <source><ph id="0" equiv="TAG_IMG" type="image" disp="<img src=&quot;../../assets/images/protein.svg&quot; alt=&quot;goal&quot; class=&quot;profile-icons&quot;>"/> Meta proteíca: <ph id="1" equiv="INTERPOLATION" disp="{{ goals.proteinas }}"/> g </source>
+        <target><ph id="0" equiv="TAG_IMG" type="image" disp="<img src=&quot;../../assets/images/protein.svg&quot; alt=&quot;goal&quot; class=&quot;profile-icons&quot;>"/> Protein goal: <ph id="1" equiv="INTERPOLATION" disp="{{ goals.proteinas }}"/> g </target>
+      </segment>
+    </unit>
+    <unit id="2636622400680056706">
+      <notes>
+        <note category="location">src/app/profile/profile.component.html:50,52</note>
+      </notes>
+      <segment>
+        <source><ph id="0" equiv="TAG_IMG" type="image" disp="<img src=&quot;../../assets/images/carb.svg&quot; alt=&quot;goal&quot; class=&quot;profile-icons&quot;>"/> Meta de carbo: <ph id="1" equiv="INTERPOLATION" disp="{{ goals.carbo }}"/> g </source>
+        <target><ph id="0" equiv="TAG_IMG" type="image" disp="<img src=&quot;../../assets/images/carb.svg&quot; alt=&quot;goal&quot; class=&quot;profile-icons&quot;>"/> Carbs goal: <ph id="1" equiv="INTERPOLATION" disp="{{ goals.carbo }}"/> g </target>
+      </segment>
+    </unit>
+    <unit id="516114792439869415">
+      <notes>
+        <note category="location">src/app/profile/profile.component.html:54,56</note>
+      </notes>
+      <segment>
+        <source><ph id="0" equiv="TAG_IMG" type="image" disp="<img src=&quot;../../assets/images/fat.svg&quot; alt=&quot;goal&quot; class=&quot;profile-icons&quot;>"/> Meta gordura: <ph id="1" equiv="INTERPOLATION" disp="{{ goals.gordura }}"/> g </source>
+        <target><ph id="0" equiv="TAG_IMG" type="image" disp="<img src=&quot;../../assets/images/fat.svg&quot; alt=&quot;goal&quot; class=&quot;profile-icons&quot;>"/> Fat goal: <ph id="1" equiv="INTERPOLATION" disp="{{ goals.gordura }}"/> g </target>
+      </segment>
+    </unit>
+    <unit id="5967906349279104359">
+      <notes>
+        <note category="location">src/app/profile/profile.component.html:63,64</note>
+      </notes>
+      <segment>
+        <source>Informações Pessoais</source>
+        <target>Personal Info</target>
+      </segment>
+    </unit>
+    <unit id="8784358563646977146">
+      <notes>
+        <note category="location">src/app/profile/profile.component.html:69,70</note>
+      </notes>
+      <segment>
+        <source>Metas</source>
+        <target>Goals</target>
+      </segment>
+    </unit>
+    <unit id="5954338936032655558">
+      <notes>
+        <note category="location">src/app/profile/profile.component.html:76,77</note>
+        <note category="location">src/app/shared/multi-ring-chart/multi-ring-chart.component.html:140,141</note>
+        <note category="location">src/app/shared/saved-recipes/saved-recipes.component.html:107,108</note>
+      </notes>
+      <segment>
+        <source>Salvar</source>
+        <target>Save</target>
+      </segment>
+    </unit>
+    <unit id="7443578550372538763">
+      <notes>
+        <note category="location">src/app/profile/profile.component.html:78,79</note>
+      </notes>
+      <segment>
+        <source>Deletar Conta</source>
+        <target>Delete Account</target>
+      </segment>
+    </unit>
+    <unit id="875885576582792639">
+      <notes>
+        <note category="location">src/app/shared/line-chart/line-chart.component.html:5</note>
+      </notes>
+      <segment>
+        <source>Calorias</source>
+        <target>Calories</target>
+      </segment>
+    </unit>
+    <unit id="1149682048243260672">
+      <notes>
+        <note category="location">src/app/shared/line-chart/line-chart.component.html:8</note>
+      </notes>
+      <segment>
+        <source>Proteínas</source>
+        <target>Proteins</target>
+      </segment>
+    </unit>
+    <unit id="8846250919557763734">
+      <notes>
+        <note category="location">src/app/shared/line-chart/line-chart.component.html:11</note>
+      </notes>
+      <segment>
+        <source>Carbo</source>
+        <target>Carbs</target>
+      </segment>
+    </unit>
+    <unit id="5980383847294319616">
+      <notes>
+        <note category="location">src/app/shared/line-chart/line-chart.component.html:14</note>
+      </notes>
+      <segment>
+        <source>Gordura</source>
+        <target>Fat</target>
+      </segment>
+    </unit>
+    <unit id="8178316023794471075">
+      <notes>
+        <note category="location">src/app/shared/line-chart/line-chart.component.html:20</note>
+      </notes>
+      <segment>
+        <source>7 dias</source>
+        <target>7 days</target>
+      </segment>
+    </unit>
+    <unit id="583271850437671961">
+      <notes>
+        <note category="location">src/app/shared/line-chart/line-chart.component.html:23</note>
+      </notes>
+      <segment>
+        <source>1 mês</source>
+        <target>1 month</target>
+      </segment>
+    </unit>
+    <unit id="3266664802117677140">
+      <notes>
+        <note category="location">src/app/shared/line-chart/line-chart.component.html:26</note>
+      </notes>
+      <segment>
+        <source>1 trimestre</source>
+        <target>1 quarter</target>
+      </segment>
+    </unit>
+    <unit id="1967567803318443746">
+      <notes>
+        <note category="location">src/app/shared/line-chart/line-chart.component.html:29</note>
+      </notes>
+      <segment>
+        <source>1 semestre</source>
+        <target>1 semester</target>
+      </segment>
+    </unit>
+    <unit id="5298819243303428560">
+      <notes>
+        <note category="location">src/app/shared/line-chart/line-chart.component.html:32</note>
+      </notes>
+      <segment>
+        <source>1 ano</source>
+        <target>1 year</target>
+      </segment>
+    </unit>
+    <unit id="7840723121846553905">
+      <notes>
+        <note category="location">src/app/shared/line-chart/line-chart.component.html:101,102</note>
+      </notes>
+      <segment>
+        <source>Alimentos – <ph id="0" equiv="INTERPOLATION" disp="{{ historicalDate }}"/></source>
+        <target>Foods – <ph id="0" equiv="INTERPOLATION" disp="{{ historicalDate }}"/></target>
+      </segment>
+    </unit>
+    <unit id="1333450866373555458">
+      <notes>
+        <note category="location">src/app/shared/line-chart/line-chart.component.html:107,108</note>
+        <note category="location">src/app/shared/multi-ring-chart/multi-ring-chart.component.html:158,159</note>
+      </notes>
+      <segment>
+        <source>Fechar</source>
+        <target>Close</target>
+      </segment>
+    </unit>
+    <unit id="9131067650978184201">
+      <notes>
+        <note category="location">src/app/shared/multi-ring-chart/multi-ring-chart.component.html:121,122</note>
+      </notes>
+      <segment>
+        <source>Registros de hoje</source>
+        <target>Today's records</target>
+      </segment>
+    </unit>
+    <unit id="2153980152639237955">
+      <notes>
+        <note category="location">src/app/shared/multi-ring-chart/multi-ring-chart.component.html:149,150</note>
+        <note category="location">src/app/shared/saved-recipes/saved-recipes.component.html:146,147</note>
+      </notes>
+      <segment>
+        <source>Editar</source>
+        <target>Edit</target>
+      </segment>
+    </unit>
+    <unit id="8451457792876367617">
+      <notes>
+        <note category="location">src/app/shared/multi-ring-chart/multi-ring-chart.component.html:150,151</note>
+        <note category="location">src/app/shared/saved-recipes/saved-recipes.component.html:147,148</note>
+      </notes>
+      <segment>
+        <source>Deletar</source>
+        <target>Delete</target>
+      </segment>
+    </unit>
+    <unit id="7234526705566918523">
+      <notes>
+        <note category="location">src/app/shared/saved-recipes/saved-recipes.component.html:2,4</note>
+      </notes>
+      <segment>
+        <source>Pratos</source>
+        <target>Dishes</target>
+      </segment>
+    </unit>
+    <unit id="5939748444816589149">
+      <notes>
+        <note category="location">src/app/shared/saved-recipes/saved-recipes.component.html:11,12</note>
+      </notes>
+      <segment>
+        <source>Parece que ainda não há pratos salvos.</source>
+        <target>It seems you have no saved dishes yet.</target>
+      </segment>
+    </unit>
+    <unit id="3521087724456386990">
+      <notes>
+        <note category="location">src/app/shared/saved-recipes/saved-recipes.component.html:99,100</note>
+      </notes>
+      <segment>
+        <source>Proteinas: <ph id="0" equiv="INTERPOLATION" disp="{{ recipe.proteinas | number:'1.0-1' }}"/>g</source>
+        <target>Proteins: <ph id="0" equiv="INTERPOLATION" disp="{{ recipe.proteinas | number:'1.0-1' }}"/>g</target>
+      </segment>
+    </unit>
+    <unit id="7629875678917388253">
+      <notes>
+        <note category="location">src/app/shared/saved-recipes/saved-recipes.component.html:100,101</note>
+      </notes>
+      <segment>
+        <source>Carbo: <ph id="0" equiv="INTERPOLATION" disp="{{ recipe.carbo | number:'1.0-1' }}"/>g</source>
+        <target>Carbs: <ph id="0" equiv="INTERPOLATION" disp="{{ recipe.carbo | number:'1.0-1' }}"/>g</target>
+      </segment>
+    </unit>
+    <unit id="476287797917376464">
+      <notes>
+        <note category="location">src/app/shared/saved-recipes/saved-recipes.component.html:109,110</note>
+      </notes>
+      <segment>
+        <source>Deletar Prato</source>
+        <target>Delete Dish</target>
+      </segment>
+    </unit>
+    <unit id="3270900295094334477">
+      <notes>
+        <note category="location">src/app/shared/saved-recipes/saved-recipes.component.html:116,117</note>
+      </notes>
+      <segment>
+        <source>Calorias:</source>
+        <target>Calories:</target>
+      </segment>
+    </unit>
+    <unit id="2278243605842056178">
+      <notes>
+        <note category="location">src/app/shared/saved-recipes/saved-recipes.component.html:118,119</note>
+        <note category="location">src/app/shared/saved-recipes/saved-recipes.component.html:123,124</note>
+        <note category="location">src/app/shared/saved-recipes/saved-recipes.component.html:128,129</note>
+        <note category="location">src/app/shared/saved-recipes/saved-recipes.component.html:133,134</note>
+      </notes>
+      <segment>
+        <source>(por 100g)</source>
+        <target>(per 100g)</target>
+      </segment>
+    </unit>
+    <unit id="1632137954589165990">
+      <notes>
+        <note category="location">src/app/shared/saved-recipes/saved-recipes.component.html:121,122</note>
+      </notes>
+      <segment>
+        <source>Proteínas:</source>
+        <target>Proteins:</target>
+      </segment>
+    </unit>
+    <unit id="3667709284845121720">
+      <notes>
+        <note category="location">src/app/shared/saved-recipes/saved-recipes.component.html:126,127</note>
+      </notes>
+      <segment>
+        <source>Carboidratos:</source>
+        <target>Carbohydrates:</target>
+      </segment>
+    </unit>
+    <unit id="8278978567183584317">
+      <notes>
+        <note category="location">src/app/shared/saved-recipes/saved-recipes.component.html:131,132</note>
+      </notes>
+      <segment>
+        <source>Gordura:</source>
+        <target>Fat:</target>
+      </segment>
+    </unit>
+    <unit id="4802530891868559032">
+      <notes>
+        <note category="location">src/app/shared/saved-recipes/saved-recipes.component.html:137,138</note>
+      </notes>
+      <segment>
+        <source>Lista de Ingredientes</source>
+        <target>Ingredients List</target>
+      </segment>
+    </unit>
+    <unit id="2876845279614484382">
+      <notes>
+        <note category="location">src/app/sign-in/sign-in.component.html:7,8</note>
+      </notes>
+      <segment>
+        <source>Criar conta</source>
+        <target>Create account</target>
+      </segment>
+    </unit>
+  </file>
+</xliff>
