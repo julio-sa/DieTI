@@ -1,0 +1,100 @@
+<div class="create-recipe-container">
+  <h2 class="title">Criar Prato</h2>
+  <!-- Seta para voltar -->
+  <div class="back-arrow" (click)="goBack()">&#x276E;</div>
+
+  <!-- Imagem da logo -->
+  <img src="assets/images/logo.svg" alt="DieTI" class="logo-image" />
+  
+  <div class="form-group">
+    <!-- Nome da receita -->
+    <div class="recipe-name-group">
+      <label class="recipe-name">Nome do Prato:</label>
+      <input 
+        class="input-field"
+        type="text" 
+        [(ngModel)]="recipeName" 
+        (blur)="onBlur()"
+        placeholder="Ex: Arroz com feijão" />
+    </div>
+
+    <!-- Busca de alimento -->
+    <div class="add-ingredients">
+      <label>Adicionar Ingrediente:</label>
+      <input 
+        class="ingredient-add-field"
+        type="text"
+        [(ngModel)]="searchQuery"
+        (input)="onSearch()"
+        (blur)="onBlur()"
+        (focus)="showResults()"
+        (keydown)="onKeyDown($event)"
+        placeholder="Pesquisar ingrediente..."/>
+
+      <input 
+          class="quantity-field" 
+          type="number" 
+          #gramsInput 
+          placeholder="Gramas"
+          min="1"
+          (input)="onGramsInput($event)"
+          (keyup.enter)="addIngredient(gramsInput.valueAsNumber); 
+                        gramsInput.value=''; 
+                        hasValue=false; 
+                        selectedItemIndex = 0" />
+  
+      <button 
+        (click)="addIngredient(gramsInput.valueAsNumber);
+                gramsInput.value=''; 
+                hasValue=false; 
+                selectedItemIndex = 0"
+        class="btn-add" 
+        [disabled]="!hasValue || !selectedFood">Ok</button>
+    </div>
+    @if (searchResults.length > 0) {
+        <div class="search-results" 
+          (click)="$event.stopPropagation()"
+          #searchResultsContainer>
+          @for (food of searchResults; track $index) {
+            <div #searchItem 
+              class="search-item" 
+              (click)="selectFood(food)"
+              [class.active]="$index === selectedItemIndex">
+              {{ food.description }}
+            </div>
+          }
+        </div>
+      }
+  </div>
+
+  <!-- Lista de ingredientes -->
+  @if (ingredients.length > 0) {
+    <div class="ingredients-list">
+      <h3>Ingredientes:</h3>
+      @for (item of ingredients; track $index) {
+        <div class="ingredient-item">
+          <button (click)="removeIngredient($index)" class="btn-remove">Remover</button>
+          <span>{{ item.food.description }}  —  {{ item.grams }}g</span>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Totais -->
+  @if (ingredients.length > 0) {
+    <div class="totals">
+      <h3>Total:</h3>
+      <ul class="total-list">
+        <li class="item">Calorias: {{ total.calorias | number:'1.0-1' }} kcal</li>
+        <li class="item">Proteínas: {{ total.proteinas | number:'1.0-1' }}g</li>
+        <li class="item">Carboidratos: {{ total.carbo | number:'1.0-1' }}g</li>
+        <li class="item">Gordura: {{ total.gordura | number:'1.0-1' }}g</li>
+      </ul>
+    </div>
+  }
+
+  <!-- Botão de salvar -->
+  <button (click)="saveRecipe()" class="btn-save" [disabled]="!recipeName || ingredients.length === 0">
+    Salvar Prato
+  </button>
+</div>

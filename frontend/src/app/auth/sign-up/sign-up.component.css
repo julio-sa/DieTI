@@ -1,0 +1,234 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.page-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: white;
+  min-height: 100vh;
+  position: relative;
+  font-family: Helvetica;
+}
+
+.back-arrow {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  font-size: 24px;
+  cursor: pointer;
+  color: #888;
+  z-index: 10;
+}
+
+.logo-image {
+  max-width: 400px;
+  height: auto;
+  margin-bottom: 20px;
+  align-self: center;
+}
+
+.sign-up-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 400px;
+}
+
+.input-group {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  position: relative;
+}
+
+.input-field {
+  width: 100%;
+  padding: 12px;
+  margin: 5px 0;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  background-color: #f9f4f4;
+  outline: none;
+  transition: border 0.2s ease, background-color 0.2s ease;
+  color: #666;
+}
+
+.input-field:focus {
+  border: 2px solid #00bfff;
+  background-color: #ffffff;
+}
+
+.input-field:invalid {
+  border-color: #ff4d4d;
+}
+
+.input-field::placeholder {
+  color: #959494;
+}
+
+/* Estilo específico para o select */
+select.input-field {
+  appearance: none;
+  padding-right: 40px; /* Ajustado para acomodar a seta */
+  background: #f9f4f4;
+  color: #959494;
+}
+
+/* Cor das opções do select */
+select.input-field option {
+  color: #959494;
+}
+
+.error-msg {
+  color: red;
+  font-size: 0.85rem;
+  margin-top: 2px;
+  margin-bottom: 8px;
+}
+
+.submit-btn {
+  width: 100%;
+  padding: 12px;
+  margin-top: 20px;
+  background-color: #00bfff;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.submit-btn:hover {
+  background-color: #0099cc;
+}
+
+/* Responsividade */
+@media (max-width: 1080px) {
+  .page-container {
+    padding: 10px;
+    width: 100%;
+    height: 100%;
+  }
+  .input-group {
+    width: 85%;
+    max-width: 700px;
+    margin: 10px 10px 0 10px;
+  }
+  .input-field {
+    width: 100%; /* Ajustado para 100% para consistência */
+    margin: 5px 0; /* Mantém o margin original */
+    padding: 12px;
+  }
+  select.input-field {
+    padding-right: 35px; /* Ajuste proporcional */
+  }
+  .input-group .select-wrapper::after {
+    right: 12px; /* Ajuste proporcional */
+    font-size: 8px;
+  }
+  .submit-btn {
+    width: 97.7%;
+    margin-top: 20px;
+  }
+  .logo-image {
+    width: 55%;
+    max-width: 1000px;
+    margin-bottom: 10px;
+  }
+}
+
+@media (max-width: 600px) {
+  .page-container {
+    padding: 10px;
+    width: 100%;
+    height: 100%;
+  }
+  .input-group {
+    width: 85%;
+    max-width: 500px;
+    margin: 10px 10px 0 10px;
+  }
+  .input-field {
+    width: 100%;
+    margin: 5px 0;
+    padding: 10px;
+  }
+  select.input-field {
+    padding-right: 30px;
+  }
+  .input-group .select-wrapper::after {
+    right: 10px;
+    font-size: 8px;
+  }
+  .submit-btn {
+    width: 99.4%;
+    margin-top: 15px;
+  }
+  .logo-image {
+    width: 55%;
+    max-width: 400px;
+    margin-bottom: 15px;
+  }
+  .back-arrow {
+    top: 10px;
+    left: 10px;
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 400px) {
+  .page-container {
+    padding: 5px;
+    width: 100%;
+    height: 100%;
+  }
+  .input-group {
+    width: 90%;
+    max-width: 280px;
+    margin: 30px 5px 0 5px;
+  }
+  .input-field {
+    width: 100%;
+    margin: 5px 0;
+    padding: 10px;
+    font-size: 14px;
+  }
+  select.input-field {
+    padding-right: 25px;
+  }
+  .input-group .select-wrapper::after {
+    right: 8px;
+    font-size: 7px;
+  }
+  .submit-btn {
+    width: 98%;
+    margin-top: 10px;
+    padding: 10px;
+    font-size: 14px;
+  }
+  .logo-image {
+    width: 70%;
+    max-width: 300px;
+    margin-bottom: 5px;
+  }
+  .back-arrow {
+    top: 5px;
+    left: 5px;
+    font-size: 18px;
+  }
+  .error-msg {
+    font-size: 0.75rem;
+  }
+}

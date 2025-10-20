@@ -1,0 +1,30 @@
+<div class="page-container">
+  <!-- Seta para voltar -->
+  <div class="back-arrow" (click)="goBack()">
+    &#x276E;
+  </div>
+
+  <!-- Imagem da logo -->
+  <img src="assets/images/logo.svg" alt="DieTI" class="logo-image">
+
+  <!-- Formulário -->
+  <form class="login-form" (ngSubmit)="onSubmit()">
+    <div class="input-group">
+      <input type="email" id="email" [(ngModel)]="email" name="email" class="input-field" placeholder="Email"
+        required />
+    </div>
+
+    <div class="input-group">
+      <input type="password" id="password" [(ngModel)]="password" name="password" class="input-field"
+        placeholder="Password" required />
+    </div>
+
+    <div class="forgot-password">
+      <button type="button" id="forgot-password" (click)="goToPasswordRecovery()">
+        Esqueci minha senha
+      </button>
+    </div>
+
+    <button type="submit" class="submit-btn">Entrar</button>
+  </form>
+</div>

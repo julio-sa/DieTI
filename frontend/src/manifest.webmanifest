@@ -1,0 +1,20 @@
+{
+  "name": "Dieti",
+  "short_name": "Dieti",
+  "description": "Controle sua alimentação com inteligência. Acompanhe gráficos diários, cadastre alimentos e alcance seus objetivos de saúde.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#00bfff",
+  "orientation": "portrait",
+  "scope": "/",
+  "icons": [],
+  "screenshots": [
+    {
+      "src": "assets/screenshots/Home - Daily.png",
+      "type": "image/png",
+      "sizes": "1080x1920",
+      "label": "Tela inicial com entrada de alimentos e gráficos"
+    }
+  ]
+}

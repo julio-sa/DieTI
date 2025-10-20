@@ -1,0 +1,209 @@
+.chart-container {
+  position: relative;
+  display: inline-block;
+  width: 450px;
+  height: 450px;
+}
+
+.chart-tooltip {
+  position: absolute;
+  background: rgba(0, 0, 0, 0.85);
+  color: white;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  pointer-events: none;
+  white-space: nowrap;
+  z-index: 1000;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  top: 0;
+  left: 0;
+  transform: translate(-50%, -100%);
+}
+
+.has-tooltip {
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.has-tooltip:hover {
+  opacity: 0.8;
+}
+
+/* Overlay escuro ao fundo */
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  backdrop-filter: blur(2px);
+}
+
+/* Caixa do popup */
+.popup {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  width: 90%;
+  max-width: 500px;
+  max-height: 80vh;
+  overflow-y: auto;
+  padding: 20px;
+  font-family: 'Roboto', sans-serif;
+}
+
+.popup h3 {
+  margin-top: 0;
+  color: #333;
+  font-size: 1.4rem;
+  text-align: center;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+}
+
+/* Lista de alimentos */
+.food-list {
+  list-style: none;
+  padding: 0;
+  margin: 15px 0;
+}
+
+.food-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 10px;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 14px;
+  color: #444;
+}
+
+.food-item:hover {
+  background-color: #f9f9f9;
+  border-radius: 6px;
+}
+
+.food-item .actions {
+  display: flex;
+  gap: 8px;
+  margin-left: auto; 
+}
+
+.btn-edit,
+.btn-delete,
+.btn-close {
+  padding: 6px 10px;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-edit {
+  background-color: #4fc3f7;
+  color: white;
+}
+
+.btn-edit:hover {
+  background-color: #00bfff;
+}
+
+.btn-delete {
+  background-color: #ff8a80;
+  color: white;
+}
+
+.btn-delete:hover {
+  background-color: #ff5252;
+}
+
+.btn-close {
+  background-color: #ccc;
+  color: #333;
+  padding: 10px 20px;
+  font-size: 14px;
+  margin-top: 10px;
+  align-self: center;
+}
+
+.btn-close:hover {
+  background-color: #bbb;
+}
+
+.edit-input {
+  padding: 6px;
+  width: 60px;
+  margin-right: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.popup {
+  scrollbar-width: thin;
+  scrollbar-color: #888 #f1f1f1;
+}
+
+.popup::-webkit-scrollbar {
+  width: 6px;
+}
+
+.popup::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.popup::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+
+.popup::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+.food-item {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.food-item:last-child {
+  border-bottom: none;
+}
+
+.edit-mode, .view-mode {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.edit-input {
+  padding: 6px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  width: 80px;
+}
+
+.full-width {
+  width: auto;
+  flex-grow: 1;
+}
+
+.view-mode span {
+  color: #444;
+  font-size: 14px;
+}

@@ -1,0 +1,217 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+.page-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: white;
+    min-height: 100vh;
+    position: relative;
+    font-family: Helvetica;
+}
+
+.back-arrow {
+    position: absolute;
+    top: 70px;
+    left: 20px;
+    font-size: 24px;
+    cursor: pointer;
+    color: #888;
+    z-index: 10;
+}
+
+.logo-image {
+    position: absolute;
+    top: 20px;
+    right: 40px;
+    width: 30%;
+    max-width: 350px;
+}
+
+.profile-title {
+    position: inherit;
+    top: -180px;
+    left: 0px;
+    font-size: 40px;
+    font-weight: bold;
+    font-family: Helvetica;
+    color: #333;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    width: 20%;
+}
+
+.edit {
+    width: 40px;
+    position: absolute;
+    top: 219px;
+    left: 355px;
+    cursor: pointer;
+}
+
+.profile-container {
+    position: relative;
+    width: 90%;
+    left: 40px;
+    margin-top: 100px;
+}
+
+.profile-icons {
+  width: 25px;
+  height: 25px; 
+  margin-top: -3.5px;
+  margin-right: 15px;
+  vertical-align: middle;
+  display: inline-block;
+}
+
+
+.registerForm {
+    position: absolute;
+    display: inline-block;
+    width: 100%;
+    left: 100px;
+    top: -90px; /* Ajustado para ficar abaixo do título */
+    font-size: 25px;
+    font-family: Helvetica;
+    color: #444;
+    max-width: 1000px; /* Limita a largura para melhor legibilidade */
+}
+
+.userData {
+    margin-left: -60px;
+    display: flex;
+    flex-direction: line;
+    align-items: flex-start;
+}
+
+.user-section {
+    margin-right: 400px;
+}
+
+.userDataEdit {
+    width: 100%;
+    max-width: 500px;
+}
+
+.userDataUl {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.userDataUl li {
+    margin: 10px 0 45px 0;
+    cursor: default; /* Remove o cursor pointer se não for interativo */
+    font-size: 25px;
+    color: #555;
+    line-height: 1.5; /* Melhora o espaçamento entre linhas */
+    transition: color 0.3s ease; /* Transição suave para hover */
+}
+
+.userDataUl li:hover {
+    color: #00bfff;
+}
+
+.input-field {
+    width: 100%;
+    max-width: 1000px;
+    padding: 12px;
+    margin: 10px 0;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    background-color: #f9f4f4;
+    outline: none;
+    transition: border 0.2s ease, background-color 0.2s ease;
+    color: #666;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra sutil */
+}
+
+.input-field:focus {
+    border: 2px solid #00bfff;
+    background-color: #ffffff;
+    box-shadow: 0 4px 8px rgba(0, 0, 191, 0.2); /* Sombra mais pronunciada ao focar */
+}
+
+select.input-field {
+    appearance: none;
+    padding-right: 40px;
+    background: #f9f4f4;
+    color: #666;
+    cursor: pointer;
+}
+
+select.input-field option {
+    color: #666;
+    background-color: #fff; /* Fundo branco para opções */
+}
+
+.submit-btn {
+    width: 100%;
+    padding: 14px;
+    margin-top: 20px;
+    background-color: #00bfff;
+    color: white;
+    border: none;
+    border-radius: 20px; /* Borda mais arredondada */
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Adicionada transição de escala */
+    box-shadow: 0 4px 6px rgba(0, 0, 191, 0.1); /* Sombra sutil */
+}
+
+.submit-btn:hover {
+    background-color: #0099cc;
+    transform: scale(1.05); /* Efeito de escala ao hover */
+}
+
+.cancel-btn {
+    width: 100%;
+    padding: 14px;
+    margin-top: 10px; /* Menor espaçamento para diferenciar do submit */
+    bottom: 20px;
+    background-color: #c0e7ff;
+    color: white;
+    border: none;
+    border-radius: 20px; /* Borda mais arredondada */
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Adicionada transição de escala */
+    box-shadow: 0 4px 6px rgba(0, 0, 191, 0.1); /* Sombra sutil */
+}
+
+.cancel-btn:hover {
+    background-color: #b8d8e9;
+    transform: scale(1.05); /* Efeito de escala ao hover */
+}
+
+.delete-btn {
+    position: center;
+    width: 100%;
+    padding: 0;
+    margin-top: 30px; /* Menor espaçamento para diferenciar do submit */
+    background-color: white;
+    color: red;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.delete-btn:hover {
+    color: #cc0000; /* Tom mais escuro de vermelho ao hover */
+}
+
+.goals-section {
+    margin-left: -80px;
+}

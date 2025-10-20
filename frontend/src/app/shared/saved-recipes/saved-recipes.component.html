@@ -1,0 +1,150 @@
+<div class="saved-recipes-container">
+  <h2 class="title">Pratos</h2>
+
+  <!-- Seta para voltar -->
+  <div class="back-arrow" (click)="goBack()">&#x276E;</div>
+
+  <!-- Imagem da logo -->
+  <img src="assets/images/logo.svg" alt="DieTI" class="logo-image" />
+
+  @if (recipes.length === 0) {
+    <p>Parece que ainda não há pratos salvos.</p>
+  } @else {
+    @for (recipe of recipes; track recipe._id) {
+      <div class="recipe-card" [class.favorited]="isFavorite(recipe)">
+        <!-- Botão de favorito -->
+        <div class="favorite-toggle" (click)="toggleFavorite(recipe); $event.stopPropagation()">
+          	&#10084;
+        </div>
+
+        @if (editingRecipeId === recipe._id) {
+          <!-- Modo de Edição -->
+          <input 
+            class="input-field"
+            type="text" 
+            [(ngModel)]="recipe.editingName" 
+            placeholder="Nome do Prato" />
+          
+          <!-- Busca de novo ingrediente -->
+          <div class="add-ingredients">
+            <label>Adicionar Ingrediente:</label>
+            <input 
+              class="ingredient-add-field"
+              type="text"
+              [(ngModel)]="searchQuery"
+              (input)="onSearch()"
+              (blur)="onBlur()"
+              (focus)="showResults()"
+              (keydown)="onKeyDown($event)"
+              placeholder="Pesquisar ingrediente..."/>
+
+            <input 
+                class="quantity-field" 
+                type="number" 
+                #gramsInput 
+                placeholder="Gramas"
+                min="1"
+                (keyup.enter)="addIngredientToRecipe(recipe, gramsInput.valueAsNumber); 
+                              gramsInput.value=''; 
+                              hasValue=false; 
+                              selectedItemIndex = 0" />
+        
+            <button 
+              (click)="addIngredientToRecipe(recipe, gramsInput.valueAsNumber);
+                      gramsInput.value=''; 
+                      hasValue=false; 
+                      selectedItemIndex = 0"
+              class="btn-add">Ok</button>
+          </div>
+
+          @if (searchResults.length > 0) {
+            <div class="search-results" 
+                (click)="$event.stopPropagation()"
+                #searchResultsContainer>
+              @for (food of searchResults; track food._id) {
+                <div #searchItem 
+                  class="search-item" 
+                  (click)="selectFood(food)"
+                  [class.active]="$index === selectedItemIndex">
+                  {{ food.description }}
+                </div>
+              }
+            </div>
+          }
+
+          <!-- Lista de ingredientes editáveis -->
+          <div class="ingredients-list">
+            <h3>Ingredientes:</h3>
+            @for (item of recipe.editingIngredients; track $index) {
+              <div class="ingredient-item">
+                <span>{{ item.description }}</span>
+                <input 
+                  type="number" 
+                  [(ngModel)]="item.grams" 
+                  (change)="updateIngredientGrams(recipe, $index, item.grams)"
+                  class="quantity-field" 
+                  min="1" />
+                <button (click)="removeIngredientFromRecipe(recipe, $index)" class="btn-remove">Remover</button>
+              </div>
+            }
+          </div>
+
+          <!-- Totais -->
+          <div class="totals">
+            <ul class="total-list">
+              <li class="item">Calorias: {{ recipe.calorias | number:'1.0-1' }} kcal</li>
+              <li class="item">Proteinas: {{ recipe.proteinas | number:'1.0-1' }}g</li>
+              <li class="item">Carbo: {{ recipe.carbo | number:'1.0-1' }}g</li>
+              <li class="item">Gordura: {{ recipe.gordura | number:'1.0-1' }}g</li>
+            </ul>
+          </div>
+
+          <!-- Botões de ação -->
+          <div class="edit-actions">
+            <button (click)="saveEditedRecipe(recipe)" class="btn-save">Salvar</button>
+            <button (click)="cancelEdit(recipe)" class="btn-cancel">Cancelar</button>
+            <button (click)="deleteRecipe(recipe._id)" class="btn-delete">Deletar Prato</button>
+          </div>
+
+        } @else {
+          <!-- Visualização -->
+          <h3>{{ recipe.name }}</h3>
+          <p class="item">
+            <strong>Calorias:</strong> 
+            {{ recipe.calorias | number:'1.0-0' }} kcal 
+            <span class="per-100g">(por 100g)</span>
+          </p>
+          <p class="item">
+            <strong>Proteínas:</strong> 
+            {{ recipe.proteinas | number:'1.1-1' }}g 
+            <span class="per-100g">(por 100g)</span>
+          </p>
+          <p class="item">
+            <strong>Carboidratos:</strong> 
+            {{ recipe.carbo | number:'1.1-1' }}g 
+            <span class="per-100g">(por 100g)</span>
+          </p>
+          <p class="item">
+            <strong>Gordura:</strong> 
+            {{ recipe.gordura | number:'1.1-1' }}g 
+            <span class="per-100g">(por 100g)</span>
+          </p>
+
+          <details>
+            <summary>Lista de Ingredientes</summary>
+            <ul>
+              @for (ing of recipe.ingredients; track $index) {
+                <li>{{ ing.description || ing.food?.description }} — {{ ing.grams }}g</li>
+              }
+            </ul>
+          </details>
+
+          <div class="card-actions">
+            <button (click)="startEditing(recipe)" class="btn-edit">Editar</button>
+            <button (click)="deleteRecipe(recipe._id)" class="btn-delete">Deletar</button>
+          </div>
+        }
+      </div>
+    }
+  }
+</div>

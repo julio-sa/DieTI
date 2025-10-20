@@ -1,0 +1,82 @@
+<div class="page-container">
+  <!-- Seta para voltar -->
+  <div class="back-arrow" (click)="goBack()">&#x276E;</div>
+
+  <!-- Imagem da logo -->
+  <img src="assets/images/logo.svg" alt="DieTI" class="logo-image" />
+
+  <img src="assets/images/edit-icon.svg" alt="edit-info" class="edit" (click)="goToEditProfile()" />
+
+  <div class="profile-container">
+    <h1 class="profile-title">Profile</h1>
+    <form class="registerForm" [formGroup]="registerForm">
+      <!-- Dados do usuário (modo visualização) -->
+      <div class="userData" *ngIf="!isEditing">
+          <div class="user-section">
+            <ul class="userDataUl">
+              <li class="lbl-user">
+                <img src="../../assets/images/user.svg" alt="user" class="profile-icons">
+                {{ registerForm.value.name }}
+              </li>
+              <li class="lbl-user">
+                <img src="../../assets/images/mail.svg" alt="mail" class="profile-icons">
+                {{ registerForm.value.email }}
+              </li>
+              <li class="lbl-user">
+                <img src="../../assets/images/age.svg" alt="age" class="profile-icons">
+                {{ registerForm.value.age }} years
+              </li>
+              <li class="lbl-user">
+                <img src="../../assets/images/weight.svg" alt="weight" class="profile-icons">
+                {{ registerForm.value.weight }} kg
+              </li>
+              <li class="lbl-user">
+                <img src="../../assets/images/height.svg" alt="height" class="profile-icons">
+                {{ registerForm.value.height }} cm
+              </li>
+            </ul>
+          </div>
+          <div class="goals-section">
+            <ul class="userDataUl">
+              <li class="lbl-user">
+                <img src="../../assets/images/kcal.svg" alt="goal" class="profile-icons">
+                Meta calórica: {{ goals.calorias }}
+              </li>
+              <li class="lbl-user">
+                <img src="../../assets/images/protein.svg" alt="goal" class="profile-icons">
+                Meta proteíca: {{ goals.proteinas }} g
+              </li>
+              <li class="lbl-user">
+                <img src="../../assets/images/carb.svg" alt="goal" class="profile-icons">
+                Meta de carbo: {{ goals.carbo }} g
+              </li>
+              <li class="lbl-user">
+                <img src="../../assets/images/fat.svg" alt="goal" class="profile-icons">
+                Meta gordura: {{ goals.gordura }} g
+              </li>
+            </ul>
+          </div>
+      </div>
+
+      <!-- Campos de edição -->
+      <div *ngIf="isEditing" class="goals-section">
+        <h3>Informações Pessoais</h3>
+        <input type="text" class="input-field" formControlName="name"/>
+        <input type="text" class="input-field" formControlName="email"/>
+        <input type="text" class="input-field" formControlName="age"/>
+        <input type="text" class="input-field" formControlName="weight"/>
+        <input type="text" class="input-field" formControlName="height"/>
+        <h3>Metas</h3>
+        <input type="number" class="input-field" placeholder="Calorias" [value]="goals.calorias" (input)="onGoalInput($event, 'calorias')" />
+        <input type="number" class="input-field" placeholder="Proteinas (g)" [value]="goals.proteinas" (input)="onGoalInput($event, 'proteinas')" />
+        <input type="number" class="input-field" placeholder="Carbo (g)" [value]="goals.carbo" (input)="onGoalInput($event, 'carbo')" />
+        <input type="number" class="input-field" placeholder="Gordura (g)" [value]="goals.gordura" (input)="onGoalInput($event, 'gordura')" />
+      </div>
+
+      <button type="button" class="submit-btn" *ngIf="isEditing" (click)="onSubmit()">Salvar</button>
+      <button type="button" class="cancel-btn" *ngIf="isEditing" (click)="cancelEdit()">Cancelar</button>
+      <button type="button" class="delete-btn" *ngIf="isEditing">Deletar Conta</button>
+      
+    </form>
+  </div>
+</div>

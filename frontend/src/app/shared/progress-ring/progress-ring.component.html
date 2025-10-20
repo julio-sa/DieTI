@@ -1,0 +1,24 @@
+<!-- src/app/shared/progress-ring/progress-ring.component.html -->
+
+<div class="progress-ring-container">
+  <svg width="160" height="160" viewBox="0 0 160 160" class="progress-svg">
+    <!-- Círculo de fundo -->
+    <circle cx="80" cy="80" r="80" fill="none" stroke="#f0f0f0" stroke-width="10" />
+    
+    <!-- Círculo de progresso com attr. -->
+    <circle 
+      cx="80" 
+      cy="80" 
+      r="80" 
+      fill="none" 
+      stroke="#00bfff" 
+      stroke-width="10" 
+      [attr.stroke-dasharray]="strokeDasharray" 
+      [attr.stroke-dashoffset]="strokeDashoffset" 
+      transform="rotate(-90 80 80)" 
+    />
+  </svg>
+  <div class="progress-label">
+    {{ value }} / {{ max }}
+  </div>
+</div>

@@ -1,0 +1,151 @@
+<div class="page-container">
+  <div class="menu" (click)="openMenu()" >
+    ⋮
+  </div>
+
+  <div class="overlay" [class.active]="activeMenu" (click)="closeMenu()"></div>
+
+  <!-- Side menu -->
+  <div class="side-menu" [class.active]="activeMenu">
+    <div class="menu-header">
+      <h1>Menu</h1>
+    </div>
+    <ul class="menu-items">
+      <li><button class="menu-item" [routerLink]="['/profile']">Perfil</button></li>
+      <li><button class="menu-item" [routerLink]="['/create-recipe']">Criar Prato</button></li>
+      <li><button class="menu-item" [routerLink]="['/saved-recipes']">Pratos Salvos</button></li>
+      <li><button class="menu-item">Configurações</button></li>
+      <li><button class="menu-item" [routerLink]="['/sign-in']">Sair</button></li>
+    </ul>
+  </div>
+
+  <!-- Botão de instalação PWA -->
+  @if (showInstallPrompt) {
+  <div class="install-prompt">
+    <p>Instalar DieTI no seu dispositivo?</p>
+    <button (click)="installApp()" class="btn-install">Instalar</button>
+    <button (click)="showInstallPrompt = false" class="btn-dismiss">×</button>
+  </div>
+  }
+
+  <img src="assets/images/logo.svg" alt="Dieti" class="logo-image" />
+
+  @if (!isOnline) {
+    <div class="offline-banner">
+      📴 Offline: Alimentos serão sincronizados depois
+    </div>
+  }
+
+  <div class="input-group">
+    <div class="input-food">
+      <input #foodInput
+            name="food" 
+            type="text" 
+            [(ngModel)]="searchQuery"
+            (input)="onSearch()" 
+            (blur)="onBlur()"
+            (focus)="showResults()"
+            (keydown)="onKeyDown($event)"
+            class="input-field"
+            placeholder="Pesquisar alimento...">
+
+      <!-- Resultados da busca -->
+      @if (searchResults.length > 0) {
+        <div class="search-results" 
+            #searchResultsContainer>  
+          @for (food of searchResults; track food._id) {
+            <div #searchItem 
+                class="search-item" 
+                (click)="selectFood(food)"
+                [class.active]="$index === selectedItemIndex">
+              
+              <div class="food-name">{{ formatFoodDescription(food.description).mainName }}</div>
+              
+              @if (formatFoodDescription(food.description).details.length > 0) {
+                <div class="food-details">
+                  @for (detail of formatFoodDescription(food.description).details; track $index) {
+                    <span class="detail">{{ detail }}</span>
+                  }
+                </div>
+              }
+
+              <!-- Mostra se é receita -->
+              @if (food.type === 'recipe') {
+                <span class="tag">Prato</span>
+              }
+            </div>
+          }
+        </div>
+      }
+    </div>
+    <div class="dual-button">
+      <div class="slider" [style.left]="sliderPosition"></div>
+      <button class="button-left" tabindex="1" (click)="moveSlider('left')" #buttonLeft>
+        @if (isLeftActive) {
+          <img src="assets/images/chart_daily_active.svg" alt="daily_chart" class="chart">
+        }
+        @else {
+          <img src="assets/images/chart_daily.svg" alt="daily_chart" class="chart">
+        }
+
+      </button>
+      <button class="button-right" tabindex="2" (click)="moveSlider('right')">
+        @if (isLeftActive) {
+          <img src="assets/images/chart_period.svg" alt="period_chart" class="chart">
+        }
+        @else {
+          <img src="assets/images/chart_period_active.svg" alt="period_chart" class="chart">
+        }
+      </button>
+    </div>
+  </div>
+
+  <!-- Popup de quantidade -->
+  @if (popupVisible) {
+    <div class="popup-overlay">
+      <div class="popup">
+        <h3>@if (selectedFood) { {{ selectedFood.description }} } @else { {{ selectedRecipe?.name }} }</h3>
+        <label>
+          Gramas:
+          <input type="number" [(ngModel)]="grams" min="1" />
+        </label>
+        <div class="popup-actions">
+          <button (click)="addFood()" class="btn-primary">Adicionar</button>
+          <button (click)="closePopup()" class="btn-cancel">Cancelar</button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- src/app/home/home-page.component.html -->
+
+  <div class="progress-container">
+   
+      <app-multi-ring-chart 
+        [style.display]="isLeftActive ? 'block' : 'none'"
+        [calorias]="caloriasData" 
+        [proteinas]="proteinasData" 
+        [carb]="carbData" 
+        [gordura]="gorduraData"
+        (refreshData)="onDataChanged()"
+        class="multi-ring-chart"/>
+      
+      <div class="favorites-container"
+        [style.display]="isLeftActive ? 'block' : 'none'">
+        <h4 [routerLink]="['/saved-recipes']">Favoritos</h4>
+        <div class="favorites-scroll">
+          @for (recipe of favoriteRecipes; track recipe._id) {
+            <div class="favorite-item" (click)="selectFavoriteRecipe(recipe)">
+              {{ recipe.name }}
+            </div>
+          }
+        </div>
+      </div>
+  
+      <!-- Gráfico de linhas (aparece quando o slider está na direita) -->
+      <app-line-chart 
+      class="line-chart"
+      [goals]="goals"
+      [style.display]="!isLeftActive ? 'block' : 'none'"/>
+  </div>
+</div>

@@ -1,0 +1,79 @@
+<div class="recovery-code-container">
+  <h2>Código de Recuperação</h2>
+  
+  <!-- Logo -->
+  <img src="assets/images/logo.svg" alt="DieTI" class="logo-image" />
+
+  <!-- Formulário -->
+  <form (ngSubmit)="onSubmit()" #codeForm="ngForm">
+    <div class="form-group">
+      <label for="code">Código:</label>
+      <input 
+        type="text" 
+        id="code"
+        name="code"
+        [(ngModel)]="code"
+        required
+        pattern="[0-9]{6}"
+        class="input-field"
+        placeholder="Digite o código de 6 dígitos"
+        [class.invalid]="codeForm.controls['code'].invalid && codeForm.controls['code'].touched" />
+      @if (codeForm?.controls?.['code']?.invalid && codeForm?.controls?.['code']?.touched) {
+        <div class="error-message">
+          Código inválido. Deve ter 6 dígitos.
+        </div>
+      }
+    </div>
+
+    <div class="form-group">
+      <label for="newPassword">Nova Senha:</label>
+      <input 
+        type="password" 
+        id="newPassword"
+        name="newPassword"
+        [(ngModel)]="newPassword"
+        required
+        minlength="6"
+        class="input-field"
+        placeholder="Digite sua nova senha"
+        [class.invalid]="codeForm.controls['newPassword'].invalid && codeForm.controls['newPassword'].touched" />
+      @if (codeForm.controls['newPassword']?.invalid && codeForm.controls['newPassword']?.touched) {
+        <div class="error-message">
+          A senha deve ter pelo menos 6 caracteres.
+        </div>
+      }
+    </div>
+
+    <div class="form-group">
+      <label for="confirmPassword">Confirmar Senha:</label>
+      <input 
+        type="password" 
+        id="confirmPassword"
+        name="confirmPassword"
+        [(ngModel)]="confirmPassword"
+        required
+        class="input-field"
+        placeholder="Confirme sua nova senha"
+        [class.invalid]="(codeForm.controls['confirmPassword'].invalid && codeForm.controls['confirmPassword'].touched) || passwordsDontMatch()" />
+      @if (codeForm.controls['confirmPassword']?.invalid && codeForm.controls['confirmPassword']?.touched) {
+        <div class="error-message">
+          Este campo é obrigatório.
+        </div>
+      }
+      @if (passwordsDontMatch() && codeForm.controls['confirmPassword']?.touched) {
+        <div class="error-message">
+          As senhas não coincidem.
+        </div>
+      }
+    </div>
+
+    <button type="submit" [disabled]="!codeForm.valid || passwordsDontMatch()" class="btn-primary">
+      Redefinir Senha
+    </button>
+  </form>
+
+  <!-- Voltar para login -->
+  <div class="back-link">
+    <a routerLink="/sign-in">Voltar ao Login</a>
+  </div>
+</div>

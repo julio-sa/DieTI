@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Você está offline</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Roboto', Arial, sans-serif;
+      background-color: #f9f9f9;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      text-align: center;
+      padding: 20px;
+    }
+    .logo {
+      width: 120px;
+      height: 120px;
+      margin-bottom: 20px;
+    }
+    h1 {
+      font-size: 24px;
+      color: #00bfff;
+      margin-bottom: 10px;
+    }
+    p {
+      font-size: 16px;
+      color: #666;
+      margin-bottom: 20px;
+      max-width: 400px;
+    }
+    .home-button {
+      display: inline-block;
+      padding: 12px 24px;
+      background-color: #00bfff;
+      color: white;
+      text-decoration: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 500;
+      transition: background-color 0.3s ease;
+    }
+    .home-button:hover {
+      background-color: #0099cc;
+    }
+    .footer {
+      margin-top: 40px;
+      font-size: 14px;
+      color: #999;
+    }
+  </style>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+  <img src="assets/images/logo.svg" alt="Dieti" class="logo">
+  <h1>You are offline</h1>
+  <p>O aplicativo DieTI funciona melhor quando está conectado a internet, mas você ainda pode usar a página inicial.</p>
+  <a href="/" class="home-button">Ir para página inicial</a>
+  <div class="footer">
+    Dieti © 2025 — Nourish your body, nourish your mind
+  </div>
+</body>
+</html>
