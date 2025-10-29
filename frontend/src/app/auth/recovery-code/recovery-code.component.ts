@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router, ActivatedRoute, RouterModule } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
@@ -7,10 +7,7 @@ import { firstValueFrom } from 'rxjs';
 @Component({
   standalone: true,
   selector: 'app-recovery-code',
-  imports: [
-    FormsModule,
-    RouterModule
-  ],
+  imports: [FormsModule],
   templateUrl: './recovery-code.component.html',
   styleUrls: ['./recovery-code.component.css']
 })
@@ -34,35 +31,45 @@ export class RecoveryCodeComponent implements OnInit {
     }
   }
 
-  // ✅ Método usado no template
   passwordsDontMatch(): boolean {
     return this.newPassword !== this.confirmPassword;
   }
 
-  async onSubmit() {
-    if (this.passwordsDontMatch()) {
-      alert('As senhas não coincidem.');
-      return;
-    }
+  isCodeValid(): boolean {
+    return this.code.length === 6 && /^\d{6}$/.test(this.code);
+  }
 
-    if (!this.code || this.code.length !== 6) {
-      alert('Por favor, insira um código válido de 6 dígitos.');
-      return;
-    }
+  isFormValid(): boolean {
+    return this.isCodeValid() && !this.passwordsDontMatch() && this.newPassword.length >= 6;
+  }
+
+  async onSubmit() {
+    console.log('Enviando:', {
+      email: this.email,
+      code: this.code,
+      newPassword: this.newPassword
+    });
 
     try {
       await firstValueFrom(
-        this.http.post('http://localhost:8000/auth/reset-password', {
+        this.http.post('http://localhost:3000/api/auth/reset-password', {
           email: this.email,
           code: this.code,
           newPassword: this.newPassword
         })
       );
+
       alert('Senha redefinida com sucesso!');
       this.router.navigate(['/sign-in']);
-    } catch (err) {
+
+    } catch (err: any) {
       console.error('Erro ao redefinir senha:', err);
-      alert('Código inválido ou expirado. Tente novamente.');
+      const errorMsg = err.error?.message || 'Falha ao redefinir senha.';
+      alert(errorMsg);
     }
+  }
+
+  goToSignIn(): void {
+    this.router.navigate(['/sign-in']);
   }
 }

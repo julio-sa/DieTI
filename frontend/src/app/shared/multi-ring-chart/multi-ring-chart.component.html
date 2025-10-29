@@ -12,6 +12,7 @@
       class="circle-progress"
       transform="rotate(-90 80 80)"
       fill="none"
+      cursor="pointer"
     />
 
     <!-- Anel médio: Proteínas -->
@@ -26,6 +27,7 @@
       class="circle-progress"
       transform="rotate(-90 80 80)"
       fill="none"
+      cursor="pointer"
     />
 
     <!-- Anel interno: Carboidratos -->
@@ -40,6 +42,7 @@
       class="circle-progress"
       transform="rotate(-90 80 80)"
       fill="none"
+      cursor="pointer"
     />
 
     <!-- Anel central: Gorduras -->
@@ -54,6 +57,7 @@
       class="circle-progress"
       transform="rotate(-90 80 80)"
       fill="none"
+      cursor="pointer"
     />
 
     <!-- Valores alinhados com cada anel -->
@@ -64,8 +68,9 @@
     width="10"
     height="10"
     (mouseenter)="onIconHover($event, 'calorias', animatedCalories, calorias.max)"
-    (mouseleave)="hideTooltip()"/>
-    <text x="65" y="80" text-anchor="left" font-size="7" font-family="Helvetica" fill="#006e8c" dy="-21">
+    (mouseleave)="hideTooltip()"
+    cursor="pointer"/>
+    <text x="65" y="80" text-anchor="left" font-size="7" font-family="Helvetica" fill="#006e8c" dy="-21" cursor="pointer">
       {{ formattedCalories }} / {{ calorias.max }}
     </text>
 
@@ -76,8 +81,9 @@
     width="10"
     height="10"
     (mouseenter)="onIconHover($event, 'proteinas', animatedProtein, proteinas.max)"
-    (mouseleave)="hideTooltip()"/>
-    <text x="65" y="80" text-anchor="left" font-size="7" font-family="Helvetica" fill="#006e8c" dy="-5">
+    (mouseleave)="hideTooltip()"
+    cursor="pointer"/>
+    <text x="65" y="80" text-anchor="left" font-size="7" font-family="Helvetica" fill="#006e8c" dy="-5" cursor="pointer">
       {{ formattedProtein }} / {{ proteinas.max }}
     </text>
 
@@ -88,8 +94,9 @@
     width="10"
     height="10"
     (mouseenter)="onIconHover($event, 'carbo', animatedCarbs, carb.max)"
-    (mouseleave)="hideTooltip()"/>
-    <text x="65" y="80" text-anchor="left" font-size="7" font-family="Helvetica" fill="#006e8c" dy="10.9">
+    (mouseleave)="hideTooltip()"
+    cursor="pointer"/>
+    <text x="65" y="80" text-anchor="left" font-size="7" font-family="Helvetica" fill="#006e8c" dy="10.9" cursor="pointer">
       {{ formattedCarb }} / {{ carb.max }}
     </text>
 
@@ -100,8 +107,9 @@
     width="10"
     height="10"
     (mouseenter)="onIconHover($event, 'gordura', animatedFat, gordura.max)"
-    (mouseleave)="hideTooltip()"/>
-    <text x="65" y="80" text-anchor="left" font-size="7" font-family="Helvetica" fill="#006e8c" dy="27">
+    (mouseleave)="hideTooltip()"
+    cursor="pointer"/>
+    <text x="65" y="80" text-anchor="left" font-size="7" font-family="Helvetica" fill="#006e8c" dy="27" cursor="pointer">
       {{ formattedFat }} / {{ gordura.max }}
     </text>
   </svg>
@@ -138,7 +146,7 @@
                     
                   <div class="actions">
                     <button (click)="saveEditedFood()" class="btn-edit" i18n>Salvar</button>
-                    <button (click)="selectedFoodToEdit = null" class="btn-cancel" i18n>Cancelar</button>
+                    <button (click)="selectedFoodToEdit = null" class="btn-delete" i18n>Cancelar</button>
                   </div>
                 </div>
               } @else {

@@ -1,82 +1,144 @@
-<div class="page-container">
+<div class="profile-header">
   <!-- Seta para voltar -->
   <div class="back-arrow" (click)="goBack()">&#x276E;</div>
 
+  <h1 class="profile-title" *ngIf="!isEditing">Profile</h1>
+  <img src="assets/images/edit-icon.svg" alt="edit-info" class="edit" (click)="goToEditProfile()" *ngIf="!isEditing"/>
+  
   <!-- Imagem da logo -->
-  <img src="assets/images/logo.svg" alt="DieTI" class="logo-image" />
+  <img src="assets/images/logo.svg" alt="DieTI" class="logo-image"/>
+</div>
 
-  <img src="assets/images/edit-icon.svg" alt="edit-info" class="edit" (click)="goToEditProfile()" />
-
-  <div class="profile-container">
-    <h1 class="profile-title">Profile</h1>
+<div class="page-container">
+  <div class="profile-container" class="profile-body">
     <form class="registerForm" [formGroup]="registerForm">
       <!-- Dados do usuário (modo visualização) -->
       <div class="userData" *ngIf="!isEditing">
-          <div class="user-section">
-            <ul class="userDataUl">
-              <li class="lbl-user">
-                <img src="../../assets/images/user.svg" alt="user" class="profile-icons">
-                {{ registerForm.value.name }}
-              </li>
-              <li class="lbl-user">
-                <img src="../../assets/images/mail.svg" alt="mail" class="profile-icons">
-                {{ registerForm.value.email }}
-              </li>
-              <li class="lbl-user">
-                <img src="../../assets/images/age.svg" alt="age" class="profile-icons">
-                {{ registerForm.value.age }} years
-              </li>
-              <li class="lbl-user">
-                <img src="../../assets/images/weight.svg" alt="weight" class="profile-icons">
-                {{ registerForm.value.weight }} kg
-              </li>
-              <li class="lbl-user">
-                <img src="../../assets/images/height.svg" alt="height" class="profile-icons">
-                {{ registerForm.value.height }} cm
-              </li>
-            </ul>
-          </div>
-          <div class="goals-section">
-            <ul class="userDataUl">
-              <li class="lbl-user" i18n>
-                <img src="../../assets/images/kcal.svg" alt="goal" class="profile-icons">
-                Meta calórica: {{ goals.calorias }}
-              </li>
-              <li class="lbl-user" i18n>
-                <img src="../../assets/images/protein.svg" alt="goal" class="profile-icons">
-                Meta proteíca: {{ goals.proteinas }} g
-              </li>
-              <li class="lbl-user" i18n>
-                <img src="../../assets/images/carb.svg" alt="goal" class="profile-icons">
-                Meta de carbo: {{ goals.carbo }} g
-              </li>
-              <li class="lbl-user" i18n>
-                <img src="../../assets/images/fat.svg" alt="goal" class="profile-icons">
-                Meta gordura: {{ goals.gordura }} g
-              </li>
-            </ul>
-          </div>
+        <div class="user-section">
+          <ul class="userDataUl">
+            <li class="lbl-user">
+              <img src="../../assets/images/user.svg" alt="user" class="profile-icons">
+              {{ registerForm.value.name }}
+            </li>
+            <li class="lbl-user">
+              <img src="../../assets/images/mail.svg" alt="mail" class="profile-icons">
+              {{ registerForm.value.email }}
+            </li>
+            <li class="lbl-user">
+              <img src="../../assets/images/age.svg" alt="age" class="profile-icons">
+              {{ registerForm.value.age }} years
+            </li>
+            <li class="lbl-user">
+              <img src="../../assets/images/weight.svg" alt="weight" class="profile-icons">
+              {{ registerForm.value.weight }} kg
+            </li>
+            <li class="lbl-user">
+              <img src="../../assets/images/height.svg" alt="height" class="profile-icons">
+              {{ registerForm.value.height }} cm
+            </li>
+          </ul>
+        </div>
+
+        <div class="goals-section">
+          <ul class="userDataUl">
+            <li class="lbl-user" i18n>
+              <img src="../../assets/images/kcal.svg" alt="goal" class="profile-icons">
+              Meta calórica diária: {{ goals.calorias }}
+            </li>
+            <li class="lbl-user" i18n>
+              <img src="../../assets/images/protein.svg" alt="goal" class="profile-icons">
+              Meta proteíca diária: {{ goals.proteinas }} g
+            </li>
+            <li class="lbl-user" i18n>
+              <img src="../../assets/images/carb.svg" alt="goal" class="profile-icons">
+              Meta de carbo diária: {{ goals.carbo }} g
+            </li>
+            <li class="lbl-user" i18n>
+              <img src="../../assets/images/fat.svg" alt="goal" class="profile-icons">
+              Meta gordura diária: {{ goals.gordura }} g
+            </li>
+          </ul>
+        </div>
       </div>
 
       <!-- Campos de edição -->
-      <div *ngIf="isEditing" class="goals-section">
-        <h3 i18n>Informações Pessoais</h3>
-        <input type="text" class="input-field" formControlName="name"/>
-        <input type="text" class="input-field" formControlName="email"/>
-        <input type="text" class="input-field" formControlName="age"/>
-        <input type="text" class="input-field" formControlName="weight"/>
-        <input type="text" class="input-field" formControlName="height"/>
-        <h3 i18n>Metas</h3>
-        <input type="number" class="input-field" i18n placeholder="Calorias" [value]="goals.calorias" (input)="onGoalInput($event, 'calorias')" />
-        <input type="number" class="input-field" i18n placeholder="Proteinas (g)" [value]="goals.proteinas" (input)="onGoalInput($event, 'proteinas')" />
-        <input type="number" class="input-field" i18n placeholder="Carbo (g)" [value]="goals.carbo" (input)="onGoalInput($event, 'carbo')" />
-        <input type="number" class="input-field" i18n placeholder="Gordura (g)" [value]="goals.gordura" (input)="onGoalInput($event, 'gordura')" />
+      <div *ngIf="isEditing" class="editing-section">
+        <div class="personal-info">
+          <h3 i18n>Informações Pessoais</h3>
+          <label for="input-field" i18n class="field-name">Nome</label>
+          <input type="text" class="input-field" formControlName="name" />
+          <label for="input-field" i18n class="field-name">Email</label>
+          <input type="text" class="input-field" formControlName="email" />
+          <label for="input-field" i18n class="field-name">Idade</label>
+          <input type="text" class="input-field" formControlName="age" />
+          <label for="input-field" i18n class="field-name">Peso</label>
+          <input type="text" class="input-field" formControlName="weight" />
+          <label for="input-field" i18n class="field-name">Altura</label>
+          <input type="text" class="input-field" formControlName="height" />
+        </div>
+
+        <div class="goals-info">
+          <h3 i18n>Metas diárias</h3>
+          <label for="input-field" i18n class="field-name">Calorias (kcal)</label>
+          <input type="number" class="input-field" i18n placeholder="Calorias" [value]="goals.calorias"
+            (input)="onGoalInput($event, 'calorias')" />
+          <label for="input-field" i18n class="field-name">Proteínas</label>
+          <input type="number" class="input-field" i18n placeholder="Proteinas (g)" [value]="goals.proteinas"
+            (input)="onGoalInput($event, 'proteinas')" />
+          <label for="input-field" i18n class="field-name">Carbo</label>
+          <input type="number" class="input-field" i18n placeholder="Carbo (g)" [value]="goals.carbo"
+            (input)="onGoalInput($event, 'carbo')" />
+          <label for="input-field" i18n class="field-name">Gordura</label>
+          <input type="number" class="input-field" i18n placeholder="Gordura (g)" [value]="goals.gordura"
+            (input)="onGoalInput($event, 'gordura')" />
+        </div>
       </div>
 
-      <button type="button" class="submit-btn" *ngIf="isEditing" (click)="onSubmit()" i18n>Salvar</button>
-      <button type="button" class="cancel-btn" *ngIf="isEditing" (click)="cancelEdit()" i18n>Cancelar</button>
-      <button type="button" class="delete-btn" *ngIf="isEditing" i18n>Deletar Conta</button>
-      
+      <div class="profile-actions">
+        <button type="button" class="submit-btn" *ngIf="isEditing" (click)="onSubmit()" i18n>Salvar</button>
+        <button type="button" class="cancel-btn" *ngIf="isEditing" (click)="cancelEdit()" i18n>Cancelar</button>
+  
+        <button type="button" class="delete-btn" *ngIf="isEditing" (click)="openDeleteAccountModal()" i18n>
+          Deletar Conta
+        </button>
+      </div>
+
+      <!-- Modal de Confirmação -->
+      <div class="modal-overlay" *ngIf="showDeleteModal" (click)="closeDeleteModal()">
+        <div class="modal-content" (click)="$event.stopPropagation()">
+          <h3 i18n>Tem certeza que deseja deletar sua conta?</h3>
+          <p class="warning" i18n>Esta ação é irreversível.</p>
+
+          <!-- Formulário completo com submit -->
+          <form [formGroup]="deleteForm" (ngSubmit)="confirmDeleteAccount()" novalidate>
+            <label for="deleteEmail" class="form-label" i18n>Email:</label>
+            <input id="deleteEmail" type="email" formControlName="email" class="form-control"
+              [class.is-invalid]="deleteForm.get('email')?.touched && deleteForm.get('email')?.invalid" />
+            <div class="invalid-feedback" *ngIf="deleteForm.get('email')?.touched && deleteForm.get('email')?.invalid">
+              Por favor, insira um email válido.
+            </div>
+
+            <label for="deletePassword" class="form-label" i18n>Senha:</label>
+            <input id="deletePassword" type="password" formControlName="password" class="form-control"
+              [class.is-invalid]="deleteForm.get('password')?.touched && deleteForm.get('password')?.invalid" />
+            <div class="invalid-feedback"
+              *ngIf="deleteForm.get('password')?.touched && deleteForm.get('password')?.invalid">
+              A senha é obrigatória.
+            </div>
+
+            <!-- Erros -->
+            <div class="error" *ngIf="deleteError" i18n>{{ deleteError }}</div>
+
+            <!-- Botões DENTRO do form -->
+            <div class="modal-actions">
+              <button type="button" class="btn-cancel" (click)="closeDeleteModal()" i18n>Cancelar</button>
+              <button type="submit" class="btn-danger" [disabled]="deleting || deleteForm.invalid" i18n>
+                {{ deleting ? 'Excluindo...' : 'Sim, Deletar' }}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
     </form>
   </div>
 </div>

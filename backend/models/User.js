@@ -7,6 +7,8 @@ const UserSchema = new mongoose.Schema({
   password: { type: String, required: true },
   weight: { type: Number, required: true },
   height: { type: Number, required: true },
+  resetPasswordCode: { type: String },
+  resetPasswordExpires: { type: Date },
 }, { timestamps: true });
 
 export default mongoose.models.User || mongoose.model("User", UserSchema);

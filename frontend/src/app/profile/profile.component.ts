@@ -1,10 +1,11 @@
-import { Component, ElementRef, ViewChild, OnInit } from "@angular/core";
+import { Component, ElementRef, ViewChild, OnInit, ChangeDetectorRef } from "@angular/core";
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule, FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import Swal from 'sweetalert2';
 import { GoalService, Goals } from '../shared/goal.service';
+import { firstValueFrom } from "rxjs";
 
 @Component({
     standalone: true,
@@ -20,6 +21,13 @@ export class ProfileComponent implements OnInit {
     errorMessage: string = '';
     originalData: any;
     goals: Goals = { calorias: 2704, proteinas: 176, carbo: 320, gordura: 80 };
+    showDeleteModal = false;
+    deleteForm: FormGroup;
+    deleteError = '';
+    deleting = false;
+
+    // ID do usuário logado
+    private userId: string | null = null;
 
     @ViewChild('nameInput') nameInput!: ElementRef
     @ViewChild('emailInput') emailInput!: ElementRef
@@ -32,6 +40,7 @@ export class ProfileComponent implements OnInit {
         private fb: FormBuilder,
         private http: HttpClient,
         private router: Router,
+        private cdr: ChangeDetectorRef
     ) {
         this.registerForm = this.fb.group({
             name: ['', Validators.required],
@@ -40,6 +49,10 @@ export class ProfileComponent implements OnInit {
             weight: ['', Validators.required],
             height: ['', Validators.required]
         });
+        this.deleteForm = this.fb.group({
+            email: ['', [Validators.required, Validators.email]],
+            password: ['', [Validators.required]]
+            });
         this.goalService.goals$.subscribe(g => this.goals = g);
     }
 
@@ -113,6 +126,17 @@ export class ProfileComponent implements OnInit {
 
     loadUserData() {
         const token = localStorage.getItem('token');
+        this.userId = localStorage.getItem('userId');
+
+        if (!this.userId) {
+            Swal.fire({
+            icon: 'error',
+            title: 'Erro',
+            text: 'ID do usuário não encontrado. Faça login novamente.'
+            });
+            this.router.navigate(['/login']);
+            return;
+        }
 
         if (!token) {
             this.router.navigate(['/login']);
@@ -124,7 +148,6 @@ export class ProfileComponent implements OnInit {
         this.http.get('http://localhost:3000/api/profile/profile', { headers }).subscribe({
             next: (res: any) => {
                 const user = res.user;
-
                 this.originalData = {
                     name: user.name,
                     email: user.email,
@@ -149,7 +172,6 @@ export class ProfileComponent implements OnInit {
                     this.errorMessage = 'Fail to load profile.';
                 }
             }
-
         });
     };
 
@@ -157,4 +179,74 @@ export class ProfileComponent implements OnInit {
         this.registerForm.patchValue(this.originalData)
         this.isEditing = false;
     };
+
+    // Abre o modal
+    openDeleteAccountModal(): void {
+        this.showDeleteModal = true;
+        this.deleteForm.reset();
+        this.deleteError = '';
+    }
+
+    // Fecha o modal
+    closeDeleteModal(): void {
+        this.showDeleteModal = false;
+        this.deleteError = '';
+    }
+
+    // Confirma a exclusão
+    async confirmDeleteAccount(): Promise<void> {
+        const confirmed = window.confirm("Tem certeza que deseja deletar sua conta?");
+        if (!confirmed) return;
+
+        try {
+            // Primeiro valida as credenciais
+            const validationResponse = await fetch('http://localhost:3000/api/auth/validate-credentials', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                email: this.deleteForm.value.email,
+                password: this.deleteForm.value.password
+            })
+            });
+
+            if (!validationResponse.ok) {
+            throw new Error('Falha na validação');
+            }
+
+            // Depois exclui a conta
+            const deleteResponse = await fetch('http://localhost:3000/api/auth/delete-account', {
+            method: 'DELETE',
+            headers: { 
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                'Content-Type': 'application/json'
+            }
+            });
+
+            if (!deleteResponse.ok) {
+            throw new Error('Falha ao excluir conta');
+            }
+
+            // Limpa os dados locais
+            localStorage.clear();
+            sessionStorage.clear();
+
+            Swal.fire({
+            icon: 'success',
+            title: 'Conta excluída!',
+            text: 'Sua conta foi removida com sucesso.',
+            confirmButtonText: 'OK'
+            }).then(() => {
+            this.router.navigate(['/sign-in']);
+            });
+
+        } catch (error) {
+            console.error('Erro:', error);
+            Swal.fire({
+            icon: 'error',
+            title: 'Erro',
+            text: 'Falha ao processar a solicitação.',
+            confirmButtonText: 'Fechar'
+            });
+        }
+    }
 }
