@@ -1,10 +1,9 @@
 import { Component, OnInit, ChangeDetectorRef, ElementRef, QueryList, ViewChildren, ViewChild } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { TacoService, NutritionalInfo } from '../shared/taco.service';
-
 
 interface RecipeIngredient {
   food: NutritionalInfo;
@@ -18,12 +17,7 @@ interface RecipeIngredient {
 @Component({
   standalone: true,
   selector: 'app-create-recipe',
-  imports: [
-    CommonModule,
-    FormsModule,
-    RouterModule,
-    ReactiveFormsModule,
-  ],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule],
   providers: [TacoService],
   templateUrl: './create-recipe.component.html',
   styleUrls: ['./create-recipe.component.css']
@@ -39,9 +33,10 @@ export class CreateRecipeComponent implements OnInit {
   hasValue = false;
   ingredients: any[] = [];
   total = { calorias: 0.0, proteinas: 0.0, carbo: 0.0, gordura: 0.0 };
-
   selectedItemIndex = -1;
-  foodInput: any = null;
+
+  // 🔥 URL fixa (sem environment)
+  private apiUrl = 'http://localhost:8000';
 
   constructor(
     private http: HttpClient,
@@ -51,10 +46,7 @@ export class CreateRecipeComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // Fecha resultados ao clicar fora
     document.addEventListener('click', this.handleClickOutside.bind(this));
-
-    this.cdr.detectChanges();
   }
 
   goBack(): void {
@@ -72,27 +64,21 @@ export class CreateRecipeComponent implements OnInit {
         this.searchResults = results;
         this.cdr.detectChanges();
       },
-      error: (err) => {
+      error: () => {
         this.searchResults = [];
         this.cdr.detectChanges();
       }
     });
   }
 
-  showResults() {
-    if (this.searchQuery.length >= 2 && this.searchResults.length === 0) {
-      this.onSearch();
-    }
-  }
-
   handleClickOutside(event: MouseEvent) {
-    const input = this.foodInput?.nativeElement;
+    const input = event.target as HTMLElement;
     const results = this.searchResultsContainer?.nativeElement;
 
     if (!input || !results) return;
 
-    const clickedInsideInput = input.contains(event.target);
-    const clickedInsideResults = results.contains(event.target);
+    const clickedInsideInput = input.tagName === 'INPUT';
+    const clickedInsideResults = results.contains(event.target as Node);
 
     if (!clickedInsideInput && !clickedInsideResults) {
       this.closeResults();
@@ -101,8 +87,6 @@ export class CreateRecipeComponent implements OnInit {
 
   onKeyDown(event: KeyboardEvent) {
     if (!this.searchResults.length) return;
-
-    const prevIndex = this.selectedItemIndex;
 
     switch (event.key) {
       case 'ArrowDown':
@@ -123,10 +107,7 @@ export class CreateRecipeComponent implements OnInit {
         break;
     }
 
-    if (prevIndex !== this.selectedItemIndex) {
-      this.scrollToSelectedItem();
-    }
-
+    this.scrollToSelectedItem();
     this.cdr.detectChanges();
   }
 
@@ -139,6 +120,12 @@ export class CreateRecipeComponent implements OnInit {
     }
   }
 
+  showResults() {
+    if (this.searchQuery.length >= 2 && this.searchResults.length === 0) {
+      this.onSearch();
+    }
+  }
+
   closeResults() {
     this.searchResults = [];
     this.cdr.detectChanges();
@@ -147,11 +134,10 @@ export class CreateRecipeComponent implements OnInit {
   selectFood(food: NutritionalInfo) {
     this.selectedFood = food;
     this.searchQuery = food.description;
-    this.searchResults = [];
+    this.closeResults();
   }
 
   onBlur() {
-    // Pequeno timeout para permitir clique no resultado antes do blur
     setTimeout(() => {
       if (this.searchResults.length > 0) {
         this.closeResults();
@@ -161,7 +147,7 @@ export class CreateRecipeComponent implements OnInit {
 
   onGramsInput(ev: Event) {
     const v = (ev.target as HTMLInputElement).value ?? '';
-    this.hasValue = v.trim().length > 0;  // ativa/desativa em tempo real
+    this.hasValue = v.trim().length > 0;
   }
 
   addIngredient(grams: number) {
@@ -202,43 +188,64 @@ export class CreateRecipeComponent implements OnInit {
     this.searchQuery = '';
   }
 
-  // create-recipe.component.ts
+  getHeaders(): HttpHeaders {
+    const token = localStorage.getItem('token');
+    return new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    });
+  }
 
   saveRecipe() {
+    const userId = localStorage.getItem('userId');
+    const token = localStorage.getItem('token');
+
+    if (!userId || !token) {
+      alert('Sessão expirada. Faça login novamente.');
+      this.router.navigate(['/sign-in']);
+      return;
+    }
+
     if (!this.recipeName || this.ingredients.length === 0) {
       alert('Preencha o nome e adicione ao menos um ingrediente');
       return;
     }
 
-    // 🔽 CALCULE O FATOR DE NORMALIZAÇÃO AQUI ↓
     const totalGrams = this.ingredients.reduce((sum, i) => sum + i.grams, 0);
-    
-    // Evita divisão por zero
     if (totalGrams <= 0) {
       alert('O peso total da receita deve ser maior que 0g.');
       return;
     }
 
-    const factor = 100 / totalGrams; // Quantos % 100g representa do total
+    const factor = 100 / totalGrams;
 
-    const normalizedRecipe = {
+    const recipeData = {
       name: this.recipeName,
-      ingredients: this.ingredients.map(i => ({ ...i })), // cópia segura
+      ingredients: this.ingredients.map(i => ({ ...i })),
       calorias: this.total.calorias * factor,
       proteinas: this.total.proteinas * factor,
       carbo: this.total.carbo * factor,
       gordura: this.total.gordura * factor,
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
+      user_id: userId // ✅ Enviado explicitamente
     };
 
-    // Envia para o backend
-    this.http.post('http://localhost:8000/recipes/save', normalizedRecipe)
-      .subscribe(() => {
-        alert('Receita salva com sucesso!');
-        this.resetForm();
-      }, err => {
-        console.error('Erro ao salvar receita', err);
-        alert('Falha ao salvar receita.');
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    });
+
+    this.http.post('http://localhost:8000/recipes/save', recipeData, { headers })
+      .subscribe({
+        next: (res: any) => {
+          console.log('Receita salva com sucesso:', res);
+          alert('Receita salva com sucesso!');
+          this.resetForm();
+        },
+        error: (err) => {
+          console.error('Erro ao salvar receita:', err);
+          alert('Falha ao salvar receita: ' + (err.error?.detail || err.message));
+        }
       });
   }
 

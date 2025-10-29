@@ -14,139 +14,44 @@
       <div class="recipe-card" [class.favorited]="isFavorite(recipe)">
         <!-- Botão de favorito -->
         <div class="favorite-toggle" (click)="toggleFavorite(recipe); $event.stopPropagation()">
-          	&#10084;
+          &#10084;
         </div>
 
-        @if (editingRecipeId === recipe._id) {
-          <!-- Modo de Edição -->
-          <input 
-            class="input-field"
-            type="text" 
-            [(ngModel)]="recipe.editingName" 
-            placeholder="Nome do Prato" />
-          
-          <!-- Busca de novo ingrediente -->
-          <div class="add-ingredients">
-            <label i18n>Adicionar Ingrediente:</label>
-            <input 
-              i18n
-              class="ingredient-add-field"
-              type="text"
-              [(ngModel)]="searchQuery"
-              (input)="onSearch()"
-              (blur)="onBlur()"
-              (focus)="showResults()"
-              (keydown)="onKeyDown($event)"
-              placeholder="Pesquisar ingrediente..."/>
+        <!-- Visualização Simples (sem edição) -->
+        <h3>{{ recipe.name }}</h3>
+        <p class="item">
+          <strong i18n>Calorias:</strong> 
+          {{ recipe.calorias | number:'1.0-0' }} kcal 
+          <span class="per-100g" i18n>(por 100g)</span>
+        </p>
+        <p class="item">
+          <strong i18n>Proteínas:</strong> 
+          {{ recipe.proteinas | number:'1.1-1' }}g 
+          <span class="per-100g" i18n>(por 100g)</span>
+        </p>
+        <p class="item">
+          <strong i18n>Carboidratos:</strong> 
+          {{ recipe.carbo | number:'1.1-1' }}g 
+          <span class="per-100g" i18n>(por 100g)</span>
+        </p>
+        <p class="item">
+          <strong i18n>Gordura:</strong> 
+          {{ recipe.gordura | number:'1.1-1' }}g 
+          <span class="per-100g" i18n>(por 100g)</span>
+        </p>
 
-            <input 
-                i18n
-                class="quantity-field" 
-                type="number" 
-                #gramsInput 
-                placeholder="Gramas"
-                min="1"
-                (keyup.enter)="addIngredientToRecipe(recipe, gramsInput.valueAsNumber); 
-                              gramsInput.value=''; 
-                              hasValue=false; 
-                              selectedItemIndex = 0" />
-        
-            <button 
-              (click)="addIngredientToRecipe(recipe, gramsInput.valueAsNumber);
-                      gramsInput.value=''; 
-                      hasValue=false; 
-                      selectedItemIndex = 0"
-              class="btn-add"
-              i18n>Ok</button>
-          </div>
-
-          @if (searchResults.length > 0) {
-            <div class="search-results" 
-                (click)="$event.stopPropagation()"
-                #searchResultsContainer>
-              @for (food of searchResults; track food._id) {
-                <div #searchItem 
-                  class="search-item" 
-                  (click)="selectFood(food)"
-                  [class.active]="$index === selectedItemIndex">
-                  {{ food.description }}
-                </div>
-              }
-            </div>
-          }
-
-          <!-- Lista de ingredientes editáveis -->
-          <div class="ingredients-list">
-            <h3 i18n>Ingredientes:</h3>
-            @for (item of recipe.editingIngredients; track $index) {
-              <div class="ingredient-item">
-                <span>{{ item.description }}</span>
-                <input 
-                  type="number" 
-                  [(ngModel)]="item.grams" 
-                  (change)="updateIngredientGrams(recipe, $index, item.grams)"
-                  class="quantity-field" 
-                  min="1" />
-                <button (click)="removeIngredientFromRecipe(recipe, $index)" class="btn-remove" i18n>Remover</button>
-              </div>
+        <details>
+          <summary i18n>Lista de Ingredientes</summary>
+          <ul>
+            @for (ing of recipe.ingredients; track $index) {
+              <li>{{ ing.description || ing.food?.description }} — {{ ing.grams }}g</li>
             }
-          </div>
+          </ul>
+        </details>
 
-          <!-- Totais -->
-          <div class="totals">
-            <ul class="total-list">
-              <li class="item" i18n>Calorias: {{ recipe.calorias | number:'1.0-1' }} kcal</li>
-              <li class="item" i18n>Proteinas: {{ recipe.proteinas | number:'1.0-1' }}g</li>
-              <li class="item" i18n>Carbo: {{ recipe.carbo | number:'1.0-1' }}g</li>
-              <li class="item" i18n>Gordura: {{ recipe.gordura | number:'1.0-1' }}g</li>
-            </ul>
-          </div>
-
-          <!-- Botões de ação -->
-          <div class="edit-actions">
-            <button (click)="saveEditedRecipe(recipe)" class="btn-save" i18n>Salvar</button>
-            <button (click)="cancelEdit(recipe)" class="btn-cancel" i18n>Cancelar</button>
-            <button (click)="deleteRecipe(recipe._id)" class="btn-delete" i18n>Deletar Prato</button>
-          </div>
-
-        } @else {
-          <!-- Visualização -->
-          <h3>{{ recipe.name }}</h3>
-          <p class="item">
-            <strong i18n>Calorias:</strong> 
-            {{ recipe.calorias | number:'1.0-0' }} kcal 
-            <span class="per-100g" i18n>(por 100g)</span>
-          </p>
-          <p class="item">
-            <strong i18n>Proteínas:</strong> 
-            {{ recipe.proteinas | number:'1.1-1' }}g 
-            <span class="per-100g" i18n>(por 100g)</span>
-          </p>
-          <p class="item">
-            <strong i18n>Carboidratos:</strong> 
-            {{ recipe.carbo | number:'1.1-1' }}g 
-            <span class="per-100g" i18n>(por 100g)</span>
-          </p>
-          <p class="item">
-            <strong i18n>Gordura:</strong> 
-            {{ recipe.gordura | number:'1.1-1' }}g 
-            <span class="per-100g" i18n>(por 100g)</span>
-          </p>
-
-          <details>
-            <summary i18n>Lista de Ingredientes</summary>
-            <ul>
-              @for (ing of recipe.ingredients; track $index) {
-                <li>{{ ing.description || ing.food?.description }} — {{ ing.grams }}g</li>
-              }
-            </ul>
-          </details>
-
-          <div class="card-actions">
-            <button (click)="startEditing(recipe)" class="btn-edit" i18n>Editar</button>
-            <button (click)="deleteRecipe(recipe._id)" class="btn-delete" i18n>Deletar</button>
-          </div>
-        }
+        <div class="card-actions">
+          <button (click)="deleteRecipe(recipe._id)" class="btn-delete" i18n>Deletar</button>
+        </div>
       </div>
     }
   }
