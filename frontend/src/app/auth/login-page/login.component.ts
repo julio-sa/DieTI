@@ -1,6 +1,6 @@
 import { CommonModule, Location } from '@angular/common';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import Swal from 'sweetalert2';
@@ -18,10 +18,25 @@ export class LoginComponent {
   password = '';
   private readonly backendUrl = environment.backendUrl;
 
-  constructor(private http: HttpClient, private router: Router, private location: Location) {}
+  constructor(private http: HttpClient, private router: Router, private location: Location, private cdr: ChangeDetectorRef,) {}
+
+  async goToHome() {
+    // 1) Tenta navegação “normal”
+    const ok = await this.router.navigateByUrl('/home', { replaceUrl: true });
+  
+    // 2) Se o router recusou (chunk quebrou / iPhone com bundle velho),
+    // força um reload direto nessa rota
+    if (!ok) {
+      window.location.href = '/home';
+    }
+  
+    this.cdr.detectChanges();
+  }
+  
   goBack(): void {
     this.router.navigate(['/sign-in']);
   }
+  
   onSubmit() {
     const loginData = { email: this.email, password: this.password };
 
