@@ -385,7 +385,7 @@
   }
 }
 
-@media (max-width: 380px) {
+@media (max-width: 300px) {
   .chart-container {
     position: relative;
     display: inline-block;

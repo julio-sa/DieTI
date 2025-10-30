@@ -444,7 +444,7 @@
 }
 
 /*Mobile*/
-@media (max-width: 375px) {
+@media (max-width: 300px) {
   .create-recipe-container {
     margin-top: 120px;
     margin-left: -20px;

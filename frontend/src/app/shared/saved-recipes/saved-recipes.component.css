@@ -519,7 +519,7 @@ details li {
 }
 
 /*Mobile*/
-@media (max-width: 375px) {
+@media (max-width: 300px) {
   .saved-recipes-container {
     padding: 20px;
     margin-left: 40px;

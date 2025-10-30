@@ -82,7 +82,7 @@
 }
 
 /*Celulares*/
-@media (max-width: 375px) {
+@media (max-width: 300px) {
   * {
     box-sizing: border-box;
     margin: 0;

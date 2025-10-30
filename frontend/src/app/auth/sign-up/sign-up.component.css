@@ -227,7 +227,7 @@ select.input-field option {
 }
 
 /*Celular*/
-@media (max-width: 375px) {
+@media (max-width: 300px) {
   .page-container {
     display: flex;
     flex-direction: column;

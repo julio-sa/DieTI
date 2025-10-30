@@ -120,7 +120,7 @@
 }
 
 /*Celular*/
-@media (max-width: 375px) {
+@media (max-width: 300px) {
   .page-container {
     height: 530px;
     width: 100%;

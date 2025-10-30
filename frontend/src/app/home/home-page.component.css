@@ -1057,7 +1057,7 @@ h4 {
   }
 }
 
-@media (max-width: 380px) {
+@media (max-width: 300px) {
   .page-container {
     display: block;
     width: 100%;

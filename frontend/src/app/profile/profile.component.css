@@ -965,7 +965,7 @@ select.input-field option {
 }
 
 /*Mobile*/
-@media (max-width: 375px) {
+@media (max-width: 300px) {
     .profile-header {
         position: absolute;
         display: flex;
