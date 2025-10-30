@@ -385,15 +385,15 @@
   }
 }
 
-@media (max-width: 375px) {
+@media (max-width: 380px) {
   .chart-container {
     position: relative;
     display: inline-block;
-    width: 100px;
-    height: 100px;
+    width: 310px;
+    height: 310px;
   }
   .chart-svg{
-    height: 100px;
+    height: 310px;
   }
 
   .popup {
