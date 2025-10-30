@@ -389,11 +389,11 @@
   .chart-container {
     position: relative;
     display: inline-block;
-    width: 200px;
-    height: 200px;
+    width: 100px;
+    height: 100px;
   }
   .chart-svg{
-    height: 200px;
+    height: 100px;
   }
 
   .popup {
