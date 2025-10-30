@@ -24,7 +24,7 @@ def import_to_mongo():
         raise FileNotFoundError(f"Excel file not found: {excel_path}")
 
     print(f"Reading Excel file '{excel_path}'...")
-    
+    # se der erro de engine, certifique-se de ter o openpyxl instalado:
     df = pd.read_excel(excel_path, engine="openpyxl")
 
     print("Columns found:", list(df.columns))
