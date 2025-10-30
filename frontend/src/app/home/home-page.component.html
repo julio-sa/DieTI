@@ -55,12 +55,12 @@
         <div class="search-results" 
             #searchResultsContainer>  
           @for (food of searchResults; track food._id) {
-            <div #searchItem 
-                class="search-item" 
-                (click)="selectFood(food); $event.stopPropagation()"
-                [class.active]="$index === selectedItemIndex">
-              
-              <div class="food-name">{{ formatFoodDescription(food.description).mainName }}</div>
+            <div #searchItem
+               class="search-item"
+               (mousedown)="onResultMouseDown(); $event.stopPropagation()"
+               (click)="selectFood(food)"
+               [class.active]="$index === selectedItemIndex">
+            <div class="food-name">{{ formatFoodDescription(food.description).mainName }}</div>
               
               @if (formatFoodDescription(food.description).details.length > 0) {
                 <div class="food-details">
