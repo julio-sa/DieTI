@@ -1,7 +1,6 @@
 {
   "$schema": "./node_modules/@angular/service-worker/config/schema.json",
   "index": "/index.html",
-
   "assetGroups": [
     {
       "name": "app",
@@ -23,16 +22,14 @@
       "resources": {
         "files": [
           "/assets/**",
-          "/manifest.webmanifest",
-          "/assets/icons/**"
+          "/manifest.webmanifest"
         ]
       }
     }
   ],
-
   "dataGroups": [
     {
-      "name": "dieti-api",
+      "name": "api-render",
       "urls": [
         "https://api-search-518g.onrender.com/**",
         "https://dieti-backend.onrender.com/**"
@@ -44,5 +41,11 @@
         "timeout": "10s"
       }
     }
+  ],
+  "navigationUrls": [
+    "/**",
+    "!/assets/**",
+    "!/api/**",
+    "!/**/*.*"
   ]
 }
