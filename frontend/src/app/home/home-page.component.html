@@ -3,10 +3,10 @@
     ⋮
   </div>
 
-  <div class="overlay" [class.active]="menuState?.activeMenu === 'home'" (click)="closeMenu()"></div>
+  <div class="overlay" [class.active]="activeMenu" (click)="closeMenu()"></div>
 
   <!-- Side menu -->
-  <div class="side-menu" [class.active]="menuState?.activeMenu === 'home'">
+  <div class="side-menu" [class.active]="activeMenu">
     <div class="menu-header">
       <h1 i18n>Menu</h1>
     </div>
