@@ -56,6 +56,7 @@ export class HomePageComponent implements AfterViewInit {
   menuState: { activeMenu: string } | null = { activeMenu: ''}
 
   private readonly apiUrl = environment.apiUrl;
+  private isSelectingFromResults = false;
 
   private installPromptEvent: any;
 
@@ -233,8 +234,18 @@ export class HomePageComponent implements AfterViewInit {
       this.closePopup();
     }
 
+  onResultMouseDown() {
+    this.isSelectingFromResults = true;
+  }
+
   onBlur() {
     setTimeout(() => {
+      // se era um clique na lista, NÃO fecha
+      if (this.isSelectingFromResults) {
+        this.isSelectingFromResults = false;
+        return;
+      }
+  
       if (this.searchResults.length > 0 && !this.popupVisible) {
         this.closeResults();
       }
