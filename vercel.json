@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "rootDirectory": "frontend",
+  "buildCommand": "npm run build -- --configuration=production",
+  "outputDirectory": "dist/frontend",
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
+  ]
+}
