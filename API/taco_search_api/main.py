@@ -451,3 +451,12 @@ async def rollover_daily_food():
     for user_id in user_ids_processed:
         await update_historical_intake(user_id, yesterday)
     return {"message": "Rollover completed", "moved": moved}
+
+@app.get("/")
+async def root():
+    return {
+        "status": "ok",
+        "name": "DieTI TACO API",
+        "docs": "/docs",
+        "redoc": "/redoc"
+    }
