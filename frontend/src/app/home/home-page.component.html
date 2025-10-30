@@ -57,7 +57,7 @@
           @for (food of searchResults; track food._id) {
             <div #searchItem 
                 class="search-item" 
-                (click)="selectFood(food)"
+                (click)="selectFood(food); $event.stopPropagation()"
                 [class.active]="$index === selectedItemIndex">
               
               <div class="food-name">{{ formatFoodDescription(food.description).mainName }}</div>
@@ -137,7 +137,7 @@
           <h4 [routerLink]="['/saved-recipes']" i18n>Favoritos</h4>
           <div class="favorites-scroll">
             @for (recipe of favoriteRecipes; track recipe._id) {
-              <div class="favorite-item" (click)="selectFavoriteRecipe(recipe)">
+              <div class="favorite-item" (click)="selectFavoriteRecipe(recipe); $event.stopPropagation()">
                 {{ recipe.name }}
               </div>
             }
