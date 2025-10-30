@@ -197,9 +197,13 @@ export class HomePageComponent implements AfterViewInit {
   }
 
   handleClickOutside(event: MouseEvent) {
+    if (!this.popupVisible && this.searchResults.length === 0) {
+      return;
+    }
+    
     const input = this.foodInput?.nativeElement;
     const results = this.searchResultsContainer?.nativeElement;
-    const popup = document.querySelector('.popup-overlay') as HTMLElement;
+    const popup = document.querySelector('.popup-overlay') as HTMLElement | null;
     const target = event.target as HTMLElement;
 
     // 1) se o clique foi num resultado de busca, não fecha nada
@@ -225,14 +229,13 @@ export class HomePageComponent implements AfterViewInit {
     }
 
     // Fecha popup ao clicar fora
-    if (popup && !popup.contains(target)) {
+    if (this.popupVisible && popup && !popup.contains(target)) {
       this.closePopup();
     }
-  }
 
   onBlur() {
     setTimeout(() => {
-      if (this.searchResults.length > 0) {
+      if (this.searchResults.length > 0 && !this.popupVisible) {
         this.closeResults();
       }
     }, 50);
