@@ -1328,7 +1328,7 @@ h4 {
   .chart {
     width: 10px;
     height: 10px;
-    margin-top: -5px;
+    margin-top: -10px;
     object-fit: contain;
     display: block;
     margin: 0 auto;
