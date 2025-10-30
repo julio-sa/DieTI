@@ -96,7 +96,7 @@ export class HomePageComponent implements AfterViewInit {
     private cdr: ChangeDetectorRef
   ) {
 
-    this.loadFavoriteRecipes();
+    //this.loadFavoriteRecipes();
 
     this.searchSubject.pipe(
       debounceTime(300),
