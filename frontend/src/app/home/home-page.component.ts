@@ -200,20 +200,32 @@ export class HomePageComponent implements AfterViewInit {
     const input = this.foodInput?.nativeElement;
     const results = this.searchResultsContainer?.nativeElement;
     const popup = document.querySelector('.popup-overlay') as HTMLElement;
+    const target = event.target as HTMLElement;
+
+    // 1) se o clique foi num resultado de busca, não fecha nada
+    if (target.closest('.search-item')) {
+      return;
+    }
+  
+    // 2) se o clique foi num favorito, não fecha nada
+    if (target.closest('.favorite-item')) {
+      return;
+    }
 
     // Verifica se o clique foi dentro dos resultados
-    const clickedInsideResults = results && results.contains(event.target as Node);
-    const clickedOnSearchItem = (event.target as HTMLElement).closest('.search-item');
+    const clickedInsideResults = results && results.contains(target);
+    const clickedOnInput = input && (input === target || input.contains(target));
+    // const clickedOnSearchItem = (event.target as HTMLElement).closest('.search-item');
 
     // Fecha resultados da busca
-    if (results && !clickedInsideResults && !clickedOnSearchItem) {
+    if (results && !clickedInsideResults && !clickedOnInput /*clickedOnSearchItem*/) {
       if (input && !input.contains(event.target as Node)) {
         this.closeResults();
       }
     }
 
     // Fecha popup ao clicar fora
-    if (popup && !popup.contains(event.target as Node)) {
+    if (popup && !popup.contains(target)) {
       this.closePopup();
     }
   }
