@@ -5,7 +5,7 @@ import { collection_reset_tokens } from '../../../lib/db';
 
 export default async function handler(req, res) {
   if (req.method === 'OPTIONS') {
-    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200');
+    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200, https://dieti.vercel.app');
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
     return res.status(200).end();
@@ -15,7 +15,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ message: 'Método não permitido' });
   }
 
-  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200');
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200, https://dieti.vercel.app');
   res.setHeader('Access-Control-Allow-Credentials', 'true');
 
   await connectDB();

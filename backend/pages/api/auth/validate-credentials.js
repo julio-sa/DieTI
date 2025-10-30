@@ -3,7 +3,7 @@ import User from '../../../models/User';
 import bcrypt from 'bcryptjs';
 
 export default async function handler(req, res) {
-  const allowedOrigins = ['http://localhost:4200'];
+  const allowedOrigins = ['http://localhost:4200', 'https://dieti.vercel.app'];
   const origin = req.headers.origin;
   if (allowedOrigins.includes(origin)) {
     res.setHeader('Access-Control-Allow-Origin', origin);
