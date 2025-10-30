@@ -1329,7 +1329,7 @@ h4 {
     width: 10px;
     object-fit: contain;
     display: block;
-    margin: 0 auto;
+    margin-top: -5px;
   }
 
   .button-left,
