@@ -1,5 +1,14 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  QueryList,
+  ViewChild,
+  ViewChildren
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { firstValueFrom, Subject } from 'rxjs';
@@ -47,15 +56,17 @@ export class HomePageComponent implements AfterViewInit {
     }, 100);
   }
 
-  activeMenu: boolean = false;
-  sliderPosition: string = '0';
-  isLeftActive: boolean = true;
-  showInstallPrompt: boolean = false;
+  activeMenu = false;
+  sliderPosition = '0';
+  isLeftActive = true;
+  showInstallPrompt = false;
   favoriteRecipes: any[] = [];
 
-  menuState: { activeMenu: string } | null = { activeMenu: ''}
+  menuState: { activeMenu: string } | null = { activeMenu: '' };
 
   private readonly apiUrl = environment.apiUrl;
+
+  // 👇 flag do clique na lista
   private isSelectingFromResults = false;
 
   private installPromptEvent: any;
@@ -67,7 +78,7 @@ export class HomePageComponent implements AfterViewInit {
     calorias: 0,
     proteinas: 0,
     carbo: 0,
-    gordura: 0
+    gordura: 0,
   };
 
   // Goals
@@ -75,7 +86,7 @@ export class HomePageComponent implements AfterViewInit {
     calorias: 2704,
     proteinas: 176,
     carbo: 320,
-    gordura: 80
+    gordura: 80,
   };
 
   // Busca de alimento
@@ -84,7 +95,7 @@ export class HomePageComponent implements AfterViewInit {
   selectedFood: NutritionalInfo | null = null;
   grams = 100;
   pendingFoods: FoodData[] = [];
-  selectedRecipe: any = null; // Receita selecionada
+  selectedRecipe: any = null;
   popupVisible = false;
 
   isOnline = true;
@@ -96,36 +107,36 @@ export class HomePageComponent implements AfterViewInit {
     private tacoService: TacoService,
     private cdr: ChangeDetectorRef
   ) {
+    this.searchSubject
+      .pipe(debounceTime(300), distinctUntilChanged())
+      .subscribe((term) => {
+        if (term.trim().length >= 2) {
+          this.tacoService.searchFood(term).subscribe({
+            next: (results) => {
+              this.searchResults = results;
+              this.cdr.detectChanges();
+            },
+            error: () => {
+              this.searchResults = [];
+              this.cdr.detectChanges();
+            },
+          });
+        } else {
+          this.searchResults = [];
+          this.cdr.detectChanges();
+        }
+      });
 
-    //this.loadFavoriteRecipes();
-
-    this.searchSubject.pipe(
-      debounceTime(300),
-      distinctUntilChanged()
-    ).subscribe(term => {
-      if (term.trim().length >= 2) {
-        this.tacoService.searchFood(term).subscribe({
-          next: (results) => {
-            this.searchResults = results;
-            this.cdr.detectChanges();
-          },
-          error: () => {
-            this.searchResults = [];
-            this.cdr.detectChanges();
-          }
-        });
-      } else {
-        this.searchResults = [];
-        this.cdr.detectChanges();
-      }
+    // online/offline
+    this.isOnline = navigator.onLine;
+    window.addEventListener('online', () => {
+      this.handleOnline();
+    });
+    window.addEventListener('offline', () => {
+      this.isOnline = false;
     });
 
-    // Detecta online/offline
-    this.isOnline = navigator.onLine;
-    window.addEventListener('online',  () => { this.handleOnline(); });
-    window.addEventListener('offline', () => { this.isOnline = false; });
-
-    // PWA Install Prompt
+    // PWA
     window.addEventListener('beforeinstallprompt', (event) => {
       event.preventDefault();
       this.installPromptEvent = event;
@@ -143,20 +154,22 @@ export class HomePageComponent implements AfterViewInit {
       for (const food of this.pendingFoods) {
         try {
           await firstValueFrom(this.http.post(`${this.apiUrl}/food/add`, food));
-          await firstValueFrom(this.http.post(`${this.apiUrl}/intake/add`, {
-            user_id: food.user_id,
-            calorias: food.calorias,
-            proteinas: food.proteinas,
-            carbo: food.carbo,
-            gordura: food.gordura
-          }));
+          await firstValueFrom(
+            this.http.post(`${this.apiUrl}/intake/add`, {
+              user_id: food.user_id,
+              calorias: food.calorias,
+              proteinas: food.proteinas,
+              carbo: food.carbo,
+              gordura: food.gordura,
+            })
+          );
         } catch {
           failed.push(food);
         }
       }
 
       this.pendingFoods = failed;
-      this.onDataChanged(); // Recarrega gráficos
+      this.onDataChanged();
     }
   }
 
@@ -167,7 +180,7 @@ export class HomePageComponent implements AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    // Carrega as metas primeiro
+    // metas
     const savedGoals = localStorage.getItem('goals');
     if (savedGoals) {
       try {
@@ -176,76 +189,74 @@ export class HomePageComponent implements AfterViewInit {
           calorias: parsedGoals.calorias || 2704,
           proteinas: parsedGoals.proteinas || 176,
           carbo: parsedGoals.carbo || 320,
-          gordura: parsedGoals.gordura || 80
+          gordura: parsedGoals.gordura || 80,
         };
       } catch (e) {
         console.error('Erro ao parsear metas do localStorage', e);
       }
     }
 
-    // Agora atualiza os dados dos gráficos com as metas corretas
     this.updateCharts();
-    
-    // Carrega o consumo diário
     this.loadDailyIntake();
-
-    // Carrega as receitas favoritas
     this.loadFavoriteRecipes();
-    
+
     this.buttonLeft.nativeElement.focus();
     document.addEventListener('click', this.handleClickOutside.bind(this));
     this.cdr.detectChanges();
   }
 
+  // 👇 AQUI estava o problema: faltava fechar esse método
   handleClickOutside(event: MouseEvent) {
+    // se não tem popup nem lista aberta, não faz nada
     if (!this.popupVisible && this.searchResults.length === 0) {
       return;
     }
-    
+
     const input = this.foodInput?.nativeElement;
     const results = this.searchResultsContainer?.nativeElement;
     const popup = document.querySelector('.popup-overlay') as HTMLElement | null;
     const target = event.target as HTMLElement;
 
-    // 1) se o clique foi num resultado de busca, não fecha nada
+    // clique na lista? não fecha
     if (target.closest('.search-item')) {
       return;
     }
-  
-    // 2) se o clique foi num favorito, não fecha nada
+
+    // clique no favorito? não fecha
     if (target.closest('.favorite-item')) {
       return;
     }
 
-    // Verifica se o clique foi dentro dos resultados
     const clickedInsideResults = results && results.contains(target);
-    const clickedOnInput = input && (input === target || input.contains(target));
-    // const clickedOnSearchItem = (event.target as HTMLElement).closest('.search-item');
+    const clickedOnInput =
+      input && (input === target || input.contains(target));
 
-    // Fecha resultados da busca
-    if (results && !clickedInsideResults && !clickedOnInput /*clickedOnSearchItem*/) {
-      if (input && !input.contains(event.target as Node)) {
+    // fecha resultados
+    if (results && !clickedInsideResults && !clickedOnInput) {
+      if (input && !input.contains(target)) {
         this.closeResults();
       }
     }
 
-    // Fecha popup ao clicar fora
+    // fecha popup
     if (this.popupVisible && popup && !popup.contains(target)) {
       this.closePopup();
     }
+  } // 👈 ESSA CHAVE FALTAVA
 
+  // chamado no mousedown do item
   onResultMouseDown() {
     this.isSelectingFromResults = true;
   }
 
   onBlur() {
     setTimeout(() => {
-      // se era um clique na lista, NÃO fecha
+      // se era clique legítimo na lista, não fecha
       if (this.isSelectingFromResults) {
         this.isSelectingFromResults = false;
         return;
       }
-  
+
       if (this.searchResults.length > 0 && !this.popupVisible) {
         this.closeResults();
       }
@@ -259,24 +270,31 @@ export class HomePageComponent implements AfterViewInit {
       return;
     }
 
-    this.http.get(`${this.apiUrl}/intake/today?user_id=${userId}`).subscribe({
-      next: (data: any) => {
-        this.dailyIntake = {
-          calorias: data.calorias || 0,
-          proteinas: data.proteinas || 0,
-          carbo: data.carbo || 0,
-          gordura: data.gordura || 0
-        };
-        this.updateCharts();
-        this.cdr.detectChanges();
-      },
-      error: (err) => {
-        console.error('Falha ao carregar dados diários', err);
-        this.dailyIntake = { calorias: 0, proteinas: 0, carbo: 0, gordura: 0 };
-        this.updateCharts();
-        this.cdr.detectChanges();
-      }
-    });
+    this.http
+      .get(`${this.apiUrl}/intake/today?user_id=${userId}`)
+      .subscribe({
+        next: (data: any) => {
+          this.dailyIntake = {
+            calorias: data.calorias || 0,
+            proteinas: data.proteinas || 0,
+            carbo: data.carbo || 0,
+            gordura: data.gordura || 0,
+          };
+          this.updateCharts();
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          console.error('Falha ao carregar dados diários', err);
+          this.dailyIntake = {
+            calorias: 0,
+            proteinas: 0,
+            carbo: 0,
+            gordura: 0,
+          };
+          this.updateCharts();
+          this.cdr.detectChanges();
+        },
+      });
 
     this.caloriasData = { ...this.caloriasData, value: this.dailyIntake.calorias };
     this.proteinasData = { ...this.proteinasData, value: this.dailyIntake.proteinas };
@@ -289,9 +307,10 @@ export class HomePageComponent implements AfterViewInit {
   onSearch() {
     this.searchSubject.next(this.searchQuery);
   }
+
   showResults() {
     if (this.searchQuery.length >= 2 && this.searchResults.length === 0) {
-      this.onSearch(); // Dispara o debounce
+      this.onSearch();
     } else if (this.searchResults.length > 0) {
       this.selectedItemIndex = -1;
       this.cdr.detectChanges();
@@ -299,13 +318,10 @@ export class HomePageComponent implements AfterViewInit {
   }
 
   formatFoodDescription(description: string): { mainName: string; details: string[] } {
-    const parts = description.split(',').map(p => p.trim());
-
+    const parts = description.split(',').map((p) => p.trim());
     if (parts.length === 0) return { mainName: '', details: [] };
-
-    const mainName = parts[0]; // "Batata"
-    const details = parts.slice(1); // ["baroa", "cozida"]
-
+    const mainName = parts[0];
+    const details = parts.slice(1);
     return { mainName, details };
   }
 
@@ -317,14 +333,15 @@ export class HomePageComponent implements AfterViewInit {
     switch (event.key) {
       case 'ArrowDown':
         event.preventDefault();
-        this.selectedItemIndex = Math.min(this.selectedItemIndex + 1, this.searchResults.length - 1);
+        this.selectedItemIndex = Math.min(
+          this.selectedItemIndex + 1,
+          this.searchResults.length - 1
+        );
         break;
-
       case 'ArrowUp':
         event.preventDefault();
         this.selectedItemIndex = Math.max(this.selectedItemIndex - 1, 0);
         break;
-
       case 'Enter':
         event.preventDefault();
         if (this.selectedItemIndex >= 0) {
@@ -345,7 +362,10 @@ export class HomePageComponent implements AfterViewInit {
     const items = this.searchItems.toArray();
     const selectedItem = items[this.selectedItemIndex];
     if (selectedItem) {
-      selectedItem.nativeElement.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      selectedItem.nativeElement.scrollIntoView({
+        block: 'nearest',
+        behavior: 'smooth',
+      });
     }
   }
 
@@ -357,13 +377,14 @@ export class HomePageComponent implements AfterViewInit {
   selectFood(food: NutritionalInfo) {
     this.selectedFood = food;
     this.grams = 100;
-    this.popupVisible = true; // ✅ Ativa o popup
+    this.popupVisible = true;
     this.closeResults();
     this.cdr.detectChanges();
   }
 
   addFood() {
-    if ((!this.selectedFood && !this.selectedRecipe) || !this.grams || this.grams <= 0) return;
+    if ((!this.selectedFood && !this.selectedRecipe) || !this.grams || this.grams <= 0)
+      return;
 
     const userId = localStorage.getItem('userId');
     if (!userId) {
@@ -373,33 +394,23 @@ export class HomePageComponent implements AfterViewInit {
 
     let consumed: any;
 
-    // ✅ Caso 1: Alimento selecionado
     if (this.selectedFood) {
       consumed = this.tacoService.calculateForGrams(this.selectedFood, this.grams);
-    }
-    // ✅ Caso 2: Receita selecionada
-    else if (this.selectedRecipe) {
-      // Valores totais da receita (para a quantidade padrão, ex: 100g)
+    } else if (this.selectedRecipe) {
       const caloriasTotal = this.selectedRecipe.calorias ?? 0;
       const proteinasTotal = this.selectedRecipe.proteinas ?? 0;
       const carboTotal = this.selectedRecipe.carbo ?? 0;
       const gorduraTotal = this.selectedRecipe.gordura ?? 0;
-
-      // Quantidade padrão da receita (normalmente 100g)
-      const quantidadePadrao = 100; // Pode ser outro valor, ajuste se necessário
-
-      // Fator de escala: quanto o usuário realmente comeu?
+      const quantidadePadrao = 100;
       const fator = this.grams / quantidadePadrao;
-
       consumed = {
-        calorias: caloriasTotal * fator, 
+        calorias: caloriasTotal * fator,
         proteinas: proteinasTotal * fator,
         carbo: carboTotal * fator,
-        gordura: gorduraTotal * fator
+        gordura: gorduraTotal * fator,
       };
     }
 
-    // ✅ Agora `consumed` sempre tem valor
     this.dailyIntake.calorias += consumed.calorias;
     this.dailyIntake.proteinas += consumed.proteinas;
     this.dailyIntake.carbo += consumed.carbo;
@@ -413,7 +424,7 @@ export class HomePageComponent implements AfterViewInit {
       calorias: Number(consumed.calorias) || 0,
       proteinas: Number(consumed.proteinas) || 0,
       carbo: Number(consumed.carbo) || 0,
-      gordura: Number(consumed.gordura) || 0
+      gordura: Number(consumed.gordura) || 0,
     };
 
     if (this.isOnline) {
@@ -421,20 +432,18 @@ export class HomePageComponent implements AfterViewInit {
         next: () => {
           this.onDataChanged();
         },
-        error: (err) => this.queueOffline(foodData, consumed)
+        error: () => this.queueOffline(foodData, consumed),
       });
     } else {
       this.queueOffline(foodData, consumed);
     }
 
     this.closePopup();
-
     this.onDataChanged();
   }
 
   private queueOffline(foodData: FoodData, consumed: any) {
     this.pendingFoods.push(foodData);
-    // Atualiza UI mesmo offline
     this.dailyIntake.calorias += consumed.calorias;
     this.dailyIntake.proteinas += consumed.proteinas;
     this.dailyIntake.carbo += consumed.carbo;
@@ -449,19 +458,19 @@ export class HomePageComponent implements AfterViewInit {
   updateCharts() {
     this.caloriasData = {
       value: this.dailyIntake.calorias,
-      max: this.goals.calorias
+      max: this.goals.calorias,
     };
     this.proteinasData = {
       value: this.dailyIntake.proteinas,
-      max: this.goals.proteinas
+      max: this.goals.proteinas,
     };
     this.carbData = {
       value: this.dailyIntake.carbo,
-      max: this.goals.carbo
+      max: this.goals.carbo,
     };
     this.gorduraData = {
       value: this.dailyIntake.gordura,
-      max: this.goals.gordura
+      max: this.goals.gordura,
     };
   }
 
@@ -485,41 +494,36 @@ export class HomePageComponent implements AfterViewInit {
       return;
     }
 
-    // ✅ Headers com token JWT
     const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
     });
 
-    // ✅ Envia user_id na query
-    this.http.get<any[]>(`${this.apiUrl}/recipes/list?user_id=${userId}`, { headers })
+    this.http
+      .get<any[]>(`${this.apiUrl}/recipes/list?user_id=${userId}`, { headers })
       .subscribe({
         next: (allRecipes) => {
-          // ✅ Filtra apenas as que são favoritas
-          this.favoriteRecipes = allRecipes.filter(recipe => 
+          this.favoriteRecipes = allRecipes.filter((recipe) =>
             favoriteIds.includes(recipe._id)
           );
-          console.log('Receitas favoritas carregadas:', this.favoriteRecipes);
           this.cdr.detectChanges();
         },
         error: (err) => {
           console.error('Erro ao carregar receitas favoritas:', err);
           this.favoriteRecipes = [];
           this.cdr.detectChanges();
-        }
+        },
       });
   }
 
-  // Método para abrir o popup com a receita
   selectFavoriteRecipe(recipe: any) {
     this.selectedRecipe = recipe;
     this.grams = 100;
     this.popupVisible = true;
-    this.closeResults(); // Fecha resultados de busca
+    this.closeResults();
     this.cdr.markForCheck();
   }
 
-  // Dados para os gráficos
   caloriasData = { value: 0, max: this.goals.calorias };
   proteinasData = { value: 0, max: this.goals.proteinas };
   carbData = { value: 0, max: this.goals.carbo };
