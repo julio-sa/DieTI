@@ -188,7 +188,7 @@ h4 {
   .view-mode {
     display: flex;
     align-items: center;
-    font-size: 10px;
+    font-size: 16px;
     gap: 8px;
     width: 100%;
   }
@@ -232,7 +232,7 @@ h4 {
     padding: 10px 20px;
     border-radius: 6px;
     cursor: pointer;
-    font-size: 10px;
+    font-size: 16px;
   }
 
   .btn-cancel {
@@ -242,7 +242,7 @@ h4 {
     padding: 10px 20px;
     border-radius: 6px;
     cursor: pointer;
-    font-size: 10px;
+    font-size: 16px;
   }
  
 .dual-button {
@@ -716,7 +716,7 @@ h4 {
   .view-mode {
     display: flex;
     align-items: center;
-    font-size: 10px;
+    font-size: 16px;
     gap: 8px;
     width: 100%;
   }
@@ -760,7 +760,7 @@ h4 {
     padding: 10px 20px;
     border-radius: 6px;
     cursor: pointer;
-    font-size: 10px;
+    font-size: 16px;
   }
 
   .btn-cancel {
@@ -770,7 +770,7 @@ h4 {
     padding: 10px 20px;
     border-radius: 6px;
     cursor: pointer;
-    font-size: 10px;
+    font-size: 16px;
   }
 
   .dual-button {
