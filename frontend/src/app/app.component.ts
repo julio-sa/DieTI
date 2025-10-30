@@ -22,8 +22,5 @@ export class AppComponent {
         }
       });
     }
-
-  updateStatus() {
-    this.online = navigator.onLine;
   }
 }
