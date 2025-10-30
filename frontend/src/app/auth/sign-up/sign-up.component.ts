@@ -5,6 +5,7 @@ import { FormsModule, ReactiveFormsModule, FormGroup, FormBuilder, Validators } 
 import { Router, RouterModule } from '@angular/router';
 import { Location } from '@angular/common';
 import Swal from 'sweetalert2';
+import { environment } from '../../../environments/environment';
 
 @Component({
   standalone: true,
@@ -60,7 +61,7 @@ export class SignUpComponent implements AfterViewInit {
 
     const { confirmPassword, ...userData } = this.registerForm.value;
 
-    this.http.post('http://localhost:3000/api/auth/sign-up', userData).subscribe({
+    this.http.post('environment.backendUrl/api/auth/sign-up', userData).subscribe({
       next: () => {
         Swal.fire({
           icon: 'success',

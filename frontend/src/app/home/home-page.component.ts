@@ -7,6 +7,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { NutritionalInfo, TacoService } from '../services/taco.service';
 import { LineChartComponent } from '../shared/line-chart/line-chart.component';
 import { MultiRingChartComponent } from '../shared/multi-ring-chart/multi-ring-chart.component';
+import { environment } from '../../environments/environment';
 
 interface FoodData {
   user_id: string;
@@ -136,8 +137,8 @@ export class HomePageComponent implements AfterViewInit {
       const failed: FoodData[] = [];
       for (const food of this.pendingFoods) {
         try {
-          await firstValueFrom(this.http.post('http://localhost:8000/food/add', food));
-          await firstValueFrom(this.http.post('http://localhost:8000/intake/add', {
+          await firstValueFrom(this.http.post('environment.apiUrl/food/add', food));
+          await firstValueFrom(this.http.post('environment.apiUrl/intake/add', {
             user_id: food.user_id,
             calorias: food.calorias,
             proteinas: food.proteinas,
@@ -225,7 +226,7 @@ export class HomePageComponent implements AfterViewInit {
       return;
     }
 
-    this.http.get(`http://localhost:8000/intake/today?user_id=${userId}`).subscribe({
+    this.http.get(`environment.apiUrl/intake/today?user_id=${userId}`).subscribe({
       next: (data: any) => {
         this.dailyIntake = {
           calorias: data.calorias || 0,
@@ -383,7 +384,7 @@ export class HomePageComponent implements AfterViewInit {
     };
 
     if (this.isOnline) {
-      this.http.post('http://localhost:8000/food/add', foodData).subscribe({
+      this.http.post('environment.apiUrl/food/add', foodData).subscribe({
         next: () => {
           this.onDataChanged();
         },
@@ -458,7 +459,7 @@ export class HomePageComponent implements AfterViewInit {
     });
 
     // ✅ Envia user_id na query
-    this.http.get<any[]>(`http://localhost:8000/recipes/list?user_id=${userId}`, { headers })
+    this.http.get<any[]>(`environment.apiUrl/recipes/list?user_id=${userId}`, { headers })
       .subscribe({
         next: (allRecipes) => {
           // ✅ Filtra apenas as que são favoritas

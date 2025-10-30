@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 @Component({
   standalone: true,
@@ -27,7 +28,7 @@ export class PasswordRecoveryComponent {
 
     try {
       await firstValueFrom(
-        this.http.post('http://localhost:3000/api/auth/forgot-password', { email: this.email })
+        this.http.post('environment.backendUrl/api/auth/forgot-password', { email: this.email })
       );
       alert('Código de recuperação enviado para seu email.');
       this.router.navigate(['/recovery-code'], { queryParams: { email: this.email } });

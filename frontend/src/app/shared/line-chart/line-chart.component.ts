@@ -2,7 +2,7 @@ import { Component, Input, OnInit, OnChanges, ElementRef, ViewChild, Output, Eve
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { ChangeDetectorRef } from '@angular/core';
-import { firstValueFrom } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 interface IntakeData {
   date: string;
@@ -88,7 +88,7 @@ export class LineChartComponent implements OnInit, OnChanges {
       'Content-Type': 'application/json'
     });
 
-    this.http.get<any[]>(`http://localhost:8000/food/history/${item.date}?user_id=${userId}`, { headers })
+    this.http.get<any[]>(`environment.apiUrl/food/history/${item.date}?user_id=${userId}`, { headers })
       .subscribe({
         next: (foods) => {
           this.historicalFoods = foods;
@@ -153,7 +153,7 @@ export class LineChartComponent implements OnInit, OnChanges {
     };
     const days = daysMap[this.selectedPeriod] || 7;
 
-    this.http.get<IntakeData[]>(`http://localhost:8000/intake/history?user_id=${userId}&days=${days}`)
+    this.http.get<IntakeData[]>(`environment.apiUrl/intake/history?user_id=${userId}&days=${days}`)
       .subscribe(data => {
 
         // ✅ Garante nova referência para forçar detecção

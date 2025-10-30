@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
-import { map } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
 
 export interface NutritionalInfo {
   _id: string | number;
@@ -18,7 +18,7 @@ export interface NutritionalInfo {
   providedIn: 'root'
 })
 export class TacoService {
-  private readonly API_BASE = 'http://localhost:8000';
+  private readonly API_BASE = 'environment.apiUrl';
   private readonly RECIPES_SEARCH = `${this.API_BASE}/search/recipes/search`;
   private readonly TACO_SEARCH = `${this.API_BASE}/taco_table/search`;
 
@@ -32,7 +32,7 @@ export class TacoService {
     const params = new HttpParams().set('q', term.trim());
 
     return this.http.get<NutritionalInfo[]>(
-      'http://localhost:8000/search/combined',
+      'environment.apiUrl/search/combined',
       { params }
     ).pipe(
       catchError(err => {

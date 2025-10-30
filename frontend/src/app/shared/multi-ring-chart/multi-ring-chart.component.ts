@@ -5,6 +5,7 @@ import { firstValueFrom } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-multi-ring-chart',
@@ -102,7 +103,7 @@ export class MultiRingChartComponent implements OnInit, OnChanges {
     try {
       // ✅ Use firstValueFrom em vez de .toPromise()
       this.dailyFoods = await firstValueFrom(
-        this.http.get<any[]>(`http://localhost:8000/food/daily?user_id=${userId}`)
+        this.http.get<any[]>(`environment.apiUrl/food/daily?user_id=${userId}`)
       );
       this.showDailyPopup = true;
     } catch (err) {
@@ -112,7 +113,7 @@ export class MultiRingChartComponent implements OnInit, OnChanges {
 
   async deleteFood(id: string) {
     if (confirm('Deletar esse alimento?')) {
-      await this.http.delete(`http://localhost:8000/food/delete/${id}`).toPromise();
+      await this.http.delete(`environment.apiUrl/food/delete/${id}`).toPromise();
       
       // ✅ Remove localmente
       this.dailyFoods = this.dailyFoods.filter(f => f._id !== id);
@@ -144,7 +145,7 @@ export class MultiRingChartComponent implements OnInit, OnChanges {
       'Content-Type': 'application/json'
     });
 
-    this.http.put(`http://localhost:8000/food/update/${_id}`, updateData, { headers })
+    this.http.put(`environement.apiUrl/food/update/${_id}`, updateData, { headers })
       .subscribe({
         next: () => {
           // Atualiza localmente

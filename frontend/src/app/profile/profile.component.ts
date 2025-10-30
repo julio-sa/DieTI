@@ -5,6 +5,7 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { Router, RouterModule } from '@angular/router';
 import Swal from 'sweetalert2';
 import { GoalService, Goals } from '../services/goal.service';
+import { environment } from '../../environments/environment';
 
 @Component({
     standalone: true,
@@ -88,7 +89,7 @@ export class ProfileComponent implements OnInit {
         const token = localStorage.getItem('token');
         const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
 
-        this.http.put('http://localhost:3000/api/profile/update', this.registerForm.value, { headers }).subscribe({
+        this.http.put('environment.backendUrl/api/profile/update', this.registerForm.value, { headers }).subscribe({
             next: (response: any) => {
                 this.isEditing = false;
                 this.loadUserData();
@@ -144,7 +145,7 @@ export class ProfileComponent implements OnInit {
 
         const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
 
-        this.http.get('http://localhost:3000/api/profile/profile', { headers }).subscribe({
+        this.http.get('environment.backendUrl/api/profile/profile', { headers }).subscribe({
             next: (res: any) => {
             const user = res.user;
             
@@ -206,7 +207,7 @@ export class ProfileComponent implements OnInit {
 
         try {
             // Primeiro valida as credenciais
-            const validationResponse = await fetch('http://localhost:3000/api/auth/validate-credentials', {
+            const validationResponse = await fetch('environment.backendUrl/api/auth/validate-credentials', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -220,7 +221,7 @@ export class ProfileComponent implements OnInit {
             }
 
             // Depois exclui a conta
-            const deleteResponse = await fetch('http://localhost:3000/api/auth/delete-account', {
+            const deleteResponse = await fetch('environment.backendUrl/api/auth/delete-account', {
             method: 'DELETE',
             headers: { 
                 'Authorization': `Bearer ${localStorage.getItem('token')}`,

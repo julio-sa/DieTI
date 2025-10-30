@@ -3,6 +3,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 @Component({
   standalone: true,
@@ -52,7 +53,7 @@ export class RecoveryCodeComponent implements OnInit {
 
     try {
       await firstValueFrom(
-        this.http.post('http://localhost:3000/api/auth/reset-password', {
+        this.http.post('environment.backendUrl/api/auth/reset-password', {
           email: this.email,
           code: this.code,
           newPassword: this.newPassword

@@ -4,6 +4,7 @@ import { ChangeDetectorRef, Component, ElementRef, OnInit, QueryList, ViewChild,
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NutritionalInfo, TacoService } from '../services/taco.service';
+import { environment } from '../../environments/environment';
 
 interface RecipeIngredient {
   food: NutritionalInfo;
@@ -36,7 +37,7 @@ export class CreateRecipeComponent implements OnInit {
   selectedItemIndex = -1;
 
   // 🔥 URL fixa (sem environment)
-  private apiUrl = 'http://localhost:8000';
+  private apiUrl = 'environment.apiUrl';
 
   constructor(
     private http: HttpClient,
@@ -235,7 +236,7 @@ export class CreateRecipeComponent implements OnInit {
       'Authorization': `Bearer ${token}`
     });
 
-    this.http.post('http://localhost:8000/recipes/save', recipeData, { headers })
+    this.http.post('environment.apiUrl/recipes/save', recipeData, { headers })
       .subscribe({
         next: (res: any) => {
           console.log('Receita salva com sucesso:', res);

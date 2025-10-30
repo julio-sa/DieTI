@@ -4,6 +4,7 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import Swal from 'sweetalert2';
+import { environment } from '../../../environments/environment';
 
 @Component({
   standalone: true,
@@ -23,7 +24,7 @@ export class LoginComponent {
   onSubmit() {
     const loginData = { email: this.email, password: this.password };
 
-    this.http.post('http://localhost:3000/api/auth/sign-in', loginData).subscribe({
+    this.http.post('environment.backendUrl/api/auth/sign-in', loginData).subscribe({
       next: (res: any) => {
         localStorage.setItem('token', res.token);
         localStorage.setItem('userId', res.user.id);
