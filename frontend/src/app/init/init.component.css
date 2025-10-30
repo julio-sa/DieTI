@@ -37,3 +37,88 @@
   font-size: 14px;
   color: #888;
 }
+
+/*Responsividade*/
+/*Tablet*/
+@media (max-width: 768px) {
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  .page-container {
+    height: 530px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: white;
+    padding: 20px;
+    max-width: 1440px;
+    font-family: Helvetica;
+  }
+
+  .content-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 300px;
+  }
+
+  .logo {
+    max-width: 400px;
+    height: auto;
+  }
+
+  .footer {
+    position: absolute;
+    bottom: 10px;
+    width: 100%;
+    text-align: center;
+    font-size: 14px;
+    color: #888;
+  }
+}
+
+/*Celulares*/
+@media (max-width: 375px) {
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  .page-container {
+    height: 530px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: white;
+    padding: 20px;
+    max-width: 1440px;
+    font-family: Helvetica;
+  }
+
+  .content-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 300px;
+  }
+
+  .logo {
+    max-width: 300px;
+    height: auto;
+  }
+
+  .footer {
+    position: absolute;
+    bottom: 10px;
+    width: 100%;
+    text-align: center;
+    font-size: 14px;
+    color: #888;
+  }
+}

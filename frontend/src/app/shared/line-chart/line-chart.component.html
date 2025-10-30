@@ -1,42 +1,40 @@
 <!-- Seleção de métrica -->
 <div class="controls">
-    <select [(ngModel)]="metric" (change)="onMetricChange()" class="metric-select">
-        <option value="calorias" i18n>
-            Calorias
-        </option>
-        <option value="proteinas" i18n>
-            Proteínas
-        </option>
-        <option value="carbo" i18n>
-            Carbo
-        </option>
-        <option value="gordura" i18n>
-            Gordura
-        </option>
-    </select>
+  <!-- Select de métrica personalizado -->
+  <div class="custom-select" (click)="toggleMetricOptions()">
+        <span>{{ getMetricLabel(metric) }}</span>
+        @if (showMetricOptions) {
+            <ul class="options">
+            @for (field of numericFields; track field) {
+                <li (click)="selectMetric(field)" 
+                    (touchstart)="selectMetric(field)"
+                    [class.active]="metric === field">
+                {{ getMetricLabel(field) }}
+                </li>
+            }
+            </ul>
+        }
+  </div>
 
-    <select [(ngModel)]="selectedPeriod" (change)="loadHistory()" class="period-select">
-        <option value="7 dias" i18n>
-            7 dias
-        </option>
-        <option value="1 mês" i18n>
-            1 mês
-        </option>
-        <option value="3 meses" i18n>
-            1 trimestre
-        </option>
-        <option value="6 meses" i18n>
-            1 semestre
-        </option>
-        <option value="1 ano" i18n>
-            1 ano
-        </option>
-    </select>
+    <div class="custom-select" (click)="togglePeriodOptions()">
+        <span>{{ selectedPeriod }}</span>
+        @if (showPeriodOptions) {
+            <ul class="options">
+            @for (period of periodOptions; track period) {
+                <li (click)="selectPeriod(period)" 
+                    (touchstart)="selectPeriod(period)"
+                    [class.active]="selectedPeriod === period">
+                {{ period }}
+                </li>
+            }
+            </ul>
+        }
+    </div>
 </div>
 
 <div class="chart-container">
     <div class="chart-scroll">
-        <svg width="3000" height="400" viewBox="0 0 2800 300" class="chart-svg" (mouseleave)="hideTooltip()">
+        <svg width="300" height="300" viewBox="0 0 300 300" class="chart-svg" (mouseleave)="hideTooltip()">
             <!-- Eixos -->
             <line [attr.x1]="50" [attr.y1]="20" [attr.x2]="50" [attr.y2]="250" stroke="#ccc" />
             <line [attr.x1]="50" [attr.y1]="250" [attr.x2]="680" [attr.y2]="250" stroke="#ccc" />

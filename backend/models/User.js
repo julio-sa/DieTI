@@ -7,6 +7,15 @@ const UserSchema = new mongoose.Schema({
   password: { type: String, required: true },
   weight: { type: Number, required: true },
   height: { type: Number, required: true },
+  goals: {
+    type: Object,
+    default: {
+      calorias: 2704,
+      proteinas: 176,
+      carbo: 320,
+      gordura: 80
+    }
+  },
   resetPasswordCode: { type: String },
   resetPasswordExpires: { type: Date },
 }, { timestamps: true });

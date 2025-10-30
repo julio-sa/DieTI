@@ -1,8 +1,8 @@
 .chart-container {
   position: relative;
   display: inline-block;
-  width: 450px;
-  height: 450px;
+  width: 400px;
+  height: 400px;
 }
 
 
@@ -99,7 +99,8 @@
 
 .btn-edit,
 .btn-delete,
-.btn-close {
+.btn-close,
+.btn-cancel {
   padding: 6px 10px;
   border: none;
   border-radius: 6px;
@@ -151,6 +152,54 @@
 .popup {
   scrollbar-width: thin;
   scrollbar-color: #888 #f1f1f1;
+  background: white;
+  padding: 24px;
+  border-radius: 12px;
+  width: 500px;
+  text-align: center;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+}
+
+.popup h3 {
+  margin-bottom: 16px;
+  font-size: 20px;
+  color: #333;
+}
+
+.popup input[type="number"] {
+  width: 100%;
+  padding: 8px;
+  margin-top: 4px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.popup-actions {
+  margin-top: 24px;
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.btn-primary {
+  background-color: #00bfff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.btn-cancel {
+  background-color: #ff8a80;
+  color: #333;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
 }
 
 .popup::-webkit-scrollbar {
@@ -208,4 +257,259 @@
 .view-mode span {
   color: #444;
   font-size: 14px;
+}
+
+/*Responsividade*/
+/*Tablet*/
+@media (max-width: 768px) {
+  .chart-container {
+    position: relative;
+    display: inline-block;
+    width: 300px;
+    height: 300px;
+  }
+  .chart-svg{
+    height: 300px;
+  }
+
+  .popup {
+    scrollbar-width: thin;
+    scrollbar-color: #888 #f1f1f1;
+    background: white;
+    padding: 24px;
+    border-radius: 12px;
+    width: 500px;
+    text-align: center;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+  }
+
+  .popup h3 {
+    margin-bottom: 16px;
+    font-size: 20px;
+    color: #333;
+  }
+
+  .popup input[type="number"] {
+    width: 50px;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 12px;
+  }
+
+  .popup-actions {
+    margin-top: 24px;
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+  }
+
+  .btn-edit {
+    background-color: #00bfff;
+    color: white;
+    border: none;
+    padding: 8px 13px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 10px;
+  }
+
+  .btn-delete {
+    background-color: #ff8a80;
+    color: #ffffff;
+    border: none;
+    padding: 8px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 10px;
+  }
+
+  .btn-cancel {
+    background-color: #ff8a80;
+    color: #ffffff;
+    border: none;
+    padding: 8px 6px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 10px;
+  }
+
+  .btn-close {
+    background-color: #ccc;
+    color: #333;
+    padding: 8px 10px;
+    font-size: 12px;
+    margin-top: 5px;
+    align-self: center;
+  }
+
+  .food-item {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .food-item:last-child {
+    border-bottom: none;
+  }
+
+  .food-description {
+    font-size: 12px;
+  }
+
+  .edit-mode, .view-mode {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .edit-input {
+    padding: 6px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 12px;
+    width: 80px;
+  }
+
+  .full-width {
+    width: auto;
+    flex-grow: 1;
+  }
+
+  .view-mode span {
+    color: #444;
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 375px) {
+  .chart-container {
+    position: relative;
+    display: inline-block;
+    width: 300px;
+    height: 300px;
+  }
+  .chart-svg{
+    height: 300px;
+  }
+
+  .popup {
+    scrollbar-width: thin;
+    scrollbar-color: #888 #f1f1f1;
+    background: white;
+    padding: 24px;
+    border-radius: 12px;
+    width: 310px;
+    text-align: center;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+  }
+
+  .popup h3 {
+    margin-bottom: 14px;
+    font-size: 18px;
+    color: #333;
+  }
+
+  .popup input[type="number"] {
+    width: 50px;
+    padding: 8px;
+    margin-top: -2px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 10px;
+  }
+
+  .popup-actions {
+    margin-top: 24px;
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+  }
+
+  .btn-edit {
+    background-color: #00bfff;
+    color: white;
+    border: none;
+    padding: 8px 13px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 8px;
+  }
+
+  .btn-delete {
+    background-color: #ff8a80;
+    color: #ffffff;
+    border: none;
+    padding: 8px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 8px;
+  }
+
+  .btn-cancel {
+    background-color: #ff8a80;
+    color: #ffffff;
+    border: none;
+    padding: 8px 6px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 8px;
+  }
+
+  .btn-close {
+    background-color: #ccc;
+    color: #333;
+    padding: 8px 10px;
+    font-size: 10px;
+    margin-top: 5px;
+    align-self: center;
+  }
+
+  .food-item {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .food-item:last-child {
+    border-bottom: none;
+  }
+
+  .food-description {
+    font-size: 8px;
+  }
+
+  .edit-mode, .view-mode {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .edit-input {
+    padding: 6px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 12px;
+    width: 80px;
+  }
+
+  .full-width {
+    width: auto;
+    flex-grow: 1;
+  }
+
+  .view-mode span {
+    color: #444;
+    font-size: 8px;
+  }
 }

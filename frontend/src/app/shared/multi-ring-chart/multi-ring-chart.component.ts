@@ -1,9 +1,10 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, Input, OnInit, OnChanges, ElementRef, ViewChild, Output, EventEmitter } from '@angular/core';
 import { ChangeDetectorRef } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-multi-ring-chart',
@@ -47,7 +48,9 @@ export class MultiRingChartComponent implements OnInit, OnChanges {
 
   constructor(
     private cdr: ChangeDetectorRef, 
-    private http: HttpClient) {}
+    private http: HttpClient,
+    private router: Router
+  ) {}
 
   // Método chamado ao passar o mouse sobre o ícone
   onIconHover(event: MouseEvent, nutrient: string, value: number, goal: number) {
@@ -124,13 +127,38 @@ export class MultiRingChartComponent implements OnInit, OnChanges {
   }
 
   saveEditedFood() {
-    const updated = this.selectedFoodToEdit;
-    this.http.put(`http://localhost:8000/food/update/${updated._id}`, updated)
-      .subscribe(() => {
-        const index = this.dailyFoods.findIndex(f => f._id === updated._id);
-        if (index !== -1) this.dailyFoods[index] = updated;
-        this.selectedFoodToEdit = null;
-        this.refreshData.emit();
+    const updated = { ...this.selectedFoodToEdit };
+
+    // ✅ Remove _id do corpo da requisição
+    const { _id, ...updateData } = updated;
+
+    const token = localStorage.getItem('token');
+    if (!token) {
+      alert('Sessão expirada.');
+      this.router.navigate(['/sign-in']);
+      return;
+    }
+
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+
+    this.http.put(`http://localhost:8000/food/update/${_id}`, updateData, { headers })
+      .subscribe({
+        next: () => {
+          // Atualiza localmente
+          const index = this.dailyFoods.findIndex(f => f._id === _id);
+          if (index !== -1) {
+            this.dailyFoods[index] = { ...updated }; // Mantém _id só aqui
+          }
+          this.selectedFoodToEdit = null;
+          this.refreshData.emit(); // Recarrega gráficos
+        },
+        error: (err) => {
+          console.error('Erro ao salvar:', err);
+          alert('Falha ao atualizar alimento. Tente novamente.');
+        }
       });
   }
 

@@ -1,12 +1,12 @@
-import { Component, ViewChild, ElementRef, AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, QueryList, ViewChildren } from '@angular/core';
-import { RouterModule } from '@angular/router';
-import { MultiRingChartComponent } from '../shared/multi-ring-chart/multi-ring-chart.component';
-import { LineChartComponent } from '../shared/line-chart/line-chart.component';
-import { TacoService, NutritionalInfo } from '../shared/taco.service';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
+import { RouterModule } from '@angular/router';
 import { firstValueFrom, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { NutritionalInfo, TacoService } from '../services/taco.service';
+import { LineChartComponent } from '../shared/line-chart/line-chart.component';
+import { MultiRingChartComponent } from '../shared/multi-ring-chart/multi-ring-chart.component';
 
 interface FoodData {
   user_id: string;
@@ -161,11 +161,30 @@ export class HomePageComponent implements AfterViewInit {
   }
 
   ngAfterViewInit(): void {
+    // Carrega as metas primeiro
+    const savedGoals = localStorage.getItem('goals');
+    if (savedGoals) {
+      try {
+        const parsedGoals = JSON.parse(savedGoals);
+        this.goals = {
+          calorias: parsedGoals.calorias || 2704,
+          proteinas: parsedGoals.proteinas || 176,
+          carbo: parsedGoals.carbo || 320,
+          gordura: parsedGoals.gordura || 80
+        };
+      } catch (e) {
+        console.error('Erro ao parsear metas do localStorage', e);
+      }
+    }
+
+    // Agora atualiza os dados dos gráficos com as metas corretas
+    this.updateCharts();
+    
+    // Carrega o consumo diário
     this.loadDailyIntake();
+    
     this.buttonLeft.nativeElement.focus();
-
     document.addEventListener('click', this.handleClickOutside.bind(this));
-
     this.cdr.detectChanges();
   }
 
@@ -413,14 +432,48 @@ export class HomePageComponent implements AfterViewInit {
   }
 
   loadFavoriteRecipes() {
-    const savedIds = localStorage.getItem('favoriteRecipes');
-    const ids = savedIds ? JSON.parse(savedIds) : [];
-    if (ids.length === 0) return;
+    const userId = localStorage.getItem('userId');
+    const token = localStorage.getItem('token');
 
-    this.http.get<any[]>('http://localhost:8000/recipes/list').subscribe(allRecipes => {
-      this.favoriteRecipes = allRecipes.filter(r => ids.includes(r._id));
+    if (!userId || !token) {
+      console.warn('Usuário não autenticado');
+      this.favoriteRecipes = [];
       this.cdr.detectChanges();
+      return;
+    }
+
+    const savedIds = localStorage.getItem('favoriteRecipes');
+    const favoriteIds = savedIds ? JSON.parse(savedIds) : [];
+
+    if (favoriteIds.length === 0) {
+      this.favoriteRecipes = [];
+      this.cdr.detectChanges();
+      return;
+    }
+
+    // ✅ Headers com token JWT
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
     });
+
+    // ✅ Envia user_id na query
+    this.http.get<any[]>(`http://localhost:8000/recipes/list?user_id=${userId}`, { headers })
+      .subscribe({
+        next: (allRecipes) => {
+          // ✅ Filtra apenas as que são favoritas
+          this.favoriteRecipes = allRecipes.filter(recipe => 
+            favoriteIds.includes(recipe._id)
+          );
+          console.log('Receitas favoritas carregadas:', this.favoriteRecipes);
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          console.error('Erro ao carregar receitas favoritas:', err);
+          this.favoriteRecipes = [];
+          this.cdr.detectChanges();
+        }
+      });
   }
 
   // Método para abrir o popup com a receita
@@ -428,7 +481,7 @@ export class HomePageComponent implements AfterViewInit {
     this.selectedRecipe = recipe;
     this.grams = 100;
     this.popupVisible = true;
-
+    this.closeResults(); // Fecha resultados de busca
     this.cdr.markForCheck();
   }
 

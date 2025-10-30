@@ -482,3 +482,962 @@ select.input-field option {
     from { transform: scale(0.9); opacity: 0; }
     to { transform: scale(1); opacity: 1; }
 }
+
+/*Responsividade*/
+/*Tablet*/
+@media (max-width: 768px) {
+    .profile-header {
+        position: absolute;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 60px;
+        font-family: "Helvetica";
+        height: 150px;
+        width: 100%;
+        z-index: 20;
+    }
+
+    .profile-title {
+        position: relative;
+        top: 64px;
+        left: -270px;
+        font-size: 24px;
+        width: 100%;
+        text-align: center;
+    }
+
+    .edit {
+        position: absolute;
+        width: 25px;
+        top: 65px;
+        left: 180px;
+        cursor: pointer;
+        z-index: 10;
+    }
+
+    .back-arrow {
+        position: absolute;
+        top: 60px;
+        left: 20px;
+        font-size: 24px;
+        cursor: pointer;
+        color: #888;
+        z-index: 10;
+    }
+
+    .logo-image {
+        position: absolute;
+        top: 20px;
+        right: 4px;
+        width: 200px;
+    }
+
+    .page-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        padding: 20px;
+        background-color: white;
+        position: relative;
+        font-family: "Helvetica";
+    }
+
+
+    .profile-container {
+        position: absolute;
+        width: 100%;
+        padding: 0 20px;
+    }
+
+    .profile-body {
+        position: absolute;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        max-width: 1200px;
+        margin-top: -30px;
+        padding: 20px;
+        background-color: white;
+    }
+
+    .profile-icons {
+        width: 20px;
+        height: 25px;
+        margin-top: -3.5px;
+        margin-right: 15px;
+        vertical-align: middle;
+        display: inline-block;
+    }
+
+    .registerForm {
+        position: absolute;
+        display: block;
+        width: 100%;
+        top: -90px;
+        font-family: "Helvetica";
+        color: #444;
+        max-width: 800px;
+    }
+
+    .userData {
+        margin-left: 70px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0px;
+        justify-content: flex-start;
+    }
+
+    .user-section {
+        min-width: 300px;
+    }
+
+    .userDataEdit {
+        width: 100%;
+        max-width: 500px;
+    }
+
+    .userDataUl {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .userDataUl li {
+        margin: 10px 0 45px 0;
+        cursor: default;
+        font-size: 20px;
+        color: #555;
+        line-height: 1.5;
+        transition: color 0.3s ease;
+    }
+
+    .userDataUl li:hover {
+        color: #00bfff;
+    }
+
+    .editing-section {
+        width: 100%;
+        display: inline-flex;
+        flex-direction: row;
+        margin-top: -50px;
+        margin-left: 10px;
+    }
+
+    h3 {
+        margin-bottom: 10px;
+        color: #333;
+        font-size: 1.4rem;
+        font-weight: 600;
+        text-align: center;
+        font-family: "Helvetica", "Arial", sans-serif;
+    }
+
+    .personal-info {
+        width: 100%;
+        max-width: 350px;
+        padding: 12px;
+        margin: 13px;
+        border: none;
+        border-radius: 10px;
+        font-size: 16px;
+        background-color: #fffcfc;
+        outline: none;
+        transition: all 0.2s ease;
+        color: #666;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .goals-info{
+        width: 100%;
+        max-width: 350px;
+        padding: 12px;
+        margin: 13px;
+        border: none;
+        border-radius: 10px;
+        font-size: 16px;
+        background-color: #fffcfc;
+        outline: none;
+        transition: all 0.2s ease;
+        color: #666;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .field-name {
+        font-weight: bold;
+        color: #666;
+        margin-top:0px;
+    }
+
+    .input-field {
+        width: 100%;
+        max-width: 300px;
+        padding: 12px;
+        margin: 10px;
+        border: none;
+        border-radius: 10px;
+        font-size: 16px;
+        background-color: #f9f4f4;
+        outline: none;
+        transition: all 0.2s ease;
+        color: #666;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .input-field:focus {
+        background-color: #ffffff;
+        border: 2px solid #00bfff;
+        box-shadow: 0 4px 8px rgba(0, 0, 191, 0.2);
+    }
+
+    select.input-field {
+        appearance: none;
+        padding-right: 40px;
+        background: #f9f4f4 url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23666' viewBox='0 0 16 16'><path d='M7.247 11.14 2.451 5.658C1.885 5.088 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/></svg>") no-repeat right 1rem center;
+        background-size: 16px;
+        cursor: pointer;
+    }
+
+    select.input-field option {
+        color: #666;
+        background-color: #fff;
+    }
+
+    .profile-actions {
+        display: flex;
+        flex-direction: column;
+        margin-left: 10px;
+    }
+
+    .submit-btn,
+    .cancel-btn {
+        max-width: 753px;
+        padding: 14px;
+        border: none;
+        border-radius: 20px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 6px rgba(0, 0, 191, 0.1);
+        margin-top: 10px;
+    }
+
+    .submit-btn {
+        background-color: #00bfff;
+        color: white;
+    }
+
+    .submit-btn:hover:not([disabled]) {
+        background-color: #0099cc;
+        transform: scale(1.0002);
+    }
+
+    .cancel-btn {
+        background-color: #c0e7ff;
+        color: #003366;
+    }
+
+    .cancel-btn:hover {
+        background-color: #b8d8e9;
+        transform: scale(1.0002);
+    }
+
+    .delete-btn {
+        max-width: 753px;
+        padding: 14px 0;
+        margin-top: 30px;
+        background: transparent;
+        color: #d32f2f;
+        border: none;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: color 0.3s ease;
+    }
+
+    .delete-btn:hover {
+        color: #b71c1c;
+        text-decoration: underline;
+    }
+
+    .goals-section {
+        margin-left: 20px;
+    }
+
+    /* --- MODAL DE EXCLUSÃO DE CONTA --- */
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.6);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        animation: fadeIn 0.3s ease-out;
+    }
+
+    .modal-content {
+        background: white;
+        padding: 2rem;
+        border-radius: 12px;
+        width: 90%;
+        max-width: 400px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        animation: scaleIn 0.3s ease-out;
+    }
+
+    .modal-content h3 {
+        margin-top: 0;
+        color: #d32f2f;
+        font-size: 1.4rem;
+        font-weight: 600;
+        text-align: center;
+        font-family: "Helvetica", "Arial", sans-serif;
+    }
+
+    .form-group {
+        margin: 1rem 0;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: bold;
+        color: #333;
+        font-size: 0.95rem;
+        font-family: "Helvetica", "Arial", sans-serif;
+    }
+
+    .form-group input {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #ccc;
+        border-radius: 10px; /* Igual aos outros inputs */
+        font-size: 1rem;
+        font-family: "Helvetica", "Arial", sans-serif;
+        background-color: #f9f4f4; /* Mesmo fundo cinza claro */
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra sutil */
+        transition: all 0.2s ease;
+    }
+
+    .form-group input:focus {
+        outline: none;
+        border: 2px solid #00bfff;
+        background-color: #ffffff;
+        box-shadow: 0 4px 8px rgba(0, 0, 191, 0.2);
+    }
+
+    .error {
+        color: #d32f2f;
+        font-size: 0.9rem;
+        margin: 0.5rem 0;
+        text-align: center;
+        font-family: "Helvetica", "Arial", sans-serif;
+        min-height: 1.2rem;
+    }
+
+    .modal-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 1rem;
+        margin-top: 1.5rem;
+    }
+
+    .btn-danger {
+        background-color: #d32f2f;
+        color: white;
+        border: none;
+        padding: 0.75rem 1.25rem;
+        border-radius: 20px; /* Borda arredondada igual aos outros botões */
+        font-size: 1rem;
+        font-weight: bold;
+        font-family: "Helvetica", "Arial", sans-serif;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-danger:hover:not([disabled]) {
+        background-color: #b71c1c;
+        transform: scale(1.05);
+    }
+
+    .btn-cancel {
+        background-color: #e0e0e0;
+        color: #333;
+        border: none;
+        padding: 0.75rem 1.25rem;
+        border-radius: 20px;
+        font-size: 1rem;
+        font-weight: bold;
+        font-family: "Helvetica", "Arial", sans-serif;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-cancel:hover {
+        background-color: #ccc;
+        transform: scale(1.05);
+    }
+
+    .warning {
+        color: #d32f2f;
+        font-size: 0.9rem;
+        margin: 0.5rem 0;
+        text-align: center;
+        font-family: "Helvetica", "Arial", sans-serif;
+        min-height: 1.2rem;
+    }
+
+    .form-label {
+        margin-top: 20px;
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: bold;
+        color: #333;
+        font-size: 0.95rem;
+        font-family: "Helvetica", "Arial", sans-serif;
+    }
+
+    #deleteEmail {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #ccc;
+        border-radius: 10px; /* Igual aos outros inputs */
+        font-size: 1rem;
+        font-family: "Helvetica", "Arial", sans-serif;
+        background-color: #f9f4f4; /* Mesmo fundo cinza claro */
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra sutil */
+        transition: all 0.2s ease;
+    }
+
+    #deleteEmail:focus {
+        outline: none;
+        border: 2px solid #00bfff;
+        background-color: #ffffff;
+        box-shadow: 0 4px 8px rgba(0, 0, 191, 0.2);
+    }
+
+    .invalid-feedback {
+        color: #d32f2f;
+        font-size: 0.9rem;
+        margin: 0.5rem 0;
+        text-align: center;
+        font-family: "Helvetica", "Arial", sans-serif;
+        min-height: 1.2rem;
+    }
+
+    #deletePassword {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #ccc;
+        border-radius: 10px; /* Igual aos outros inputs */
+        font-size: 1rem;
+        font-family: "Helvetica", "Arial", sans-serif;
+        background-color: #f9f4f4; /* Mesmo fundo cinza claro */
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra sutil */
+        transition: all 0.2s ease;
+    }
+
+    #deletePassword:focus {
+        outline: none;
+        border: 2px solid #00bfff;
+        background-color: #ffffff;
+        box-shadow: 0 4px 8px rgba(0, 0, 191, 0.2);
+    }
+
+    /* --- ANIMAÇÕES SUAVES --- */
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    @keyframes scaleIn {
+        from { transform: scale(0.9); opacity: 0; }
+        to { transform: scale(1); opacity: 1; }
+    }
+}
+
+/*Mobile*/
+@media (max-width: 375px) {
+    .profile-header {
+        position: absolute;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 60px;
+        font-family: "Helvetica";
+        height: 100px;
+        width: 100%;
+        z-index: 20;
+    }
+
+    .profile-title {
+        position: relative;
+        top: 114px;
+        left: -90px;
+        font-size: 24px;
+        width: 100%;
+        text-align: center;
+    }
+
+    .edit {
+        position: absolute;
+        width: 25px;
+        top: 115px;
+        left: 135px;
+        cursor: pointer;
+        z-index: 10;
+    }
+
+    .back-arrow {
+        position: absolute;
+        top: 30px;
+        left: 20px;
+        font-size: 24px;
+        cursor: pointer;
+        color: #888;
+        z-index: 10;
+    }
+
+    .logo-image {
+        position: absolute;
+        top: 25px;
+        right: 10px;
+        width: 150px;
+    }
+
+    .page-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        padding: 20px;
+        background-color: white;
+        position: relative;
+        font-family: "Helvetica";
+    }
+
+
+    .profile-container {
+        position: absolute;
+        width: 100%;
+        padding: 0 20px;
+    }
+
+    .profile-body {
+        position: absolute;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        max-width: 1200px;
+        margin-top: -30px;
+        padding: 20px;
+        background-color: white;
+    }
+
+    .profile-icons {
+        width: 15px;
+        height: 15px;
+        margin-top: -3.5px;
+        margin-right: 15px;
+        vertical-align: middle;
+        display: inline-block;
+    }
+
+    .registerForm {
+        position: absolute;
+        display: block;
+        width: 100%;
+        top: -140px;
+        font-family: "Helvetica";
+        color: #444;
+        max-width: 800px;
+    }
+
+    .userData {
+        margin-left: 30px;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+    }
+
+    .user-section {
+        min-width: 300px;
+    }
+
+    .userDataEdit {
+        width: 100%;
+        max-width: 500px;
+    }
+
+    .userDataUl {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .userDataUl li {
+        margin: 10px 0 20px 0;
+        cursor: default;
+        font-size: 16px;
+        color: #555;
+        line-height: 1.5;
+        transition: color 0.3s ease;
+    }
+
+    .userDataUl li:hover {
+        color: #00bfff;
+    }
+
+    .editing-section {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        margin-top: -10px;
+        margin-left: -15px;
+    }
+
+    h3 {
+        margin-bottom: 10px;
+        color: #333;
+        font-size: 1rem;
+        font-weight: 600;
+        text-align: center;
+        font-family: "Helvetica";
+    }
+
+    .personal-info {
+        width: 100%;
+        max-width: 350px;
+        padding: 12px;
+        border: none;
+        border-radius: 10px;
+        font-size: 12px;
+        background-color: #fffcfc;
+        outline: none;
+        transition: all 0.2s ease;
+        color: #666;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .goals-info{
+        width: 100%;
+        max-width: 350px;
+        padding: 12px;
+        margin: 13px;
+        border: none;
+        border-radius: 10px;
+        font-size: 16px;
+        background-color: #fffcfc;
+        outline: none;
+        transition: all 0.2s ease;
+        color: #666;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .field-name {
+        font-weight: bold;
+        color: #666;
+        margin-top:0px;
+    }
+
+    .input-field {
+        width: 260px;
+        padding: 12px;
+        margin: 10px;
+        border: none;
+        border-radius: 10px;
+        font-size: 16px;
+        background-color: #f9f4f4;
+        outline: none;
+        transition: all 0.2s ease;
+        color: #666;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .input-field:focus {
+        background-color: #ffffff;
+        border: 2px solid #00bfff;
+        box-shadow: 0 4px 8px rgba(0, 0, 191, 0.2);
+    }
+
+    select.input-field {
+        appearance: none;
+        padding-right: 40px;
+        background: #f9f4f4 url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23666' viewBox='0 0 16 16'><path d='M7.247 11.14 2.451 5.658C1.885 5.088 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/></svg>") no-repeat right 1rem center;
+        background-size: 16px;
+        cursor: pointer;
+    }
+
+    select.input-field option {
+        color: #666;
+        background-color: #fff;
+    }
+
+    .profile-actions {
+        display: flex;
+        flex-direction: column;
+        margin-left: 10px;
+    }
+
+    .submit-btn,
+    .cancel-btn {
+        width: 300px;
+        padding: 14px;
+        border: none;
+        border-radius: 20px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 6px rgba(0, 0, 191, 0.1);
+        margin-top: 10px;
+    }
+
+    .submit-btn {
+        background-color: #00bfff;
+        color: white;
+    }
+
+    .submit-btn:hover:not([disabled]) {
+        background-color: #0099cc;
+        transform: scale(1.0002);
+    }
+
+    .cancel-btn {
+        background-color: #c0e7ff;
+        color: #003366;
+    }
+
+    .cancel-btn:hover {
+        background-color: #b8d8e9;
+        transform: scale(1.0002);
+    }
+
+    .delete-btn {
+        max-width: 753px;
+        padding: 14px 0;
+        margin-top: 30px;
+        background: transparent;
+        color: #d32f2f;
+        border: none;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: color 0.3s ease;
+    }
+
+    .delete-btn:hover {
+        color: #b71c1c;
+        text-decoration: underline;
+    }
+
+    .goals-section {
+        margin-left: 0px;
+        margin-top: -10px;
+    }
+
+    /* --- MODAL DE EXCLUSÃO DE CONTA --- */
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.6);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        animation: fadeIn 0.3s ease-out;
+    }
+
+    .modal-content {
+        background: white;
+        padding: 2rem;
+        border-radius: 12px;
+        width: 90%;
+        max-width: 400px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        animation: scaleIn 0.3s ease-out;
+    }
+
+    .modal-content h3 {
+        margin-top: 0;
+        color: #d32f2f;
+        font-size: 1.4rem;
+        font-weight: 600;
+        text-align: center;
+        font-family: "Helvetica", "Arial", sans-serif;
+    }
+
+    .form-group {
+        margin: 1rem 0;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: bold;
+        color: #333;
+        font-size: 0.95rem;
+        font-family: "Helvetica", "Arial", sans-serif;
+    }
+
+    .form-group input {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #ccc;
+        border-radius: 10px; /* Igual aos outros inputs */
+        font-size: 1rem;
+        font-family: "Helvetica", "Arial", sans-serif;
+        background-color: #f9f4f4; /* Mesmo fundo cinza claro */
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra sutil */
+        transition: all 0.2s ease;
+    }
+
+    .form-group input:focus {
+        outline: none;
+        border: 2px solid #00bfff;
+        background-color: #ffffff;
+        box-shadow: 0 4px 8px rgba(0, 0, 191, 0.2);
+    }
+
+    .error {
+        color: #d32f2f;
+        font-size: 0.9rem;
+        margin: 0.5rem 0;
+        text-align: center;
+        font-family: "Helvetica", "Arial", sans-serif;
+        min-height: 1.2rem;
+    }
+
+    .modal-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 1rem;
+        margin-top: 1.5rem;
+    }
+
+    .btn-danger {
+        background-color: #d32f2f;
+        color: white;
+        border: none;
+        padding: 0.75rem 1.25rem;
+        border-radius: 20px; /* Borda arredondada igual aos outros botões */
+        font-size: 1rem;
+        font-weight: bold;
+        font-family: "Helvetica", "Arial", sans-serif;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-danger:hover:not([disabled]) {
+        background-color: #b71c1c;
+        transform: scale(1.05);
+    }
+
+    .btn-cancel {
+        background-color: #e0e0e0;
+        color: #333;
+        border: none;
+        padding: 0.75rem 1.25rem;
+        border-radius: 20px;
+        font-size: 1rem;
+        font-weight: bold;
+        font-family: "Helvetica", "Arial", sans-serif;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-cancel:hover {
+        background-color: #ccc;
+        transform: scale(1.05);
+    }
+
+    .warning {
+        color: #d32f2f;
+        font-size: 0.9rem;
+        margin: 0.5rem 0;
+        text-align: center;
+        font-family: "Helvetica", "Arial", sans-serif;
+        min-height: 1.2rem;
+    }
+
+    .form-label {
+        margin-top: 20px;
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: bold;
+        color: #333;
+        font-size: 0.95rem;
+        font-family: "Helvetica", "Arial", sans-serif;
+    }
+
+    #deleteEmail {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #ccc;
+        border-radius: 10px; /* Igual aos outros inputs */
+        font-size: 1rem;
+        font-family: "Helvetica", "Arial", sans-serif;
+        background-color: #f9f4f4; /* Mesmo fundo cinza claro */
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra sutil */
+        transition: all 0.2s ease;
+    }
+
+    #deleteEmail:focus {
+        outline: none;
+        border: 2px solid #00bfff;
+        background-color: #ffffff;
+        box-shadow: 0 4px 8px rgba(0, 0, 191, 0.2);
+    }
+
+    .invalid-feedback {
+        color: #d32f2f;
+        font-size: 0.9rem;
+        margin: 0.5rem 0;
+        text-align: center;
+        font-family: "Helvetica", "Arial", sans-serif;
+        min-height: 1.2rem;
+    }
+
+    #deletePassword {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #ccc;
+        border-radius: 10px; /* Igual aos outros inputs */
+        font-size: 1rem;
+        font-family: "Helvetica", "Arial", sans-serif;
+        background-color: #f9f4f4; /* Mesmo fundo cinza claro */
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra sutil */
+        transition: all 0.2s ease;
+    }
+
+    #deletePassword:focus {
+        outline: none;
+        border: 2px solid #00bfff;
+        background-color: #ffffff;
+        box-shadow: 0 4px 8px rgba(0, 0, 191, 0.2);
+    }
+
+    /* --- ANIMAÇÕES SUAVES --- */
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    @keyframes scaleIn {
+        from { transform: scale(0.9); opacity: 0; }
+        to { transform: scale(1); opacity: 1; }
+    }
+}

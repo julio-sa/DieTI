@@ -1,9 +1,9 @@
-import { Component, OnInit, ChangeDetectorRef, ElementRef, QueryList, ViewChildren, ViewChild } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { ChangeDetectorRef, Component, ElementRef, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { CommonModule } from '@angular/common';
-import { TacoService, NutritionalInfo } from '../shared/taco.service';
+import { NutritionalInfo, TacoService } from '../services/taco.service';
 
 interface RecipeIngredient {
   food: NutritionalInfo;

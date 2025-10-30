@@ -39,6 +39,32 @@
         Altura é requerida.
       </div>
 
+      <div formGroupName="goals">
+        <!-- CALORIES -->
+        <input type="number" id="calories" name="calories" formControlName="calorias" class="input-field" placeholder="Meta de Calorias (kcal)     Ex: 2500"/>
+        <div *ngIf="registerForm.get('goals.calorias')?.touched && registerForm.get('goals.calorias')?.invalid" class="error-msg" i18n>
+          Meta Calórica é requerida.
+        </div>
+  
+        <!-- PROTEINS -->
+        <input type="number" id="proteins" name="proteins" formControlName="proteinas" class="input-field" placeholder="Meta de Proteínas (g)       Ex: 180"/>
+        <div *ngIf="registerForm.get('goals.proteinas')?.touched && registerForm.get('goals.proteinas')?.invalid" class="error-msg" i18n>
+          Meta de Proteínas é requerida.
+        </div>
+  
+        <!-- CARBOHYDRATES -->
+        <input type="number" id="carbs" name="carbs" formControlName="carbo" class="input-field" placeholder="Meta de Carboidratos (g)  Ex: 300"/>
+        <div *ngIf="registerForm.get('goals.carbo')?.touched && registerForm.get('goals.carbo')?.invalid" class="error-msg" i18n>
+          Meta de Carboidratos é requerida.
+        </div>
+  
+        <!-- FAT -->
+        <input type="number" id="fats" name="fats" formControlName="gordura" class="input-field" placeholder="Meta de Gorduras (g)        Ex: 80"/>
+        <div *ngIf="registerForm.get('goals.gordura')?.touched && registerForm.get('goals.gordura')?.invalid" class="error-msg" i18n>
+          Meta de Gordura é requerida.
+        </div>
+      </div>
+
       <!-- PASSWORD -->
       <input i18n type="password" id="password" formControlName="password" class="input-field" placeholder="Senha">
       <div *ngIf="registerForm.get('password')?.touched && registerForm.get('password')?.invalid" class="error-msg" i18n>
@@ -46,8 +72,7 @@
       </div>
 
       <!-- CONFIRM PASSWORD -->
-      <input i18n type="password" id="confirmPassword" formControlName="confirmPassword" class="input-field"
-        placeholder="Confirme a senha">
+      <input i18n type="password" id="confirmPassword" formControlName="confirmPassword" class="input-field" placeholder="Confirme a senha">
       <div *ngIf="registerForm.errors?.['mismatch'] && registerForm.get('confirmPassword')?.touched" class="error-msg" i18n>
         Senhas não conferem.
       </div>

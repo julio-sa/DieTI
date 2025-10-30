@@ -36,4 +36,8 @@ export class PasswordRecoveryComponent {
       alert('Falha ao enviar código. Verifique seu email e tente novamente.');
     }
   }
+  
+  goToSignIn(): void {
+    this.router.navigate(['/sign-in']);
+  }
 }

@@ -91,3 +91,103 @@ a {
 .back-link a:hover {
   text-decoration: underline;
 }
+
+/*Responsividade*/
+/*Tablet*/
+@media (max-width: 768px) {
+  .recovery-code-container {
+    max-width: 300px;
+    max-height: 530px;
+    margin: 50px auto;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    font-family: Helvetica;
+    font-size: 14px;
+  }
+
+  .logo-image {
+    display: block;
+    margin-top: 20px;
+    margin-left: 26px;
+    margin-bottom: 10px;
+    width: 200px;
+  }
+
+  .form-group {
+    margin-bottom: 20px;
+  }
+
+  label {
+    display: block;
+    margin-bottom: 2px;
+    font-weight: bold;
+    color: #333;
+  }
+
+  a {
+    cursor: pointer;
+  }
+
+  .input-field {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 12px;
+    outline: none;
+    transition: border 0.2s ease;
+  }
+
+  .input-field:focus {
+    border-color: #00bfff;
+    box-shadow: 0 0 0 2px rgba(0, 191, 255, 0.2);
+  }
+
+  .input-field.invalid {
+    border-color: #f44336;
+  }
+
+  .error-message {
+    color: #f44336;
+    font-size: 12px;
+    margin-top: 5px;
+  }
+
+  .btn-primary {
+    width: 100%;
+    padding: 8px;
+    background: #00bfff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: background 0.2s;
+  }
+
+  .btn-primary:hover {
+    background: #0097d9;
+  }
+
+  .btn-primary:disabled {
+    background: #cccccc;
+    cursor: not-allowed;
+  }
+
+  .back-link {
+    text-align: center;
+    margin-top: 20px;
+  }
+
+  .back-link a {
+    color: #00bfff;
+    text-decoration: none;
+    font-weight: bold;
+  }
+
+  .back-link a:hover {
+    text-decoration: underline;
+  }
+}

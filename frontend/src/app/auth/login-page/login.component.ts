@@ -1,10 +1,8 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { Location } from '@angular/common';
-import { tap } from 'rxjs';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -27,26 +25,31 @@ export class LoginComponent {
 
     this.http.post('http://localhost:3000/api/auth/sign-in', loginData).subscribe({
       next: (res: any) => {
-        localStorage.setItem('token', res.token)
+        localStorage.setItem('token', res.token);
         localStorage.setItem('userId', res.user.id);
-        localStorage.setItem('userName', res.user.name)
+        localStorage.setItem('userName', res.user.name);
         
+        // ✅ Salva as metas retornadas
+        if (res.user.goals) {
+          localStorage.setItem('goals', JSON.stringify(res.user.goals));
+        }
+
         Swal.fire({
-                  icon: 'success',
-                  title: 'Bem vindo de volta!',
-                  text: 'Login realizado com sucesso.',
-                  confirmButtonText: 'Vamos lá!'
-                }).then(() => this.router.navigate(['/home']));
+          icon: 'success',
+          title: 'Bem vindo de volta!',
+          text: 'Login realizado com sucesso.',
+          confirmButtonText: 'Vamos lá!'
+        }).then(() => this.router.navigate(['/home']));
       },
       error: (err: HttpErrorResponse) => {
         Swal.fire({
-                  icon: 'error',
-                  title: 'Oops...',
-                  text: 'Email ou senha incorretos.',
-                });
+          icon: 'error',
+          title: 'Oops...',
+          text: 'Email ou senha incorretos.',
+        });
       }
-    });
-  }
+    });
+  }
   goToPasswordRecovery() {
     this.router.navigate(['/password-recovery']);
   }

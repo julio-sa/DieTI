@@ -1,5 +1,5 @@
-import { Component, Input, OnInit, OnChanges, ElementRef, ViewChild, Output, EventEmitter } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { Component, Input, OnInit, OnChanges, ElementRef, ViewChild, Output, EventEmitter, HostListener } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { ChangeDetectorRef } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
@@ -35,6 +35,8 @@ export class LineChartComponent implements OnInit, OnChanges {
   historicalFoods: any[] = [];
   historicalDate: string = '';
   showHistoricalPopup: boolean = false;
+  showMetricOptions = false;
+  showPeriodOptions = false;
 
   showTooltip = false;
   tooltipText = '';
@@ -46,8 +48,16 @@ export class LineChartComponent implements OnInit, OnChanges {
 
   metric: NumericField = 'calorias';
 
+  private lastTouchTime = 0;
+
+  private isMobileDevice(): boolean {
+    return window.innerWidth <= 768 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  }
+
   // ✅ Array seguro definido no TS
   readonly numericFields: NumericField[] = ['calorias', 'proteinas', 'carbo', 'gordura'];
+
+  periodOptions = ['7 dias', '1 mês', '1 trimestre', '1 semestre', '1 ano'] as const;
 
   // ✅ Cores com tipo explícito
   readonly colors: Record<NumericField, string> = {
@@ -64,16 +74,31 @@ export class LineChartComponent implements OnInit, OnChanges {
 
   openHistoricalFoodPopup(item: IntakeData) {
     const userId = localStorage.getItem('userId');
-    if (!userId) return;
+    const token = localStorage.getItem('token');
+    
+    if (!userId || !token) {
+      alert('Sessão expirada. Faça login novamente.');
+      return;
+    }
 
     this.historicalDate = item.date;
-    this.http.get<any[]>(`http://localhost:8000/food/history/${item.date}?user_id=${userId}`)
+    
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+
+    this.http.get<any[]>(`http://localhost:8000/food/history/${item.date}?user_id=${userId}`, { headers })
       .subscribe({
         next: (foods) => {
           this.historicalFoods = foods;
           this.showHistoricalPopup = true;
+          this.cdr.detectChanges();
         },
-        error: () => alert('Erro ao buscar alimentos para a data ' + item.date)
+        error: (err) => {
+          console.error('Erro ao buscar alimentos:', err);
+          alert('Erro ao carregar alimentos para esta data.');
+        }
       });
   }
 
@@ -96,6 +121,23 @@ export class LineChartComponent implements OnInit, OnChanges {
 
   onMetricChange() {
     this.animateData();
+  }
+
+  onSelectTouch(event: TouchEvent, type: 'metric' | 'period') {
+    const now = Date.now();
+    // Impede cliques muito rápidos (300ms)
+    if (now - this.lastTouchTime < 300) {
+      event.preventDefault();
+      return;
+    }
+    
+    this.lastTouchTime = now;
+    
+    if (type === 'metric') {
+      this.toggleMetricOptions();
+    } else {
+      this.togglePeriodOptions();
+    }
   }
 
   loadHistory() {
@@ -270,5 +312,52 @@ export class LineChartComponent implements OnInit, OnChanges {
       case '1 ano': return 5;
       default: return 90;
     }
+  }
+
+  // Fechar dropdowns ao clicar fora
+  @HostListener('document:click', ['$event'])
+  onClickOutside(event: MouseEvent) {
+    const target = event.target as HTMLElement;
+    const insideSelect = target.closest('.custom-select');
+    if (!insideSelect) {
+      this.showMetricOptions = false;
+      this.showPeriodOptions = false;
+    }
+  }
+
+  toggleMetricOptions() {
+    if (this.isMobileDevice()) {
+      this.showMetricOptions = !this.showMetricOptions;
+      if (this.showMetricOptions) this.showPeriodOptions = false;
+    }
+  }
+
+  togglePeriodOptions() {
+    if (this.isMobileDevice()) {
+      this.showPeriodOptions = !this.showPeriodOptions;
+      if (this.showPeriodOptions) this.showMetricOptions = false;
+    }
+  }
+
+  selectMetric(field: NumericField) {
+    this.metric = field;
+    this.showMetricOptions = false;
+    this.onMetricChange();
+  }
+
+  selectPeriod(period: string) {
+    this.selectedPeriod = period;
+    this.showPeriodOptions = false;
+    this.loadHistory();
+  }
+
+  getMetricLabel(field: NumericField): string {
+    const labels: Record<NumericField, string> = {
+      calorias: 'Calorias',
+      proteinas: 'Proteínas',
+      carbo: 'Carbo',
+      gordura: 'Gordura'
+    };
+    return labels[field];
   }
 }

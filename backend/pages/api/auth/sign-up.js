@@ -10,14 +10,24 @@ const handler = async (req, res) => {
   try {
     await connectDB();
 
-    const { id, name, email, password, age, weight, height } = req.body;
+    const { id, name, email, password, age, weight, height, goals } = req.body;
 
-    if (!name || !email || !password) {
-      return res.status(400).json({ message: "Faltando informações obrigatórias" });
+    if (!name || !email || !password || !age || !weight || !height) {
+      return res.status(400).json({ message: "Faltando informações obrigatórias" });
     }
 
+    // Valores padrão para metas se não fornecidos
+    const defaultGoals = {
+      calorias: 2704,
+      proteinas: 176,
+      carbo: 320,
+      gordura: 80
+    };
+
+    const userGoals = goals || defaultGoals;
+
     const existingUser = await User.findOne({ email });
-    if (existingUser) return res.status(400).json({ message: "Email já cadastrado" });
+    if (existingUser) return res.status(400).json({ message: "Email já cadastrado" });
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -29,6 +39,7 @@ const handler = async (req, res) => {
       age,
       weight,
       height,
+      goals: userGoals
     });
 
     await newUser.save();
@@ -40,12 +51,13 @@ const handler = async (req, res) => {
     );
 
     return res.status(201).json({
-      message: "Usuário criado com sucesso",
+      message: "Usuário criado com sucesso",
       token,
       user: {
         id: newUser.id,
         email: newUser.email,
-        name: newUser.name
+        name: newUser.name,
+        goals: newUser.goals
       }
     });
   } catch (error) {

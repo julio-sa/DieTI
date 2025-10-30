@@ -59,3 +59,120 @@
 .auth-button-signup:hover {
   background-color: #b8d8e9;
 }
+
+/*Responsividade*/
+/*Tablet*/
+@media(max-width: 768px) {
+  .page-container {
+    height: 530px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: white;
+    padding: 20px;
+  }
+
+  .content-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 120px;
+  }
+
+  .logo {
+    max-width: 300px;
+    height: auto;
+    margin-top: 80px;
+  }
+
+  .buttons-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .auth-button-signin,
+  .auth-button-signup {
+    width: 350px;
+    padding: 1rem;
+    font-size: 1.2rem;
+    font-weight: bold;
+    background-color: #a3d8f4;
+    color: white;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+
+  .auth-button-signup {
+    background-color: #c0e7ff;
+  }
+
+  .auth-button-signin:hover {
+    background-color: #a0d6f3;
+  }
+
+  .auth-button-signup:hover {
+    background-color: #b8d8e9;
+  }
+}
+
+/*Celular*/
+@media (max-width: 375px) {
+  .page-container {
+    height: 530px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: white;
+    padding: 20px;
+  }
+
+  .content-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 150px;
+  }
+
+  .logo {
+    max-width: 300px;
+    height: auto;
+    margin-top: 80px;
+  }
+
+  .buttons-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .auth-button-signin,
+  .auth-button-signup {
+    width: 250px;
+    padding: 0.5rem;
+    font-size: 1rem;
+    font-weight: bold;
+    background-color: #a3d8f4;
+    color: white;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+
+  .auth-button-signup {
+    background-color: #c0e7ff;
+  }
+
+  .auth-button-signin:hover {
+    background-color: #a0d6f3;
+  }
+
+  .auth-button-signup:hover {
+    background-color: #b8d8e9;
+  }
+}

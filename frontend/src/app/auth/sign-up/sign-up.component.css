@@ -113,3 +113,224 @@ select.input-field option {
 .submit-btn:hover {
   background-color: #0099cc;
 }
+
+/*Responsividade*/
+/*Tablet*/
+@media (max-width: 768px) {
+  .page-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    padding: 20px;
+    background-color: white;
+    max-height: 530px;
+    position: relative;
+    font-family: Helvetica;
+  }
+
+  .back-arrow {
+    position: absolute;
+    top: 40px;
+    left: 40px;
+    font-size: 24px;
+    cursor: pointer;
+    color: #888;
+    z-index: 10;
+  }
+
+  .logo-image {
+    max-width: 200px;
+    height: auto;
+    margin-top: 10px;
+  }
+
+  .sign-up-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 400px;
+  }
+
+  .input-group {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    position: relative;
+  }
+
+  .input-field {
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0;
+    border: none;
+    border-radius: 10px;
+    font-size: 14px;
+    background-color: #f9f4f4;
+    outline: none;
+    transition: border 0.2s ease, background-color 0.2s ease;
+    color: #666;
+  }
+
+  .input-field:focus {
+    border: 2px solid #00bfff;
+    background-color: #ffffff;
+  }
+
+  .input-field:invalid {
+    border-color: #ff4d4d;
+  }
+
+  .input-field::placeholder {
+    color: #959494;
+  }
+
+  /* Estilo específico para o select */
+  select.input-field {
+    appearance: none;
+    padding-right: 40px;
+    background: #f9f4f4;
+    color: #959494;
+  }
+
+  /* Cor das opções do select */
+  select.input-field option {
+    color: #959494;
+  }
+
+  .error-msg {
+    color: red;
+    font-size: 0.5rem;
+    margin-top: 2px;
+    margin-bottom: 8px;
+  }
+
+  .submit-btn {
+    width: 100%;
+    padding: 8px;
+    margin-top: 10px;
+    background-color: #00bfff;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .submit-btn:hover {
+    background-color: #0099cc;
+  }
+}
+
+/*Celular*/
+@media (max-width: 375px) {
+  .page-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    padding: 20px;
+    background-color: white;
+    max-height: 530px;
+    position: relative;
+    font-family: Helvetica;
+  }
+
+  .back-arrow {
+    position: absolute;
+    top: 40px;
+    left: 20px;
+    font-size: 24px;
+    cursor: pointer;
+    color: #888;
+    z-index: 10;
+  }
+
+  .logo-image {
+    max-width: 200px;
+    height: auto;
+    margin-top: 30px;
+  }
+
+  .sign-up-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 400px;
+  }
+
+  .input-group {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    position: relative;
+  }
+
+  .input-field {
+    width: 100%;
+    padding: 8px;
+    margin: 5px 0;
+    border: none;
+    border-radius: 10px;
+    font-size: 12px;
+    background-color: #f9f4f4;
+    outline: none;
+    transition: border 0.2s ease, background-color 0.2s ease;
+    color: #666;
+  }
+
+  .input-field:focus {
+    border: 2px solid #00bfff;
+    background-color: #ffffff;
+  }
+
+  .input-field:invalid {
+    border-color: #ff4d4d;
+  }
+
+  .input-field::placeholder {
+    color: #959494;
+  }
+
+  /* Estilo específico para o select */
+  select.input-field {
+    appearance: none;
+    padding-right: 40px;
+    background: #f9f4f4;
+    color: #959494;
+  }
+
+  /* Cor das opções do select */
+  select.input-field option {
+    color: #959494;
+  }
+
+  .error-msg {
+    color: red;
+    font-size: 0.5rem;
+    margin-top: 2px;
+    margin-bottom: 8px;
+  }
+
+  .submit-btn {
+    width: 100%;
+    padding: 6px;
+    margin-top: 10px;
+    background-color: #00bfff;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .submit-btn:hover {
+    background-color: #0099cc;
+  }
+}

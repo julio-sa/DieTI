@@ -1,11 +1,10 @@
-import { Component, ElementRef, ViewChild, OnInit, ChangeDetectorRef } from "@angular/core";
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { FormsModule, ReactiveFormsModule, FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from "@angular/core";
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import Swal from 'sweetalert2';
-import { GoalService, Goals } from '../shared/goal.service';
-import { firstValueFrom } from "rxjs";
+import { GoalService, Goals } from '../services/goal.service';
 
 @Component({
     standalone: true,
@@ -147,33 +146,40 @@ export class ProfileComponent implements OnInit {
 
         this.http.get('http://localhost:3000/api/profile/profile', { headers }).subscribe({
             next: (res: any) => {
-                const user = res.user;
-                this.originalData = {
-                    name: user.name,
-                    email: user.email,
-                    age: user.age,
-                    weight: user.weight,
-                    height: user.height,
-                    objective: user.objective
-                };
+            const user = res.user;
+            
+            // Atualiza os dados do formulário
+            this.originalData = {
+                name: user.name,
+                email: user.email,
+                age: user.age,
+                weight: user.weight,
+                height: user.height,
+                objective: user.objective
+            };
+            this.registerForm.patchValue(this.originalData);
 
-                this.registerForm.patchValue(this.originalData);
+            // ✅ Atualiza as metas se existirem
+            if (user.goals) {
+                this.goals = { ...user.goals };
+                this.goalService.updateGoals(this.goals); // Atualiza o serviço também
+            }
             },
             error: (err) => {
-                if (err.status === 401) {
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Expired Session',
-                        text: 'Please, login again.',
-                    }).then(() => {
-                        this.router.navigate(['/login']);
-                    });
-                } else {
-                    this.errorMessage = 'Fail to load profile.';
-                }
+            if (err.status === 401) {
+                Swal.fire({
+                icon: 'warning',
+                title: 'Expired Session',
+                text: 'Please, login again.',
+                }).then(() => {
+                this.router.navigate(['/login']);
+                });
+            } else {
+                this.errorMessage = 'Fail to load profile.';
+            }
             }
         });
-    };
+        }
 
     cancelEdit() {
         this.registerForm.patchValue(this.originalData)

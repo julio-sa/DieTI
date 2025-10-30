@@ -6,7 +6,6 @@ import { Router, RouterModule } from '@angular/router';
 import { Location } from '@angular/common';
 import Swal from 'sweetalert2';
 
-
 @Component({
   standalone: true,
   selector: "app-sign-up",
@@ -18,6 +17,13 @@ export class SignUpComponent implements AfterViewInit {
   registerForm: FormGroup;
   errorMessage: string = '';
 
+  goals = {
+    calorias: 2704,
+    proteinas: 176,
+    carbo: 320,
+    gordura: 80
+  };
+
   @ViewChild('nameInput', { static: true }) nameInput!: ElementRef;
 
   constructor(private fb: FormBuilder, private http: HttpClient, private router: Router, private location: Location) {
@@ -28,7 +34,13 @@ export class SignUpComponent implements AfterViewInit {
       confirmPassword: ['', Validators.required],
       age: ['', Validators.required],
       weight: ['', Validators.required],
-      height: ['', Validators.required]
+      height: ['', Validators.required],
+      goals: this.fb.group({
+        calorias: ['', [Validators.required, Validators.min(1)]],
+        proteinas: ['', [Validators.required, Validators.min(1)]],
+        carbo: ['', [Validators.required, Validators.min(1)]],
+        gordura: ['', [Validators.required, Validators.min(1)]]
+      })
     }, { validator: this.password_confirmation });
   }
 
@@ -46,12 +58,9 @@ export class SignUpComponent implements AfterViewInit {
       return;
     }
 
-    const formData = {
-      ...this.registerForm.value,
-      createdAt: new Date().toISOString()
-    };
+    const { confirmPassword, ...userData } = this.registerForm.value;
 
-    this.http.post('http://localhost:3000/api/auth/sign-up', formData).subscribe({
+    this.http.post('http://localhost:3000/api/auth/sign-up', userData).subscribe({
       next: () => {
         Swal.fire({
           icon: 'success',

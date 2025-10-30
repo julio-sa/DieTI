@@ -101,7 +101,7 @@ details li {
 }
 
 .input-field {
-  width: 67.5%;
+  width: 92%;
   padding: 5px;
   border: none;
   border-radius: 10px;
@@ -252,4 +252,552 @@ details li {
   color: #666;
   font-weight: normal;
   margin-left: 4px;
+}
+
+/*Responsividade*/
+/*Tablet*/
+@media (max-width: 768px) {
+  .saved-recipes-container {
+    padding: 20px;
+    margin-left: 40px;
+    margin-top: 180px;
+    font-family: Helvetica;
+    width: calc(100% - 90px);
+  }
+
+  .back-arrow {
+      position: absolute;
+      top: 70px;
+      left: 40px;
+      font-size: 24px;
+      cursor: pointer;
+      color: #888;
+      z-index: 10;
+  }
+
+  .logo-image {
+      position: absolute;
+      top: 20px;
+      right: 40px;
+      width: 30%;
+      max-width: 350px;
+  }
+
+  .title {
+    margin-bottom: 30px;
+  }
+
+  .recipe-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    background-color: #fbfbfbc0;
+  }
+
+  .recipe-card h3 {
+    margin-top: 0;
+    color: #333;
+  }
+
+  .item {
+    margin-top: 10px;
+  }
+
+  details summary {
+    cursor: pointer;
+    font-weight: bold;
+    margin-top: 10px;
+  }
+
+  details ul {
+    list-style: disc;
+    margin: 10px 0;
+    padding-left: 20px;
+  }
+
+  details li {
+    margin: 10px 0;
+  }
+
+  /* Botões de ação */
+  .card-actions, .edit-actions {
+    margin-top: 15px;
+    display: flex;
+    gap: 10px;
+  }
+
+  .btn-edit, .btn-save {
+    background-color: #00bfff;
+    color: white;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+
+  .btn-cancel, .btn-delete {
+    background-color: #f44336;
+    color: white;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+
+  .btn-cancel {
+    background-color: #999;
+  }
+
+  /* Campo de quantidade no modo edição */
+  .quantity-field {
+    width: 80px;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-left: 10px;
+  }
+
+  .input-field {
+    width: 91.7%;
+    padding: 5px;
+    border: none;
+    border-radius: 10px;
+    background-color: #f9f4f4;
+    font-size: 16px;
+    outline: none;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    transition: border 0.2s ease, background-color 0.2s ease;
+    color: #666;
+  }
+
+  .input-field:focus {
+    border: 2px solid #00bfff;
+    background-color: #ffffff;
+  }
+
+  .input-field::placeholder {
+    color: #999;
+  }
+
+  .ingredient-add-field {
+    width: 40%;
+    padding: 6px;
+    border: none;
+    border-radius: 10px;
+    background-color: #f9f4f4;
+    font-size: 14px;
+    outline: none;
+    margin-top: 10px;
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    transition: border 0.2s ease, background-color 0.2s ease;
+    color: #666;
+  }
+
+  .ingredient-add-field:focus {
+    border: 2px solid #00bfff;
+    background-color: #ffffff;
+  }
+
+  .ingredient-add-field::placeholder {
+    color: #999;
+  }
+
+  .search-results {
+    position: absolute;
+    top: calc(100% + 5px); /* Abaixo do campo */
+    margin-left: 132px; /* Alinha à esquerda */
+    width: 58%; /* Mesma largura do campo */
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    max-height: 150px;
+    overflow-y: auto;
+    z-index: 100;
+  }
+
+  .search-item {
+    padding: 12px 16px;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+    transition: background 0.2s;
+  }
+
+  .search-item:hover,
+  .search-item.active {
+    background-color: #e6f7ff;
+    color: #00bfff;
+  }
+
+  .add-ingredients label {
+    font-size: 14px;
+  }
+
+  .quantity-field {
+    width: 70px;
+    padding: 6px;
+    border: none;
+    border-radius: 10px;
+    background-color: #f9f4f4;
+    font-size: 14px;
+    outline: none;
+    margin-top: 10px;
+    margin-right: 20px;
+    transition: border 0.2s ease, background-color 0.2s ease;
+    color: #666;
+  }
+
+  .quantity-field:focus {
+    border: 2px solid #00bfff;
+    background-color: #ffffff;
+  }
+
+  .quantity-field::placeholder {
+    color: #999;
+  }
+
+  .btn-add {
+    background-color: #00bfff;
+    color: white;
+    padding: 5px 20px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+  }
+
+  .btn-add:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+
+  .btn-remove {
+    background-color: #f44336;
+    color: white;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+    margin-right: 30px;
+  }
+
+  .total-list {
+    margin-top: 30px;
+    margin-left: 20px;
+  }
+
+  .item {
+    margin-bottom: 10px;
+  }
+
+  /* saved-recipes.component.css */
+  .favorite-toggle {
+    top: 10px;
+    font-size: 30px;
+    margin-left: calc(100% - 50px);
+    cursor: pointer;
+    color: #ddd;
+    transition: color 0.2s ease;
+  }
+
+  .recipe-card.favorited .favorite-toggle,
+  .favorite-toggle.active {
+    color: #00bfff;
+  }
+
+  .per-100g {
+    font-size: 0.8em;
+    color: #666;
+    font-weight: normal;
+    margin-left: 4px;
+  }
+}
+
+/*Mobile*/
+@media (max-width: 375px) {
+  .saved-recipes-container {
+    padding: 20px;
+    margin-left: 40px;
+    margin-top: 80px;
+    font-family: Helvetica;
+    width: calc(100% - 90px);
+  }
+
+  .back-arrow {
+      position: absolute;
+      top: 20px;
+      left: 5px;
+      font-size: 24px;
+      cursor: pointer;
+      color: #888;
+      z-index: 10;
+  }
+
+  .logo-image {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 45%;
+      max-width: 350px;
+  }
+
+  .title {
+    margin-top: -10px;
+    margin-left: -50px;
+    margin-bottom: 0px;
+    font-size: 18px;
+  }
+
+  .recipe-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    margin-left: -55px;
+    background-color: #fbfbfbc0;
+    width: 310px;
+  }
+
+  .recipe-card h3 {
+    margin-top: 0;
+    color: #333;
+  }
+
+  .item {
+    margin-top: 10px;
+  }
+
+  details summary {
+    cursor: pointer;
+    font-weight: bold;
+    margin-top: 10px;
+  }
+
+  details ul {
+    list-style: disc;
+    margin: 10px 0;
+    padding-left: 20px;
+  }
+
+  details li {
+    margin: 10px 0;
+  }
+
+  /* Botões de ação */
+  .card-actions, .edit-actions {
+    margin-top: 15px;
+    display: flex;
+    gap: 10px;
+  }
+
+  .btn-edit, .btn-save {
+    background-color: #00bfff;
+    color: white;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+
+  .btn-cancel, .btn-delete {
+    background-color: #f44336;
+    color: white;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+
+  .btn-cancel {
+    background-color: #999;
+  }
+
+  /* Campo de quantidade no modo edição */
+  .quantity-field {
+    width: 80px;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-left: 10px;
+  }
+
+  .input-field {
+    width: 85%;
+    padding: 5px;
+    border: none;
+    border-radius: 10px;
+    background-color: #f9f4f4;
+    font-size: 16px;
+    outline: none;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    transition: border 0.2s ease, background-color 0.2s ease;
+    color: #666;
+  }
+
+  .input-field:focus {
+    border: 2px solid #00bfff;
+    background-color: #ffffff;
+  }
+
+  .input-field::placeholder {
+    color: #999;
+  }
+
+  .ingredient-add-field {
+    width: 85%;
+    padding: 6px;
+    border: none;
+    border-radius: 10px;
+    background-color: #f9f4f4;
+    font-size: 12px;
+    outline: none;
+    margin-top: 10px;
+    margin-left: 0px;
+    margin-right: 0px;
+    margin-bottom: 0px;
+    transition: border 0.2s ease, background-color 0.2s ease;
+    color: #666;
+  }
+
+  .ingredient-add-field:focus {
+    border: 2px solid #00bfff;
+    background-color: #ffffff;
+  }
+
+  .ingredient-add-field::placeholder {
+    color: #999;
+  }
+
+  .search-results {
+    position: absolute;
+    top: 290px; /* Abaixo do campo */
+    margin-left: 0px;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    height: 150px;
+    overflow-y: auto;
+    z-index: 100;
+    width: 237px;
+    font-size: 12px;
+  }
+
+  .search-item {
+    padding: 10px 16px;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+    transition: background 0.2s;
+  }
+
+  .search-item:hover,
+  .search-item.active {
+    background-color: #e6f7ff;
+    color: #00bfff;
+  }
+
+  .quantity-field {
+    width: 150px;
+    padding: 5px;
+    border: none;
+    border-radius: 10px;
+    background-color: #f9f4f4;
+    font-size: 12px;
+    outline: none;
+    margin-top: 10px;
+    margin-right: 20px;
+    margin-left: 0px;
+    transition: border 0.2s ease, background-color 0.2s ease;
+    color: #666;
+  }
+
+  .quantity-field:focus {
+    border: 2px solid #00bfff;
+    background-color: #ffffff;
+  }
+
+  .quantity-field::placeholder {
+    color: #999;
+  }
+
+  .btn-add {
+    background-color: #00bfff;
+    color: white;
+    padding: 5px 20px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-left: 10px;
+    margin-bottom: 20px;
+  }
+
+  .btn-add:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+
+  .btn-remove {
+    background-color: #f44336;
+    color: white;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+    margin-right: 30px;
+    width: 80px;
+  }
+
+  h3 {
+    margin-bottom: 10px;
+  }
+
+  .total-list {
+    margin-top: 20px;
+    margin-left: 20px;
+    margin-bottom: 30px;
+  }
+
+  .ingredient-item {
+    margin-top: 10px;
+    font-size: 12px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .quantity-field-edit {
+    width: 80px;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-top: 10px;
+  }
+
+  .favorite-toggle {
+    top: 10px;
+    font-size: 30px;
+    margin-left: calc(100% - 50px);
+    cursor: pointer;
+    color: #ddd;
+    transition: color 0.2s ease;
+  }
+
+  .recipe-card.favorited .favorite-toggle,
+  .favorite-toggle.active {
+    color: #00bfff;
+  }
+
+  .per-100g {
+    font-size: 0.8em;
+    color: #666;
+    font-weight: normal;
+    margin-left: 4px;
+  }
 }
