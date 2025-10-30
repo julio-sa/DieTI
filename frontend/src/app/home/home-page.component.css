@@ -1303,10 +1303,10 @@ h4 {
 
   .dual-button {
     width: 100%;
-    padding: 8px;
+    padding: 5px;
     margin-top: 5px;
     background-color: #e0e0e0;
-    border-radius: 20px;
+    border-radius: 15px;
     position: relative;
     overflow: hidden;
     display: flex;
@@ -1454,10 +1454,10 @@ h4 {
   }
 
   .multi-ring-chart {
-    width: 320px;
-    height: 320px;
+    width: calc(100% - 20px);
+    height: calc(100% - 20px);
     margin-top: 20px;
-    margin-left: 0px;
+    margin-left: 20px;
   }
 
   .legend-container {
@@ -1529,7 +1529,7 @@ h4 {
 
   .favorites-container {
     padding: 0 20px;
-    margin-top: -80px;
+    margin-top: -100px;
     margin-left: -45px;
   }
 
