@@ -14,6 +14,7 @@ import { environment } from '../../../environments/environment';
 })
 export class PasswordRecoveryComponent {
   email = '';
+  private readonly backendUrl = environment.backendUrl;
 
   constructor(
     private http: HttpClient,
@@ -28,7 +29,7 @@ export class PasswordRecoveryComponent {
 
     try {
       await firstValueFrom(
-        this.http.post('environment.backendUrl/api/auth/forgot-password', { email: this.email })
+        this.http.post(`${this.backendUrl}/api/auth/forgot-password`, { email: this.email })
       );
       alert('Código de recuperação enviado para seu email.');
       this.router.navigate(['/recovery-code'], { queryParams: { email: this.email } });

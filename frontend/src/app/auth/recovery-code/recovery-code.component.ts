@@ -18,6 +18,8 @@ export class RecoveryCodeComponent implements OnInit {
   newPassword = '';
   confirmPassword = '';
 
+  private readonly backendUrl = environment.backendUrl;
+
   constructor(
     private http: HttpClient,
     private router: Router,
@@ -53,7 +55,7 @@ export class RecoveryCodeComponent implements OnInit {
 
     try {
       await firstValueFrom(
-        this.http.post('environment.backendUrl/api/auth/reset-password', {
+        this.http.post(`${this.backendUrl}/api/auth/reset-password`, {
           email: this.email,
           code: this.code,
           newPassword: this.newPassword

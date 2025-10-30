@@ -24,6 +24,8 @@ export class MultiRingChartComponent implements OnInit, OnChanges {
 
   @Output() refreshData = new EventEmitter<void>();
 
+  private readonly apiUrl = environment.apiUrl;
+
   showTooltip = false;
   tooltipText = '';
   tooltipX = 0;
@@ -103,7 +105,7 @@ export class MultiRingChartComponent implements OnInit, OnChanges {
     try {
       // ✅ Use firstValueFrom em vez de .toPromise()
       this.dailyFoods = await firstValueFrom(
-        this.http.get<any[]>(`environment.apiUrl/food/daily?user_id=${userId}`)
+        this.http.get<any[]>(`${this.apiUrl}/food/daily?user_id=${userId}`)
       );
       this.showDailyPopup = true;
     } catch (err) {
@@ -113,7 +115,7 @@ export class MultiRingChartComponent implements OnInit, OnChanges {
 
   async deleteFood(id: string) {
     if (confirm('Deletar esse alimento?')) {
-      await this.http.delete(`environment.apiUrl/food/delete/${id}`).toPromise();
+      await this.http.delete(`${this.apiUrl}/food/delete/${id}`).toPromise();
       
       // ✅ Remove localmente
       this.dailyFoods = this.dailyFoods.filter(f => f._id !== id);
@@ -145,7 +147,7 @@ export class MultiRingChartComponent implements OnInit, OnChanges {
       'Content-Type': 'application/json'
     });
 
-    this.http.put(`environement.apiUrl/food/update/${_id}`, updateData, { headers })
+    this.http.put(`${this.apiUrl}/food/update/${_id}`, updateData, { headers })
       .subscribe({
         next: () => {
           // Atualiza localmente

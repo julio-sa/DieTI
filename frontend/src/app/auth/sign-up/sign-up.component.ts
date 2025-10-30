@@ -18,6 +18,8 @@ export class SignUpComponent implements AfterViewInit {
   registerForm: FormGroup;
   errorMessage: string = '';
 
+  private readonly backendUrl = environment.backendUrl;
+
   goals = {
     calorias: 2704,
     proteinas: 176,
@@ -61,7 +63,7 @@ export class SignUpComponent implements AfterViewInit {
 
     const { confirmPassword, ...userData } = this.registerForm.value;
 
-    this.http.post('environment.backendUrl/api/auth/sign-up', userData).subscribe({
+    this.http.post(`${this.backendUrl}/api/auth/sign-up`, userData).subscribe({
       next: () => {
         Swal.fire({
           icon: 'success',

@@ -16,6 +16,7 @@ import { environment } from '../../../environments/environment';
 export class LoginComponent {
   email = '';
   password = '';
+  private readonly backendUrl = environment.backendUrl;
 
   constructor(private http: HttpClient, private router: Router, private location: Location) {}
   goBack(): void {
@@ -24,7 +25,7 @@ export class LoginComponent {
   onSubmit() {
     const loginData = { email: this.email, password: this.password };
 
-    this.http.post('environment.backendUrl/api/auth/sign-in', loginData).subscribe({
+    this.http.post(`${this.backendUrl}/api/auth/sign-in`, loginData).subscribe({
       next: (res: any) => {
         localStorage.setItem('token', res.token);
         localStorage.setItem('userId', res.user.id);

@@ -18,7 +18,7 @@ export interface NutritionalInfo {
   providedIn: 'root'
 })
 export class TacoService {
-  private readonly API_BASE = 'environment.apiUrl';
+  private readonly API_BASE = environment.apiUrl;
   private readonly RECIPES_SEARCH = `${this.API_BASE}/search/recipes/search`;
   private readonly TACO_SEARCH = `${this.API_BASE}/taco_table/search`;
 
@@ -32,7 +32,7 @@ export class TacoService {
     const params = new HttpParams().set('q', term.trim());
 
     return this.http.get<NutritionalInfo[]>(
-      'environment.apiUrl/search/combined',
+      `${this.API_BASE}/search/combined`,
       { params }
     ).pipe(
       catchError(err => {

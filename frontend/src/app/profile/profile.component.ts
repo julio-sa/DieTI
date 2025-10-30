@@ -29,6 +29,9 @@ export class ProfileComponent implements OnInit {
     // ID do usuário logado
     private userId: string | null = null;
 
+    private readonly apiUrl = environment.apiUrl;
+    private readonly backendUrl = environment.backendUrl;
+
     @ViewChild('nameInput') nameInput!: ElementRef
     @ViewChild('emailInput') emailInput!: ElementRef
     @ViewChild('ageInput') ageInput!: ElementRef
@@ -89,7 +92,7 @@ export class ProfileComponent implements OnInit {
         const token = localStorage.getItem('token');
         const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
 
-        this.http.put('environment.backendUrl/api/profile/update', this.registerForm.value, { headers }).subscribe({
+        this.http.put(`${this.backendUrl}/api/profile/update`, this.registerForm.value, { headers }).subscribe({
             next: (response: any) => {
                 this.isEditing = false;
                 this.loadUserData();
@@ -145,7 +148,7 @@ export class ProfileComponent implements OnInit {
 
         const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
 
-        this.http.get('environment.backendUrl/api/profile/profile', { headers }).subscribe({
+        this.http.get(`${this.backendUrl}/api/profile/profile`, { headers }).subscribe({
             next: (res: any) => {
             const user = res.user;
             
@@ -221,7 +224,7 @@ export class ProfileComponent implements OnInit {
             }
 
             // Depois exclui a conta
-            const deleteResponse = await fetch('environment.backendUrl/api/auth/delete-account', {
+            const deleteResponse = await fetch(`${this.backendUrl}/api/auth/delete-account`, {
             method: 'DELETE',
             headers: { 
                 'Authorization': `Bearer ${localStorage.getItem('token')}`,

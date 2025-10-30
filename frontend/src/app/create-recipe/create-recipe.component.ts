@@ -37,7 +37,7 @@ export class CreateRecipeComponent implements OnInit {
   selectedItemIndex = -1;
 
   // 🔥 URL fixa (sem environment)
-  private apiUrl = 'environment.apiUrl';
+  private readonly apiUrl = environment.apiUrl;
 
   constructor(
     private http: HttpClient,
@@ -236,7 +236,7 @@ export class CreateRecipeComponent implements OnInit {
       'Authorization': `Bearer ${token}`
     });
 
-    this.http.post('environment.apiUrl/recipes/save', recipeData, { headers })
+    this.http.post(`${this.apiUrl}/recipes/save`, recipeData, { headers })
       .subscribe({
         next: (res: any) => {
           console.log('Receita salva com sucesso:', res);

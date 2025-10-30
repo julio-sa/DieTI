@@ -32,6 +32,8 @@ export class LineChartComponent implements OnInit, OnChanges {
   };
   @ViewChild('tooltip') tooltipElement!: ElementRef;
 
+  private readonly apiUrl = environment.apiUrl;
+
   historicalFoods: any[] = [];
   historicalDate: string = '';
   showHistoricalPopup: boolean = false;
@@ -88,7 +90,7 @@ export class LineChartComponent implements OnInit, OnChanges {
       'Content-Type': 'application/json'
     });
 
-    this.http.get<any[]>(`environment.apiUrl/food/history/${item.date}?user_id=${userId}`, { headers })
+    this.http.get<any[]>(`${this.apiUrl}/food/history/${item.date}?user_id=${userId}`, { headers })
       .subscribe({
         next: (foods) => {
           this.historicalFoods = foods;
@@ -153,7 +155,7 @@ export class LineChartComponent implements OnInit, OnChanges {
     };
     const days = daysMap[this.selectedPeriod] || 7;
 
-    this.http.get<IntakeData[]>(`environment.apiUrl/intake/history?user_id=${userId}&days=${days}`)
+    this.http.get<IntakeData[]>(`${this.apiUrl}/intake/history?user_id=${userId}&days=${days}`)
       .subscribe(data => {
 
         // ✅ Garante nova referência para forçar detecção
