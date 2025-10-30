@@ -1,6 +1,5 @@
 # --- 1. IMPORTS ---
 from fastapi import FastAPI, HTTPException, Query
-from typing import Optional
 from dotenv import load_dotenv
 from pydantic import BaseModel, Field, ConfigDict
 from fastapi.middleware.cors import CORSMiddleware
@@ -22,7 +21,10 @@ app = FastAPI(
 # Permitir frontend Angular
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:4200"],
+    allow_origins=[
+        "http://localhost:4200",
+        "https://dieti-backend.onrender.com",
+        ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
