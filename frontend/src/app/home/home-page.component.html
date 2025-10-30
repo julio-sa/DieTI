@@ -131,17 +131,19 @@
         (refreshData)="onDataChanged()"
         class="multi-ring-chart"/>
       
-      <div class="favorites-container"
-        [style.display]="isLeftActive ? 'block' : 'none'">
-        <h4 [routerLink]="['/saved-recipes']" i18n>Favoritos</h4>
-        <div class="favorites-scroll">
-          @for (recipe of favoriteRecipes; track recipe._id) {
-            <div class="favorite-item" (click)="selectFavoriteRecipe(recipe)">
-              {{ recipe.name }}
-            </div>
-          }
+      @if (favoriteRecipes && favoriteRecipes.length > 0) {
+        <div class="favorites-container"
+             [style.display]="isLeftActive ? 'block' : 'none'">
+          <h4 [routerLink]="['/saved-recipes']" i18n>Favoritos</h4>
+          <div class="favorites-scroll">
+            @for (recipe of favoriteRecipes; track recipe._id) {
+              <div class="favorite-item" (click)="selectFavoriteRecipe(recipe)">
+                {{ recipe.name }}
+              </div>
+            }
+          </div>
         </div>
-      </div>
+      }
   
       <!-- Gráfico de linhas (aparece quando o slider está na direita) -->
       <app-line-chart 
