@@ -1124,7 +1124,7 @@ h4 {
 
   .input-group {
     margin: 45px auto 0 auto;
-    width: 200px;
+    width: 350px;
     max-width: calc(100% - 3px);
     display: flex;
     flex-direction: column;
@@ -1303,7 +1303,7 @@ h4 {
 
   .dual-button {
     width: 100%;
-    padding: 12px;
+    padding: 8px;
     margin-top: 5px;
     background-color: #e0e0e0;
     border-radius: 20px;
@@ -1454,10 +1454,10 @@ h4 {
   }
 
   .multi-ring-chart {
-    width: 300px;
-    height: 300px;
+    width: 320px;
+    height: 320px;
     margin-top: 20px;
-    margin-left: calc(100% - 40px);
+    margin-left: 0px;
   }
 
   .legend-container {
