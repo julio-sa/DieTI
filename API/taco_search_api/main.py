@@ -1,9 +1,8 @@
 # --- 1. IMPORTS ---
 from fastapi import FastAPI, HTTPException, Query
-from pydantic import Field
 from typing import Optional
 from dotenv import load_dotenv
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, ConfigDict
 from fastapi.middleware.cors import CORSMiddleware
 from bson import ObjectId
 from unidecode import unidecode
@@ -52,19 +51,20 @@ recipes_collection = db[collection_recipes]
 
 # --- 3. MODELOS PYDANTIC ---
 class NutritionalInfo(BaseModel):
-    id: int = Field(alias="_id")
-    description: str
-    calorias_kcal: Optional[float] = None
-    proteinas_g: Optional[float] = None
-    gordura_g: Optional[float] = None
-    carbo_g: Optional[float] = None
-    date: str = None
-
-    class Config:
-        allow_population_by_field_name = True
-        json_encoders = {
+    model_config = ConfigDict(
+        populate_by_name=True,
+        json_encoders={
             float: lambda v: float(f"{v:.4f}") if v is not None else None
         }
+    )
+
+    id: int = Field(alias="_id")
+    description: str
+    calorias_kcal: float | None = None
+    proteinas_g: float | None = None
+    gordura_g: float | None = None
+    carbo_g: float | None = None
+    date: str | None = None
 
 class AddIntakeRequest(BaseModel):
     user_id: str
