@@ -1,11 +1,11 @@
-import { environment } from '../environments/environment'
-
-const frontendUrl = environment.frontendUrl;
-
 export default function withCors(handler) {
   return async (req, res) => {
+    const allowedOrigins = ['http://localhost:4200', 'https://dieti.vercel.app'];
+    const origin = req.headers.origin;
     // Sempre define os headers CORS
-    res.setHeader('Access-Control-Allow-Origin', `${frontendUrl}`);
+    if (allowedOrigins.includes(origin)) {
+      res.setHeader('Access-Control-Allow-Origin', origin);
+    }
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     res.setHeader('Access-Control-Allow-Credentials', 'true');

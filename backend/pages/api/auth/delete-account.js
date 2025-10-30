@@ -2,11 +2,13 @@ import connectDB from '../../../lib/mongodb';
 import User from '../../../models/User';
 import { validateToken } from '../../../lib/auth';
 
-const frontendUrl = environment.frontendUrl;
-
 export default async function handler(req, res) {
+  const allowedOrigins = ['http://localhost:4200', 'https://dieti.vercel.app'];
+  const origin = req.headers.origin;
   // Headers CORS fixos
-  res.setHeader('Access-Control-Allow-Origin', `${frontendUrl}`);
+  if (allowedOrigins.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  }
   res.setHeader('Access-Control-Allow-Methods', 'DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Authorization, Content-Type');
 
