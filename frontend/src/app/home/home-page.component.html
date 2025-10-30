@@ -1,7 +1,5 @@
 <div class="page-container">
-  <div class="menu" (click)="openMenu()">
-    ⋮
-  </div>
+  <div class="menu" (click)="openMenu()">⋮</div>
 
   <div class="overlay" [class.active]="activeMenu" (click)="closeMenu()"></div>
 
@@ -127,7 +125,7 @@
       [gordura]="gorduraData"
       (refreshData)="onDataChanged()"
       class="multi-ring-chart"
-    />
+    ></app-multi-ring-chart>
 
     @if (favoriteRecipes && favoriteRecipes.length > 0) {
     <div class="favorites-container" [style.display]="isLeftActive ? 'block' : 'none'">
@@ -142,6 +140,10 @@
     </div>
     }
 
-    <app-line-chart class="line-chart" [goals]="goals" [style.display]="!isLeftActive ? 'block' : 'none'"></app-line-chart>
+    <app-line-chart
+      class="line-chart"
+      [goals]="goals"
+      [style.display]="!isLeftActive ? 'block' : 'none'"
+    ></app-line-chart>
   </div>
 </div>
