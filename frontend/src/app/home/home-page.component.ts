@@ -187,6 +187,9 @@ export class HomePageComponent implements AfterViewInit {
     
     // Carrega o consumo diário
     this.loadDailyIntake();
+
+    // Carrega as receitas favoritas
+    this.loadFavoriteRecipes();
     
     this.buttonLeft.nativeElement.focus();
     document.addEventListener('click', this.handleClickOutside.bind(this));
