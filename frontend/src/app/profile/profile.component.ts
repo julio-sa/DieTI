@@ -4,8 +4,8 @@ import { ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from "@an
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import Swal from 'sweetalert2';
-import { GoalService, Goals } from '../services/goal.service';
 import { environment } from '../../environments/environment';
+import { GoalService, Goals } from '../services/goal.service';
 
 @Component({
     standalone: true,

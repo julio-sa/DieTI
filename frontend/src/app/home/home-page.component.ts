@@ -4,10 +4,10 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { firstValueFrom, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
 import { NutritionalInfo, TacoService } from '../services/taco.service';
 import { LineChartComponent } from '../shared/line-chart/line-chart.component';
 import { MultiRingChartComponent } from '../shared/multi-ring-chart/multi-ring-chart.component';
-import { environment } from '../../environments/environment';
 
 interface FoodData {
   user_id: string;

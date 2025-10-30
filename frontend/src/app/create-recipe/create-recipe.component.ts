@@ -3,8 +3,8 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { ChangeDetectorRef, Component, ElementRef, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { NutritionalInfo, TacoService } from '../services/taco.service';
 import { environment } from '../../environments/environment';
+import { NutritionalInfo, TacoService } from '../services/taco.service';
 
 interface RecipeIngredient {
   food: NutritionalInfo;

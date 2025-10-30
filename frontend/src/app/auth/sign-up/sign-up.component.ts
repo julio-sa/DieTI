@@ -1,9 +1,8 @@
-import { Component, AfterViewInit, ElementRef, ViewChild } from "@angular/core";
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { FormsModule, ReactiveFormsModule, FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { AfterViewInit, Component, ElementRef, ViewChild } from "@angular/core";
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { Location } from '@angular/common';
 import Swal from 'sweetalert2';
 import { environment } from '../../../environments/environment';
 

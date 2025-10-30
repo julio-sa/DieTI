@@ -1,5 +1,5 @@
 export const environment = {
-  production: false,
-  apiUrl: 'http://localhost:8000',          // fastapi local
-  backendUrl: 'http://localhost:3000'       // next local
+  production: true,
+  apiUrl: 'https://dieti-api-search.onrender.com',
+  backendUrl: 'https://dieti-backend.onrender.com'
 };
