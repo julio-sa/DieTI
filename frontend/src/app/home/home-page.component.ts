@@ -53,6 +53,8 @@ export class HomePageComponent implements AfterViewInit {
   showInstallPrompt: boolean = false;
   favoriteRecipes: any[] = [];
 
+  menuState: { activeMenu: string } | null = { activeMenu: ''}
+
   private readonly apiUrl = environment.apiUrl;
 
   private installPromptEvent: any;
@@ -502,11 +504,17 @@ export class HomePageComponent implements AfterViewInit {
 
   openMenu(): void {
     this.activeMenu = true;
+    if (this.menuState) {
+      this.menuState.activeMenu = 'home';
+    }
     this.cdr.markForCheck();
   }
 
   closeMenu(): void {
     this.activeMenu = false;
+    if (this.menuState) {
+      this.menuState.activeMenu = '';
+    }
     this.cdr.markForCheck();
   }
 
