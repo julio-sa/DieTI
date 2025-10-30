@@ -1,26 +1,14 @@
 import { Component } from '@angular/core';
-import { RouterModule } from '@angular/router';
-import { SwUpdate } from '@angular/service-worker';
+import { RouterOutlet } from '@angular/router';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-root',
-  imports: [
-    RouterModule
-  ],
-  template: `./app.component.html`,
+  standalone: true,
+  imports: [CommonModule, RouterOutlet],
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css'],
 })
 export class AppComponent {
-  online = true;
-  title = 'frontend';
-
-  constructor(private swUpdate: SwUpdate) {
-    if (this.swUpdate.isEnabled) {
-      this.swUpdate.versionUpdates.subscribe(async (event) => {
-        if (event.type === 'VERSION_READY') {
-          await this.swUpdate.activateUpdate();
-          document.location.reload();
-        }
-      });
-    }
-  }
+  title = 'DieTI';
 }

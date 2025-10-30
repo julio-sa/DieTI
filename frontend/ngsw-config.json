@@ -46,6 +46,6 @@
     "/**",
     "!/assets/**",
     "!/api/**",
-    "!/**/*.*"
+    "!/*.{js,css,png,jpg,jpeg,gif,webp,svg,ico,txt,webmanifest}"
   ]
 }
