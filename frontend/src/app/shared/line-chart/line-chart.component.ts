@@ -1,5 +1,16 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { ChangeDetectorRef, Component, ElementRef, EventEmitter, HostListener, Input, OnChanges, OnInit, Output, ViewChild } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  EventEmitter,
+  HostListener,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { environment } from '../../../environments/environment';
 
@@ -18,7 +29,7 @@ type NumericField = 'calorias' | 'proteinas' | 'carbo' | 'gordura';
   standalone: true,
   imports: [FormsModule],
   templateUrl: './line-chart.component.html',
-  styleUrls: ['./line-chart.component.css']
+  styleUrls: ['./line-chart.component.css'],
 })
 export class LineChartComponent implements OnInit, OnChanges {
   @Input() selectedPeriod = '7 dias';
@@ -33,17 +44,22 @@ export class LineChartComponent implements OnInit, OnChanges {
 
   private readonly apiUrl = environment.apiUrl;
 
+  // popup de histórico
   historicalFoods: any[] = [];
-  historicalDate: string = '';
-  showHistoricalPopup: boolean = false;
+  historicalDate = '';
+  showHistoricalPopup = false;
+
+  // selects
   showMetricOptions = false;
   showPeriodOptions = false;
 
+  // tooltip
   showTooltip = false;
   tooltipText = '';
-  tooltipX = 0; 
+  tooltipX = 0;
   tooltipY = 0;
 
+  // dados
   rawData: IntakeData[] = [];
   animatedData: IntakeData[] = [];
 
@@ -51,65 +67,83 @@ export class LineChartComponent implements OnInit, OnChanges {
 
   private lastTouchTime = 0;
 
-  private isMobileDevice(): boolean {
-    return window.innerWidth <= 768 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-  }
-
-  // ✅ Array seguro definido no TS
   readonly numericFields: NumericField[] = ['calorias', 'proteinas', 'carbo', 'gordura'];
 
-  periodOptions = ['7 dias', '1 mês', '1 trimestre', '1 semestre', '1 ano'] as const;
+  // nota: aqui use sempre os mesmos nomes no HTML
+  readonly periodOptions = ['7 dias', '1 mês', '1 trimestre', '1 semestre', '1 ano'] as const;
 
-  // ✅ Cores com tipo explícito
+  // cores
   readonly colors: Record<NumericField, string> = {
     calorias: '#006e8c',
     proteinas: '#00bfff',
     carbo: '#4fc3f7',
-    gordura: '#a5d8ff'
+    gordura: '#a5d8ff',
   };
 
-  constructor(
-    private http: HttpClient,
-    private cdr: ChangeDetectorRef
-  ) {}
+  get hasHistoricalFoods(): boolean {
+    return Array.isArray(this.historicalFoods) && this.historicalFoods.length > 0;
+  }
 
+  constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {}
+
+  // ===================
+  // popup de histórico
+  // ===================
   openHistoricalFoodPopup(item: IntakeData) {
     const userId = localStorage.getItem('userId');
     const token = localStorage.getItem('token');
-    
+
     if (!userId || !token) {
       alert('Sessão expirada. Faça login novamente.');
       return;
     }
 
     this.historicalDate = item.date;
-    
+
     const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
     });
 
-    this.http.get<any[]>(`${this.apiUrl}/food/history/${item.date}?user_id=${userId}`, { headers })
+    this.http
+      .get<any>(`${this.apiUrl}/food/history/${item.date}?user_id=${userId}`, { headers })
       .subscribe({
-        next: (foods) => {
+        next: (res: any) => {
+          const foods: any[] =
+            Array.isArray(res)
+              ? res
+              : Array.isArray(res?.foods)
+              ? res.foods
+              : Array.isArray(res?.items)
+              ? res.items
+              : Array.isArray(res?.data)
+              ? res.data
+              : [];
+
           this.historicalFoods = foods;
           this.showHistoricalPopup = true;
           this.cdr.detectChanges();
         },
         error: (err) => {
-          console.error('Erro ao buscar alimentos:', err);
-          alert('Erro ao carregar alimentos para esta data.');
-        }
+          console.error('Erro ao buscar alimentos do histórico:', err);
+          this.historicalFoods = [];
+          this.showHistoricalPopup = true; // mostra pra usuário saber que não tem
+          this.cdr.detectChanges();
+        },
       });
   }
 
-  // Mapeia o label exibido para a data real
-  getDateFromLabel(label: string, index: number): string {
-    // animatedData tem as datas reais
-    return this.animatedData[index]?.date || '';
+  onPointClick(item: IntakeData, event?: Event) {
+    if (event) {
+      event.stopPropagation();
+      event.preventDefault();
+    }
+    this.openHistoricalFoodPopup(item);
   }
 
-
+  // ===================
+  // lifecycle
+  // ===================
   ngOnInit(): void {
     this.historicalFoods = [];
     this.loadHistory();
@@ -120,27 +154,9 @@ export class LineChartComponent implements OnInit, OnChanges {
     this.animateData();
   }
 
-  onMetricChange() {
-    this.animateData();
-  }
-
-  onSelectTouch(event: TouchEvent, type: 'metric' | 'period') {
-    const now = Date.now();
-    // Impede cliques muito rápidos (300ms)
-    if (now - this.lastTouchTime < 300) {
-      event.preventDefault();
-      return;
-    }
-    
-    this.lastTouchTime = now;
-    
-    if (type === 'metric') {
-      this.toggleMetricOptions();
-    } else {
-      this.togglePeriodOptions();
-    }
-  }
-
+  // ===================
+  // carga do gráfico
+  // ===================
   loadHistory() {
     const userId = localStorage.getItem('userId');
     if (!userId) return;
@@ -150,29 +166,27 @@ export class LineChartComponent implements OnInit, OnChanges {
       '1 mês': 30,
       '1 trimestre': 90,
       '1 semestre': 180,
-      '1 ano': 365
+      '1 ano': 365,
     };
+
     const days = daysMap[this.selectedPeriod] || 7;
 
-    this.http.get<IntakeData[]>(`${this.apiUrl}/intake/history?user_id=${userId}&days=${days}`)
-      .subscribe(data => {
-
-        // ✅ Garante nova referência para forçar detecção
+    this.http
+      .get<IntakeData[]>(`${this.apiUrl}/intake/history?user_id=${userId}&days=${days}`)
+      .subscribe((data) => {
+        // nova referência
         this.rawData = JSON.parse(JSON.stringify(data));
 
-        // ✅ Reinicia animatedData antes da animação
-        this.animatedData = this.rawData.map(item => ({
+        // zera animação
+        this.animatedData = this.rawData.map((item) => ({
           ...item,
           calorias: 0,
           proteinas: 0,
           carbo: 0,
-          gordura: 0
+          gordura: 0,
         }));
 
-        // ✅ Força detecção antes da animação
         this.cdr.detectChanges();
-
-        // ✅ Inicia animação do zero
         this.animateData();
       });
   }
@@ -180,8 +194,11 @@ export class LineChartComponent implements OnInit, OnChanges {
   reload(): void {
     this.loadHistory();
   }
-  // Método chamado ao passar o mouse sobre um ponto    
-  onPointHover(event: MouseEvent, item: IntakeData, index: number) {
+
+  // ===================
+  // tooltip
+  // ===================
+  onPointHover(event: MouseEvent, item: IntakeData, _index: number) {
     const value = this.getValue(item, this.metric);
     const goal = this.goals[this.metric];
 
@@ -196,27 +213,13 @@ export class LineChartComponent implements OnInit, OnChanges {
     this.showTooltip = true;
   }
 
-  // Ao sair do ponto
   hideTooltip() {
     this.showTooltip = false;
   }
 
-  formatGoalValue(percentage: number): string {
-    const goal = this.goals[this.metric];
-    const value = Math.round(goal * percentage);
-    return `${value} ${this.getUnit()}`;
-  }
-
-  getUnit(): string {
-    switch (this.metric) {
-      case 'calorias': return 'kcal';
-      case 'proteinas':
-      case 'carbo':
-      case 'gordura': return 'g';
-      default: return '';
-    }
-  }
-
+  // ===================
+  // animação
+  // ===================
   animateData() {
     const duration = 1000;
     const start = performance.now();
@@ -226,16 +229,14 @@ export class LineChartComponent implements OnInit, OnChanges {
       const progress = Math.min(elapsed / duration, 1);
       const easeOut = 1 - Math.pow(1 - progress, 3);
 
-      // ✅ Recalcula animatedData em cada frame
-      this.animatedData = this.rawData.map(item => ({
+      this.animatedData = this.rawData.map((item) => ({
         date: item.date,
         calorias: item.calorias * easeOut,
         proteinas: item.proteinas * easeOut,
         carbo: item.carbo * easeOut,
-        gordura: item.gordura * easeOut
+        gordura: item.gordura * easeOut,
       }));
 
-      // ✅ Força detecção visual
       this.cdr.detectChanges();
 
       if (progress < 1) {
@@ -246,37 +247,32 @@ export class LineChartComponent implements OnInit, OnChanges {
     requestAnimationFrame(animate);
   }
 
-  get xLabels(): string[] {
-    const step = this.selectedPeriod === '7 dias' ? 1 :
-                this.selectedPeriod === '1 mês' ? 2 :
-                this.selectedPeriod === '3 meses' ? 3 :
-                this.selectedPeriod === '6 meses' ? 6 :
-                this.selectedPeriod === '1 ano' ? 12 : 1;
-
-    return this.animatedData.map((d, i) => {
-      const date = new Date(d.date);
-      const day = date.getDate();
-      if (i % step === 0) {
-        return `${day}`;
-      }
-      return ''; // pula alguns labels
-    });
-  }
-
+  // ===================
+  // formatação de eixos
+  // ===================
   private parseLocalDate(dateString: string): Date {
     const [year, month, day] = dateString.split('-').map(Number);
-    return new Date(year, month - 1, day); // Usa ano/mês/dia sem fuso
+    return new Date(year, month - 1, day);
   }
+
   formatDate(date: string): string {
-  const dateObj = this.parseLocalDate(date);
+    const d = this.parseLocalDate(date);
+    const today = new Date();
 
-  if (this.selectedPeriod === '7 dias') {
-    const weekday = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab'];
-    return weekday[dateObj.getDay()];
+    const isTomorrow =
+      d.getFullYear() === today.getFullYear() &&
+      d.getMonth() === today.getMonth() &&
+      d.getDate() === today.getDate() + 1;
+
+    const finalDate = isTomorrow ? new Date(d.getFullYear(), d.getMonth(), d.getDate() - 1) : d;
+
+    if (this.selectedPeriod === '7 dias') {
+      const weekday = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab'];
+      return weekday[finalDate.getDay()];
+    }
+
+    return `${finalDate.getDate()}`;
   }
-
-  return `${dateObj.getDate()}`; // Mostra o dia correto
-}
 
   getValue(data: IntakeData, field: keyof IntakeData): number {
     const value = data[field];
@@ -284,38 +280,50 @@ export class LineChartComponent implements OnInit, OnChanges {
   }
 
   getLinePath(data: IntakeData[], field: NumericField): string {
-    return data.map((d, i) => {
-      const x = 60 + i * this.pointSpacing;
-      const value = d[field];
-      const goal = this.goals[field];
-      const y = this.getYCoord(value, goal);
-      return `${i === 0 ? 'M' : 'L'} ${x} ${y}`;
-    }).join(' ');
+    return data
+      .map((d, i) => {
+        const x = 60 + i * this.pointSpacing;
+        const value = d[field];
+        const goal = this.goals[field];
+        const y = this.getYCoord(value, goal);
+        return `${i === 0 ? 'M' : 'L'} ${x} ${y}`;
+      })
+      .join(' ');
   }
 
   getYCoord(value: number, goal: number): number {
-    if (goal === 0) return 250; // evita divisão por zero
-    const percentage = Math.min(value / goal, 1); // limita em 100%
-    return 250 - (percentage * 200); // escala para o SVG
-  }
-
-  // Para capitalizar o nome da métrica
-  capitalize(word: string): string {
-    return word.charAt(0).toUpperCase() + word.slice(1);
+    if (goal === 0) return 250;
+    const percentage = Math.min(value / goal, 1);
+    return 250 - percentage * 200;
   }
 
   get pointSpacing(): number {
     switch (this.selectedPeriod) {
-      case '7 dias': return 90;
-      case '1 mês': return 30;
-      case '3 meses': return 15;
-      case '6 meses': return 8;
-      case '1 ano': return 5;
-      default: return 90;
+      case '7 dias':
+        return 90;
+      case '1 mês':
+        return 30;
+      case '1 trimestre':
+        return 15;
+      case '1 semestre':
+        return 8;
+      case '1 ano':
+        return 5;
+      default:
+        return 90;
     }
   }
 
-  // Fechar dropdowns ao clicar fora
+  // ===================
+  // selects mobile
+  // ===================
+  private isMobileDevice(): boolean {
+    return (
+      window.innerWidth <= 768 ||
+      /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+    );
+  }
+
   @HostListener('document:click', ['$event'])
   onClickOutside(event: MouseEvent) {
     const target = event.target as HTMLElement;
@@ -343,7 +351,7 @@ export class LineChartComponent implements OnInit, OnChanges {
   selectMetric(field: NumericField) {
     this.metric = field;
     this.showMetricOptions = false;
-    this.onMetricChange();
+    this.animateData();
   }
 
   selectPeriod(period: string) {
@@ -352,12 +360,35 @@ export class LineChartComponent implements OnInit, OnChanges {
     this.loadHistory();
   }
 
+  formatGoalValue(percentage: number): string {
+    const goal = this.goals[this.metric];
+    const value = Math.round(goal * percentage);
+    return `${value} ${this.getUnit()}`;
+  }
+
+  getUnit(): string {
+    switch (this.metric) {
+      case 'calorias':
+        return 'kcal';
+      case 'proteinas':
+      case 'carbo':
+      case 'gordura':
+        return 'g';
+      default:
+        return '';
+    }
+  }
+
+  capitalize(word: string): string {
+    return word.charAt(0).toUpperCase() + word.slice(1);
+  }
+
   getMetricLabel(field: NumericField): string {
     const labels: Record<NumericField, string> = {
       calorias: 'Calorias',
       proteinas: 'Proteínas',
       carbo: 'Carbo',
-      gordura: 'Gordura'
+      gordura: 'Gordura',
     };
     return labels[field];
   }

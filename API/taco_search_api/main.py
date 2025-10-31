@@ -250,13 +250,16 @@ async def add_food(food: dict):
     user_id = food.get("user_id")
     if not user_id:
         raise HTTPException(status_code=400, detail="User ID is required")
-    date = food.get("date") or datetime.datetime.now().strftime("%Y-%m-%d")
+
+    today = datetime.datetime.now().strftime("%Y-%m-%d")
+    date = food.get("date") or today
+
     calorias = float(food.get("calorias") or 0.0)
     proteinas = float(food.get("proteinas") or 0.0)
     carbo = float(food.get("carbo") or 0.0)
     gordura = float(food.get("gordura") or 0.0)
 
-    result = await daily_log_intake_collection.insert_one({
+    doc = {
         "user_id": user_id,
         "description": food["description"],
         "grams": food["grams"],
@@ -265,11 +268,21 @@ async def add_food(food: dict):
         "carbo": carbo,
         "gordura": gordura,
         "date": date
-    })
+    }
 
+    # salva no log do dia (sempre)
+    await daily_log_intake_collection.insert_one(doc)
+
+    # se for registro retroativo (data != hoje), já salva no histórico também
+    if date != today:
+        await historical_log_intake_collection.insert_one(doc)
+
+    # recalcula totais
     await update_daily_intake(user_id, date)
     await update_historical_intake(user_id, date)
+
     return {"msg": "Food added"}
+
 
 @app.put("/food/update/{food_id}")
 async def update_food(food_id: str, updates: dict):
@@ -338,21 +351,38 @@ async def get_history(user_id: str, days: int = 7):
 
 @app.get("/food/history/{date}")
 async def get_historical_food(user_id: str, date: str):
+    # valida formato
     try:
         datetime.datetime.strptime(date, "%Y-%m-%d")
     except ValueError:
         raise HTTPException(status_code=400, detail="Invalid date format")
 
-    cursor = historical_log_intake_collection.find({"user_id": user_id, "date": date})
-    foods = await cursor.to_list(length=100)
+    today = datetime.datetime.now().strftime("%Y-%m-%d")
 
-    # Retorna lista vazia em vez de erro
+    # 1) se for hoje -> lê do diário (é onde /food/add grava)
+    if date == today:
+      cursor = daily_log_intake_collection.find({"user_id": user_id, "date": date})
+      foods = await cursor.to_list(length=100)
+    else:
+      # 2) se for dia passado -> tenta primeiro no histórico
+      cursor = historical_log_intake_collection.find({"user_id": user_id, "date": date})
+      foods = await cursor.to_list(length=100)
+
+      # 3) fallback: se não achou no histórico (ex.: cron não rodou),
+      # tenta no diário mesmo assim
+      if not foods:
+        cursor = daily_log_intake_collection.find({"user_id": user_id, "date": date})
+        foods = await cursor.to_list(length=100)
+
+    # sempre devolver lista, nunca erro
     if not foods:
         return []
 
     for food in foods:
         food["_id"] = str(food["_id"])
+
     return foods
+
 
 @app.post("/recipes/save")
 async def save_recipe(recipe: dict):

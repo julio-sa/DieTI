@@ -1,6 +1,16 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, ViewChild } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
@@ -11,7 +21,7 @@ import { environment } from '../../../environments/environment';
   standalone: true,
   imports: [FormsModule, CommonModule],
   templateUrl: './multi-ring-chart.component.html',
-  styleUrls: ['./multi-ring-chart.component.css']
+  styleUrls: ['./multi-ring-chart.component.css'],
 })
 export class MultiRingChartComponent implements OnInit, OnChanges {
   @Input() calorias!: { value: number; max: number };
@@ -30,76 +40,87 @@ export class MultiRingChartComponent implements OnInit, OnChanges {
   tooltipX = 0;
   tooltipY = 0;
 
-  // Valores animados
+  // valores animados
   animatedCalories = 0;
   animatedProtein = 0;
   animatedCarbs = 0;
   animatedFat = 0;
 
-  // Raio dos anéis
+  // raios
   outerRadius = 80;
   middleRadius = 70;
   innerRadius = 60;
   centerRadius = 50;
 
-  // Circunferências
+  // circunferências
   caloriasCircumference = 0;
   proteinasCircumference = 0;
   carbCircumference = 0;
   gorduraCircumference = 0;
 
+  // popup diário
+  dailyFoods: any[] = [];
+  showDailyPopup = false;
+  selectedFoodToEdit: any = null;
+  // guardo o original pra calcular o delta
+  private originalFoodToEdit: any = null;
+
+  // pra não ficar animando duas vezes ao mesmo tempo
+  private animationFrameId: number | null = null;
+
   constructor(
-    private cdr: ChangeDetectorRef, 
+    private cdr: ChangeDetectorRef,
     private http: HttpClient,
     private router: Router
   ) {}
 
-  // Método chamado ao passar o mouse sobre o ícone
+  // =========================
+  // tooltip
+  // =========================
   onIconHover(event: MouseEvent, nutrient: string, value: number, goal: number) {
-    this.tooltipText = `${this.capitalize(nutrient)}: ${value.toFixed(1)} / ${goal} ${this.getUnit(nutrient)}`;
-    
-    // Posição relativa ao container
-    const chartRect = (event.currentTarget as SVGElement).ownerSVGElement?.parentElement?.getBoundingClientRect();
+    this.tooltipText = `${this.capitalize(nutrient)}: ${value.toFixed(
+      1
+    )} / ${goal} ${this.getUnit(nutrient)}`;
+
+    const chartRect = (
+      event.currentTarget as SVGElement
+    ).ownerSVGElement?.parentElement?.getBoundingClientRect();
     if (!chartRect) return;
 
     this.tooltipX = event.clientX - chartRect.left + window.scrollX + 10;
     this.tooltipY = event.clientY - chartRect.top + window.scrollY - 10;
 
     this.showTooltip = true;
-    this.cdr.detectChanges(); // Força detecção se necessário
+    this.cdr.detectChanges();
   }
 
-  // Oculta o tooltip
   hideTooltip() {
     this.showTooltip = false;
   }
 
-  // Capitaliza a primeira letra
   capitalize(word: string): string {
     return word.charAt(0).toUpperCase() + word.slice(1);
   }
 
-  // Retorna unidade
   getUnit(nutrient: string): string {
     switch (nutrient) {
-      case 'calorias': return 'kcal';
+      case 'calorias':
+        return 'kcal';
       case 'proteinas':
       case 'carbo':
-      case 'gordura': return 'g';
-      default: return '';
+      case 'gordura':
+        return 'g';
+      default:
+        return '';
     }
   }
 
-
-  dailyFoods: any[] = [];
-  showDailyPopup: boolean = false;
-  selectedFoodToEdit: any = null;
-
+  // =========================
+  // popup diário
+  // =========================
   async openDailyFoodPopup() {
     const userId = localStorage.getItem('userId');
     if (!userId) return;
-
-    const today = new Date().toISOString().split('T')[0];
 
     try {
       this.dailyFoods = await firstValueFrom(
@@ -112,25 +133,29 @@ export class MultiRingChartComponent implements OnInit, OnChanges {
   }
 
   async deleteFood(id: string) {
-    if (confirm('Deletar esse alimento?')) {
-      await this.http.delete(`${this.apiUrl}/food/delete/${id}`).toPromise();
-      
-      // ✅ Remove localmente
-      this.dailyFoods = this.dailyFoods.filter(f => f._id !== id);
-      
-      // ✅ Avisa o pai para recarregar gráficos
-      this.refreshData.emit();
-    }
-} 
+    if (!confirm('Deletar esse alimento?')) return;
+
+    await this.http.delete(`${this.apiUrl}/food/delete/${id}`).toPromise();
+
+    this.dailyFoods = this.dailyFoods.filter((f) => f._id !== id);
+
+    // atualiza a home
+    this.refreshData.emit();
+  }
 
   editFood(food: any) {
+    // cópia que o usuário edita
     this.selectedFoodToEdit = { ...food };
+    // cópia original pra calcular delta
+    this.originalFoodToEdit = { ...food };
   }
 
   saveEditedFood() {
-    const updated = { ...this.selectedFoodToEdit };
+    if (!this.selectedFoodToEdit) return;
 
-    // ✅ Remove _id do corpo da requisição
+    const updated = { ...this.selectedFoodToEdit };
+    const original = this.originalFoodToEdit ? { ...this.originalFoodToEdit } : null;
+
     const { _id, ...updateData } = updated;
 
     const token = localStorage.getItem('token');
@@ -141,39 +166,86 @@ export class MultiRingChartComponent implements OnInit, OnChanges {
     }
 
     const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
     });
 
-    this.http.put(`${this.apiUrl}/food/update/${_id}`, updateData, { headers })
-      .subscribe({
-        next: () => {
-          // Atualiza localmente
-          const index = this.dailyFoods.findIndex(f => f._id === _id);
-          if (index !== -1) {
-            this.dailyFoods[index] = { ...updated }; // Mantém _id só aqui
-          }
-          this.selectedFoodToEdit = null;
-          this.refreshData.emit(); // Recarrega gráficos
-        },
-        error: (err) => {
-          console.error('Erro ao salvar:', err);
-          alert('Falha ao atualizar alimento. Tente novamente.');
+    // se ele só mudou os gramas, recalculamos as macros aqui
+    if (original && updated.grams && original.grams && updated.grams !== original.grams) {
+      const factor = updated.grams / original.grams;
+      updateData.calorias = +(original.calorias * factor).toFixed(2);
+      updateData.proteinas = +(original.proteinas * factor).toFixed(2);
+      updateData.carbo = +(original.carbo * factor).toFixed(2);
+      updateData.gordura = +(original.gordura * factor).toFixed(2);
+    }
+
+    this.http.put(`${this.apiUrl}/food/update/${_id}`, updateData, { headers }).subscribe({
+      next: async () => {
+        // atualiza lista local
+        const idx = this.dailyFoods.findIndex((f) => f._id === _id);
+        if (idx !== -1) {
+          this.dailyFoods[idx] = { _id, ...updateData };
         }
-      });
+
+        // 🔥 AJUSTA O INTAKE com o delta
+        if (original) {
+          const diffCal = +( (updateData.calorias ?? 0) - (original.calorias ?? 0) ).toFixed(2);
+          const diffProt = +( (updateData.proteinas ?? 0) - (original.proteinas ?? 0) ).toFixed(2);
+          const diffCarb = +( (updateData.carbo ?? 0) - (original.carbo ?? 0) ).toFixed(2);
+          const diffFat = +( (updateData.gordura ?? 0) - (original.gordura ?? 0) ).toFixed(2);
+
+          // só chama se mudou algo
+          if (diffCal !== 0 || diffProt !== 0 || diffCarb !== 0 || diffFat !== 0) {
+            try {
+              await firstValueFrom(
+                this.http.post(
+                  `${this.apiUrl}/intake/add`,
+                  {
+                    user_id: updated.user_id || original.user_id,
+                    calorias: diffCal,
+                    proteinas: diffProt,
+                    carbo: diffCarb,
+                    gordura: diffFat,
+                  },
+                  { headers }
+                )
+              );
+            } catch (err) {
+              // se o backend não aceitar negativo, aqui vai falhar
+              console.warn('Não foi possível ajustar o intake com o delta.', err);
+            }
+          }
+        }
+
+        this.selectedFoodToEdit = null;
+        this.originalFoodToEdit = null;
+
+        // pede pra home recarregar
+        this.refreshData.emit();
+      },
+      error: (err) => {
+        console.error('Erro ao salvar:', err);
+        alert('Falha ao atualizar alimento. Tente novamente.');
+      },
+    });
   }
 
   closePopup() {
     this.showDailyPopup = false;
+    this.selectedFoodToEdit = null;
+    this.originalFoodToEdit = null;
   }
+
+  // =========================
+  // lifecycle
+  // =========================
   ngOnInit(): void {
-    // Inicializa circunferências
     this.caloriasCircumference = 2 * Math.PI * this.outerRadius;
     this.proteinasCircumference = 2 * Math.PI * this.middleRadius;
     this.carbCircumference = 2 * Math.PI * this.innerRadius;
     this.gorduraCircumference = 2 * Math.PI * this.centerRadius;
-    this.dailyFoods = []; 
-    // Inicia animação
+
+    this.dailyFoods = [];
     this.animateValues();
   }
 
@@ -181,7 +253,16 @@ export class MultiRingChartComponent implements OnInit, OnChanges {
     this.animateValues();
   }
 
+  // =========================
+  // animação (com cancel)
+  // =========================
   animateValues() {
+    // cancela animação anterior
+    if (this.animationFrameId !== null) {
+      cancelAnimationFrame(this.animationFrameId);
+      this.animationFrameId = null;
+    }
+
     const duration = 1200;
     const start = performance.now();
 
@@ -195,35 +276,33 @@ export class MultiRingChartComponent implements OnInit, OnChanges {
     const toCarbs = this.carb.value;
     const toFat = this.gordura.value;
 
-    const animate = (time: number) => {
+    const step = (time: number) => {
       const elapsed = time - start;
       const progress = Math.min(elapsed / duration, 1);
-
-      // Ease-out natural
       const easeOut = 1 - Math.pow(1 - progress, 3);
 
-      this.animatedCalories = fromCalories + (toCalories - fromCalories) * easeOut;
-      this.animatedProtein = fromProtein + (toProtein - fromProtein) * easeOut;
+      this.animatedCalories =
+        fromCalories + (toCalories - fromCalories) * easeOut;
+      this.animatedProtein =
+        fromProtein + (toProtein - fromProtein) * easeOut;
       this.animatedCarbs = fromCarbs + (toCarbs - fromCarbs) * easeOut;
       this.animatedFat = fromFat + (toFat - fromFat) * easeOut;
 
-      if (progress < 1) {
-        requestAnimationFrame(animate);
-      } else {
-        // Garante precisão
-        this.animatedCalories = toCalories;
-        this.animatedProtein = toProtein;
-        this.animatedCarbs = toCarbs;
-        this.animatedFat = toFat;
-      }
-
-      // Força detecção
       this.cdr.detectChanges();
+
+      if (progress < 1) {
+        this.animationFrameId = requestAnimationFrame(step);
+      } else {
+        this.animationFrameId = null;
+      }
     };
 
-    requestAnimationFrame(animate);
+    this.animationFrameId = requestAnimationFrame(step);
   }
 
+  // =========================
+  // getters
+  // =========================
   get caloriasPercentage() {
     return (this.animatedCalories / this.calorias.max) * 100;
   }
@@ -240,34 +319,40 @@ export class MultiRingChartComponent implements OnInit, OnChanges {
     return (this.animatedFat / this.gordura.max) * 100;
   }
 
-  // Getters para offsets — usam os valores ANIMADOS
   get caloriasOffset() {
-    const percentage = (this.animatedCalories / this.calorias.max) * 100;
-    const raw = this.caloriasCircumference * (1 - Math.min(percentage, 100) / 100);
+    const pct = (this.animatedCalories / this.calorias.max) * 100;
+    const raw = this.caloriasCircumference * (1 - Math.min(pct, 100) / 100);
     return -raw;
   }
 
   get proteinasOffset() {
-    const percentage = (this.animatedProtein / this.proteinas.max) * 100;
-    const raw = this.proteinasCircumference * (1 - Math.min(percentage, 100) / 100);
+    const pct = (this.animatedProtein / this.proteinas.max) * 100;
+    const raw = this.proteinasCircumference * (1 - Math.min(pct, 100) / 100);
     return -raw;
   }
 
   get carbOffset() {
-    const percentage = (this.animatedCarbs / this.carb.max) * 100;
-    const raw = this.carbCircumference * (1 - Math.min(percentage, 100) / 100);
+    const pct = (this.animatedCarbs / this.carb.max) * 100;
+    const raw = this.carbCircumference * (1 - Math.min(pct, 100) / 100);
     return -raw;
   }
 
   get gorduraOffset() {
-    const percentage = (this.animatedFat / this.gordura.max) * 100;
-    const raw = this.gorduraCircumference * (1 - Math.min(percentage, 100) / 100);
+    const pct = (this.animatedFat / this.gordura.max) * 100;
+    const raw = this.gorduraCircumference * (1 - Math.min(pct, 100) / 100);
     return -raw;
   }
 
-  // Formatação
-  get formattedCalories() { return this.animatedCalories.toFixed(1); }
-  get formattedProtein() { return this.animatedProtein.toFixed(1); }
-  get formattedCarb() { return this.animatedCarbs.toFixed(1); }
-  get formattedFat() { return this.animatedFat.toFixed(1); }
+  get formattedCalories() {
+    return this.animatedCalories.toFixed(1);
+  }
+  get formattedProtein() {
+    return this.animatedProtein.toFixed(1);
+  }
+  get formattedCarb() {
+    return this.animatedCarbs.toFixed(1);
+  }
+  get formattedFat() {
+    return this.animatedFat.toFixed(1);
+  }
 }

@@ -80,7 +80,7 @@ export class HomePageComponent implements AfterViewInit {
   isOnline = true;
   pendingFoods: FoodData[] = [];
 
-  // dados
+  // dados do dia
   dailyIntake = {
     calorias: 0,
     proteinas: 0,
@@ -88,6 +88,7 @@ export class HomePageComponent implements AfterViewInit {
     gordura: 0,
   };
 
+  // metas
   goals = {
     calorias: 2704,
     proteinas: 176,
@@ -95,7 +96,7 @@ export class HomePageComponent implements AfterViewInit {
     gordura: 80,
   };
 
-  // gráficos
+  // dados pros gráficos
   caloriasData = { value: 0, max: this.goals.calorias };
   proteinasData = { value: 0, max: this.goals.proteinas };
   carbData = { value: 0, max: this.goals.carbo };
@@ -163,7 +164,10 @@ export class HomePageComponent implements AfterViewInit {
       }
     }
 
+    // inicializa gráficos com metas certas
     this.updateCharts();
+
+    // carga do dia
     this.loadDailyIntake();
     this.loadFavoriteRecipes();
 
@@ -185,6 +189,7 @@ export class HomePageComponent implements AfterViewInit {
 
     if (this.pendingFoods.length > 0) {
       const failed: FoodData[] = [];
+
       for (const food of this.pendingFoods) {
         try {
           await firstValueFrom(this.http.post(`${this.apiUrl}/food/add`, food));
@@ -195,14 +200,17 @@ export class HomePageComponent implements AfterViewInit {
               proteinas: food.proteinas,
               carbo: food.carbo,
               gordura: food.gordura,
+              description: food.description,
+              grams: food.grams,
             })
           );
         } catch {
           failed.push(food);
         }
       }
+
       this.pendingFoods = failed;
-      this.onDataChanged();
+      this.onDataChanged(); // recarrega do backend só uma vez
     }
   }
 
@@ -244,7 +252,6 @@ export class HomePageComponent implements AfterViewInit {
   // pointerdown na opção
   // =============================
   onResultPointerDown(_event: PointerEvent) {
-    // marca que o blur veio de um clique válido
     this.isSelectingFromResults = true;
   }
 
@@ -288,7 +295,6 @@ export class HomePageComponent implements AfterViewInit {
     }
   }
 
-  // usado no template ↓
   formatFoodDescription(description: string): { mainName: string; details: string[] } {
     const parts = description.split(',').map((p) => p.trim());
     if (parts.length === 0) {
@@ -379,10 +385,19 @@ export class HomePageComponent implements AfterViewInit {
       return;
     }
 
+    // 1) calcula consumo
     let consumed: any;
-
     if (this.selectedFood) {
-      consumed = this.tacoService.calculateForGrams(this.selectedFood, this.grams);
+        if ((this.selectedFood as any).type === 'recipe') {
+          consumed = this.tacoService.calculateForGrams(this.selectedFood, this.grams);
+          consumed.calorias = consumed.calorias / 100;
+          consumed.proteinas = consumed.proteinas / 100;
+          consumed.carbo = consumed.carbo / 100;
+          consumed.gordura = consumed.gordura / 100;
+        } else {
+            consumed = this.tacoService.calculateForGrams(this.selectedFood, this.grams);
+            alert(consumed)
+        }
     } else if (this.selectedRecipe) {
       const caloriasTotal = this.selectedRecipe.calorias ?? 0;
       const proteinasTotal = this.selectedRecipe.proteinas ?? 0;
@@ -397,13 +412,14 @@ export class HomePageComponent implements AfterViewInit {
       };
     }
 
-    // atualiza UI
+    // 2) atualiza UI na hora
     this.dailyIntake.calorias += consumed.calorias;
     this.dailyIntake.proteinas += consumed.proteinas;
     this.dailyIntake.carbo += consumed.carbo;
     this.dailyIntake.gordura += consumed.gordura;
     this.updateCharts();
 
+    // 3) monta payload
     const foodData: FoodData = {
       user_id: userId,
       description: this.selectedFood?.description || this.selectedRecipe?.name,
@@ -414,27 +430,42 @@ export class HomePageComponent implements AfterViewInit {
       gordura: Number(consumed.gordura) || 0,
     };
 
+    // 4) envia pro backend
     if (this.isOnline) {
       this.http.post(`${this.apiUrl}/food/add`, foodData).subscribe({
-        next: () => this.onDataChanged(),
-        error: () => this.queueOffline(foodData, consumed),
+        next: () => {
+          // grava também no intake
+          this.http
+            .post(`${this.apiUrl}/intake/add`, {
+              user_id: userId,
+              calorias: foodData.calorias,
+              proteinas: foodData.proteinas,
+              carbo: foodData.carbo,
+              gordura: foodData.gordura,
+              description: foodData.description,
+              grams: foodData.grams,
+            })
+            .subscribe({
+              next: () => this.onDataChanged(), // ✅ só aqui recarrega do backend
+              error: () => this.onDataChanged(),
+            });
+        },
+        error: () => {
+          // se falhou mesmo online, joga pra fila offline
+          this.queueOffline(foodData);
+        },
       });
     } else {
-      this.queueOffline(foodData, consumed);
+      // offline: só enfileira (UI já foi atualizada)
+      this.queueOffline(foodData);
     }
 
+    // 5) fecha popup
     this.closePopup();
-    this.onDataChanged();
   }
 
-  private queueOffline(foodData: FoodData, consumed: any) {
+  private queueOffline(foodData: FoodData) {
     this.pendingFoods.push(foodData);
-    this.dailyIntake.calorias += consumed.calorias;
-    this.dailyIntake.proteinas += consumed.proteinas;
-    this.dailyIntake.carbo += consumed.carbo;
-    this.dailyIntake.gordura += consumed.gordura;
-    this.updateCharts();
-    this.cdr.detectChanges();
     alert('Alimento adicionado offline. Será sincronizado quando online.');
     this.selectedFood = null;
   }
@@ -474,11 +505,6 @@ export class HomePageComponent implements AfterViewInit {
         this.cdr.detectChanges();
       },
     });
-
-    this.caloriasData = { ...this.caloriasData, value: this.dailyIntake.calorias };
-    this.proteinasData = { ...this.proteinasData, value: this.dailyIntake.proteinas };
-    this.carbData = { ...this.carbData, value: this.dailyIntake.carbo };
-    this.gorduraData = { ...this.gorduraData, value: this.dailyIntake.gordura };
   }
 
   loadFavoriteRecipes() {
@@ -509,9 +535,7 @@ export class HomePageComponent implements AfterViewInit {
       .get<any[]>(`${this.apiUrl}/recipes/list?user_id=${userId}`, { headers })
       .subscribe({
         next: (allRecipes) => {
-          this.favoriteRecipes = allRecipes.filter((recipe) =>
-            favoriteIds.includes(recipe._id)
-          );
+          this.favoriteRecipes = allRecipes.filter((recipe) => favoriteIds.includes(recipe._id));
           this.cdr.detectChanges();
         },
         error: () => {

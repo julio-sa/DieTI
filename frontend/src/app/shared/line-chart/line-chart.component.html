@@ -2,108 +2,143 @@
 <div class="controls">
   <!-- Select de métrica personalizado -->
   <div class="custom-select" (click)="toggleMetricOptions()">
-        <span>{{ getMetricLabel(metric) }}</span>
-        @if (showMetricOptions) {
-            <ul class="options">
-            @for (field of numericFields; track field) {
-                <li (click)="selectMetric(field)" 
-                    (touchstart)="selectMetric(field)"
-                    [class.active]="metric === field">
-                {{ getMetricLabel(field) }}
-                </li>
-            }
-            </ul>
+    <span>{{ getMetricLabel(metric) }}</span>
+    @if (showMetricOptions) {
+      <ul class="options">
+        @for (field of numericFields; track field) {
+          <li
+            (click)="selectMetric(field); $event.stopPropagation()"
+            (touchstart)="selectMetric(field)"
+            [class.active]="metric === field">
+            {{ getMetricLabel(field) }}
+          </li>
         }
+      </ul>
+    }
   </div>
 
-    <div class="custom-select" (click)="togglePeriodOptions()">
-        <span>{{ selectedPeriod }}</span>
-        @if (showPeriodOptions) {
-            <ul class="options">
-            @for (period of periodOptions; track period) {
-                <li (click)="selectPeriod(period)" 
-                    (touchstart)="selectPeriod(period)"
-                    [class.active]="selectedPeriod === period">
-                {{ period }}
-                </li>
-            }
-            </ul>
+  <div class="custom-select" (click)="togglePeriodOptions()">
+    <span>{{ selectedPeriod }}</span>
+    @if (showPeriodOptions) {
+      <ul class="options">
+        @for (period of periodOptions; track period) {
+          <li
+            (click)="selectPeriod(period); $event.stopPropagation()"
+            (touchstart)="selectPeriod(period)"
+            [class.active]="selectedPeriod === period">
+            {{ period }}
+          </li>
         }
-    </div>
+      </ul>
+    }
+  </div>
 </div>
 
 <div class="chart-container">
-    <div class="chart-scroll">
-        <svg width="300" height="300" viewBox="0 0 300 300" class="chart-svg" (mouseleave)="hideTooltip()">
-            <!-- Eixos -->
-            <line [attr.x1]="50" [attr.y1]="20" [attr.x2]="50" [attr.y2]="250" stroke="#ccc" />
-            <line [attr.x1]="50" [attr.y1]="250" [attr.x2]="680" [attr.y2]="250" stroke="#ccc" />
-    
-            <!-- Labels do eixo Y -->
-            @for (i of [0, 25, 50, 75, 100]; track i) {
-                <text [attr.x]="45" [attr.y]="250 - i * 2" text-anchor="end" font-size="10" fill="#666">
-                    {{ i }}%
-                </text>
-    
-                <!-- Label secundária com valor absoluto -->
-                @if (i > 0) {
-                    <text [attr.x]="45" [attr.y]="265 - i * 2" text-anchor="end" font-size="9" fill="#999">
-                    {{ formatGoalValue(i / 100) }}
-                    </text>
-                }
-            }
-    
-            <!-- Labels do eixo X -->
-            @for (item of animatedData; track $index) {
-                <text 
-                    [attr.x]="65 + $index * pointSpacing"
-                    [attr.y]="270"
-                    text-anchor="middle"
-                    font-size="12"
-                    fill="#333">
-                    {{ formatDate(item.date) }}
-                </text>
-            }
-    
-            <!-- Linha única -->
-            <polyline fill="none" [attr.stroke]="colors[metric]" stroke-width="3"
-                [attr.d]="getLinePath(animatedData, metric)" />
-                @for (item of animatedData; track $index) {
-                    <circle 
-                        [attr.cx]="65 + $index * pointSpacing"
-                        [attr.cy]="getYCoord(getValue(item, metric), goals[metric])"
-                        r="6"
-                        [attr.fill]="colors[metric]"
-                        class="has-tooltip"
-                        (mouseenter)="onPointHover($event, item, $index)"
-                        (mouseleave)="hideTooltip()"
-                        (click)="openHistoricalFoodPopup(item)"
-                    />
-                }
-        </svg>
-    </div>
+  <div class="chart-scroll">
+    <svg
+      width="300"
+      height="300"
+      viewBox="0 0 300 300"
+      class="chart-svg"
+      (mouseleave)="hideTooltip()">
 
-    <!-- Tooltip flutuante -->
-    @if (showTooltip) {
-        <div 
-            class="chart-tooltip" 
-            #tooltip 
-            [style.left.px]="tooltipX" 
-            [style.top.px]="tooltipY">
-            {{ tooltipText }}
-        </div>
-    }
-    @if (showHistoricalPopup) {
-    <div class="popup-overlay" (click)="showHistoricalPopup = false">
-        <div class="popup" (click)="$event.stopPropagation()">
-        <h3 i18n>Alimentos – {{ historicalDate }}</h3>
-        <ul class="food-list">
-            @for (food of historicalFoods; track $index) {
-            <li>{{ food.description }} — {{ food.grams }}g ({{ food.calories }} kcal)</li>
-            }
-        </ul>
-        <button (click)="showHistoricalPopup = false" i18n>Fechar</button>
-        </div>
+      <!-- Eixos -->
+      <line [attr.x1]="50" [attr.y1]="20" [attr.x2]="50" [attr.y2]="250" stroke="#ccc" />
+      <line [attr.x1]="50" [attr.y1]="250" [attr.x2]="680" [attr.y2]="250" stroke="#ccc" />
+
+      <!-- Labels do eixo Y -->
+      @for (i of [0, 25, 50, 75, 100]; track i) {
+        <text
+          [attr.x]="45"
+          [attr.y]="250 - i * 2"
+          text-anchor="end"
+          font-size="10"
+          fill="#666">
+          {{ i }}%
+        </text>
+
+        @if (i > 0) {
+          <text
+            [attr.x]="45"
+            [attr.y]="265 - i * 2"
+            text-anchor="end"
+            font-size="9"
+            fill="#999">
+            {{ formatGoalValue(i / 100) }}
+          </text>
+        }
+      }
+
+      <!-- Labels do eixo X -->
+      @for (item of animatedData; track $index) {
+        <text
+          [attr.x]="65 + $index * pointSpacing"
+          [attr.y]="270"
+          text-anchor="middle"
+          font-size="12"
+          fill="#333">
+          {{ formatDate(item.date) }}
+        </text>
+      }
+
+      <!-- Linha única -->
+      <polyline
+        fill="none"
+        [attr.stroke]="colors[metric]"
+        stroke-width="3"
+        [attr.d]="getLinePath(animatedData, metric)" />
+
+      <!-- Pontos -->
+      @for (item of animatedData; track $index) {
+        <circle
+          [attr.cx]="65 + $index * pointSpacing"
+          [attr.cy]="getYCoord(getValue(item, metric), goals[metric])"
+          r="6"
+          [attr.fill]="colors[metric]"
+          class="has-tooltip"
+          (mouseenter)="onPointHover($event, item, $index)"
+          (mouseleave)="hideTooltip()"
+          (click)="onPointClick(item, $event)"
+          (touchstart)="onPointClick(item, $event)" />
+      }
+    </svg>
+  </div>
+
+  <!-- Tooltip flutuante -->
+  @if (showTooltip) {
+    <div
+      class="chart-tooltip"
+      #tooltip
+      [style.left.px]="tooltipX"
+      [style.top.px]="tooltipY">
+      {{ tooltipText }}
     </div>
-    }
+  }
+
+  @if (showHistoricalPopup) {
+    <div class="popup-overlay" (click)="showHistoricalPopup = false">
+      <div class="popup" (click)="$event.stopPropagation()">
+        <h3 i18n>Alimentos – {{ historicalDate }}</h3>
+
+       @if (hasHistoricalFoods) {
+            <ul class="food-list">
+                @for (food of historicalFoods; track $index) {
+                <li>
+                    {{ food.description }}
+                    — {{ food.grams }} g
+                    @if (food.calorias) {
+                    ({{ food.calorias }} kcal)
+                    }
+                </li>
+                }
+            </ul>
+        } @else {
+            <p style="margin-top: 1rem;">Nenhum alimento registrado nesse dia.</p>
+        }
+
+        <button (click)="showHistoricalPopup = false" i18n>Fechar</button>
+      </div>
+    </div>
+  }
 </div>
