@@ -1,0 +1,15 @@
+name: Daily Rollover
+
+on:
+  schedule:
+    # 03:05 UTC todo dia (≈ 00:05 em SP, ajusta se quiser)
+    - cron: "5 3 * * *"
+  workflow_dispatch: {}  # permite rodar na mão pelo GitHub
+
+jobs:
+  call-backend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call FastAPI rollover
+        run: |
+          curl -X POST "https://dieti-api-search.onrender.com/cron/rollover"
