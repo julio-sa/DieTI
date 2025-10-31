@@ -102,7 +102,6 @@ export class MultiRingChartComponent implements OnInit, OnChanges {
     const today = new Date().toISOString().split('T')[0];
 
     try {
-      // ✅ Use firstValueFrom em vez de .toPromise()
       this.dailyFoods = await firstValueFrom(
         this.http.get<any[]>(`${this.apiUrl}/food/daily?user_id=${userId}`)
       );

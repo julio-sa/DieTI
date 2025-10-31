@@ -512,7 +512,7 @@
   }
 
   .ingredient-add-field {
-    width: 74%;
+    width: 100%;
     padding: 8px;
     border: none;
     border-radius: 10px;
@@ -538,9 +538,9 @@
 
   .search-results {
     position: absolute;
-    top: 115px; /* Abaixo do campo */
+    top: 110px; /* Abaixo do campo */
     margin-left: 1px; /* Alinha à esquerda */
-    width: 73.2%; /* Mesma largura do campo */
+    width: 99%; /* Mesma largura do campo */
     background: white;
     border: 1px solid #ccc;
     border-radius: 8px;
@@ -594,8 +594,8 @@
     font-size: 12px;
     outline: none;
     margin-top: 10px;
-    margin-left: 8px;
-    margin-right: 0px;
+    margin-left: 0px;
+    margin-right: 121px;
     transition: border 0.2s ease, background-color 0.2s ease;
     color: #666;
   }
@@ -669,7 +669,7 @@
     border-radius: 10px;
     cursor: pointer;
     margin-top: 5px;
-    margin-left: 100px;
+    margin-left: 90px;
   }
 
   .btn-save:disabled {

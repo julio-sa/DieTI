@@ -4,7 +4,7 @@
     flex-wrap: wrap;
     gap: 60px;
     font-family: "Helvetica";
-    height: 150px;
+    height: 130px;
     width: 100%;
     z-index: 20;
 }
@@ -12,7 +12,7 @@
 .profile-title {
     position: relative;
     top: 65px;
-    left: -460px;
+    left: -600px;
     font-size: 40px;
     width: 100%;
     text-align: center;
@@ -22,7 +22,7 @@
     position: absolute;
     width: 30px;
     top: 75px;
-    left: 250px;
+    left: 270px;
     font-size: 24px;
     cursor: pointer;
     z-index: 10;
@@ -64,7 +64,7 @@
     position: absolute;
     width: 90%;
     max-width: 1200px;
-    margin-top: 80px;
+    margin-top: 60px;
     padding: 0 20px;
 }
 
@@ -75,7 +75,7 @@
     align-items: center;
     width: 100%;
     max-width: 1200px;
-    margin-top: 10px;
+    margin-top: -20px;
     padding: 20px;
     background-color: white;
 }
@@ -93,7 +93,7 @@
     position: absolute;
     display: block;
     width: 100%;
-    top: -90px;
+    top: -130px;
     font-size: 25px;
     font-family: "Helvetica";
     color: #444;
@@ -104,7 +104,7 @@
     margin-left: -60px;
     display: flex;
     flex-wrap: wrap;
-    gap: 60px;
+    gap: 140px;
     justify-content: flex-start;
 }
 
@@ -119,12 +119,13 @@
 
 .userDataUl {
     list-style: none;
-    margin: 0;
+    margin-top: -30px;
+    margin-left: 10px;
     padding: 0;
 }
 
 .userDataUl li {
-    margin: 10px 0 45px 0;
+    margin: 10px 0 55px 0;
     cursor: default;
     font-size: 25px;
     color: #555;
@@ -141,7 +142,7 @@
     max-width: 750px;
     display: inline-flex;
     flex-direction: row;
-    margin-top: -50px;
+    margin-top: -100px;
     margin-left: 50px;
 }
 
@@ -988,9 +989,9 @@ select.input-field option {
 
     .edit {
         position: absolute;
-        width: 25px;
-        top: 115px;
-        left: 135px;
+        width: 20px;
+        top: 118px;
+        left: 105px;
         cursor: pointer;
         z-index: 10;
     }
@@ -1184,12 +1185,12 @@ select.input-field option {
     .profile-actions {
         display: flex;
         flex-direction: column;
-        margin-left: 10px;
+        margin-left: 45px;
     }
 
     .submit-btn,
     .cancel-btn {
-        width: 300px;
+        width: 200px;
         padding: 14px;
         border: none;
         border-radius: 20px;
@@ -1225,10 +1226,11 @@ select.input-field option {
         max-width: 753px;
         padding: 14px 0;
         margin-top: 30px;
+        margin-left: -46px;
         background: transparent;
         color: #d32f2f;
         border: none;
-        font-size: 16px;
+        font-size: 13px;
         font-weight: bold;
         cursor: pointer;
         transition: color 0.3s ease;

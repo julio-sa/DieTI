@@ -561,22 +561,25 @@ details li {
     margin-bottom: 15px;
     margin-left: -55px;
     background-color: #fbfbfbc0;
-    width: 310px;
+    width: 290px;
   }
 
   .recipe-card h3 {
     margin-top: 0;
     color: #333;
+    font-size: 16px;
   }
 
   .item {
     margin-top: 10px;
+    font-size: 12px;
   }
 
   details summary {
     cursor: pointer;
     font-weight: bold;
-    margin-top: 10px;
+    margin-top: 20px;
+    font-size: 14px;
   }
 
   details ul {
