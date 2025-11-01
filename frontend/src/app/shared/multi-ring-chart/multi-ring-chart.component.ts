@@ -10,6 +10,7 @@ import {
   OnInit,
   Output,
   ViewChild,
+  ChangeDetectionStrategy,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -62,11 +63,13 @@ export class MultiRingChartComponent implements OnInit, OnChanges {
   dailyFoods: any[] = [];
   showDailyPopup = false;
   selectedFoodToEdit: any = null;
-  // guardo o original pra calcular o delta
   private originalFoodToEdit: any = null;
 
-  // pra não ficar animando duas vezes ao mesmo tempo
+  // animação
   private animationFrameId: number | null = null;
+
+  // ✅ isso aqui evita o bug do Safari: primeiro frame = vazio
+  private renderReady = false;
 
   constructor(
     private cdr: ChangeDetectorRef,
@@ -139,14 +142,11 @@ export class MultiRingChartComponent implements OnInit, OnChanges {
 
     this.dailyFoods = this.dailyFoods.filter((f) => f._id !== id);
 
-    // atualiza a home
     this.refreshData.emit();
   }
 
   editFood(food: any) {
-    // cópia que o usuário edita
     this.selectedFoodToEdit = { ...food };
-    // cópia original pra calcular delta
     this.originalFoodToEdit = { ...food };
   }
 
@@ -170,7 +170,6 @@ export class MultiRingChartComponent implements OnInit, OnChanges {
       'Content-Type': 'application/json',
     });
 
-    // se ele só mudou os gramas, recalculamos as macros aqui
     if (original && updated.grams && original.grams && updated.grams !== original.grams) {
       const factor = updated.grams / original.grams;
       updateData.calorias = +(original.calorias * factor).toFixed(2);
@@ -181,20 +180,17 @@ export class MultiRingChartComponent implements OnInit, OnChanges {
 
     this.http.put(`${this.apiUrl}/food/update/${_id}`, updateData, { headers }).subscribe({
       next: async () => {
-        // atualiza lista local
         const idx = this.dailyFoods.findIndex((f) => f._id === _id);
         if (idx !== -1) {
           this.dailyFoods[idx] = { _id, ...updateData };
         }
 
-        // 🔥 AJUSTA O INTAKE com o delta
         if (original) {
-          const diffCal = +( (updateData.calorias ?? 0) - (original.calorias ?? 0) ).toFixed(2);
-          const diffProt = +( (updateData.proteinas ?? 0) - (original.proteinas ?? 0) ).toFixed(2);
-          const diffCarb = +( (updateData.carbo ?? 0) - (original.carbo ?? 0) ).toFixed(2);
-          const diffFat = +( (updateData.gordura ?? 0) - (original.gordura ?? 0) ).toFixed(2);
+          const diffCal = +((updateData.calorias ?? 0) - (original.calorias ?? 0)).toFixed(2);
+          const diffProt = +((updateData.proteinas ?? 0) - (original.proteinas ?? 0)).toFixed(2);
+          const diffCarb = +((updateData.carbo ?? 0) - (original.carbo ?? 0)).toFixed(2);
+          const diffFat = +((updateData.gordura ?? 0) - (original.gordura ?? 0)).toFixed(2);
 
-          // só chama se mudou algo
           if (diffCal !== 0 || diffProt !== 0 || diffCarb !== 0 || diffFat !== 0) {
             try {
               await firstValueFrom(
@@ -211,7 +207,6 @@ export class MultiRingChartComponent implements OnInit, OnChanges {
                 )
               );
             } catch (err) {
-              // se o backend não aceitar negativo, aqui vai falhar
               console.warn('Não foi possível ajustar o intake com o delta.', err);
             }
           }
@@ -220,7 +215,6 @@ export class MultiRingChartComponent implements OnInit, OnChanges {
         this.selectedFoodToEdit = null;
         this.originalFoodToEdit = null;
 
-        // pede pra home recarregar
         this.refreshData.emit();
       },
       error: (err) => {
@@ -246,18 +240,27 @@ export class MultiRingChartComponent implements OnInit, OnChanges {
     this.gorduraCircumference = 2 * Math.PI * this.centerRadius;
 
     this.dailyFoods = [];
-    this.animateValues();
+
+    // ⚠️ truque pro Safari / iOS:
+    // primeiro paint = círculos vazios
+    this.renderReady = false;
+    requestAnimationFrame(() => {
+      this.renderReady = true;
+      this.animateValues();
+    });
   }
 
   ngOnChanges(): void {
-    this.animateValues();
+    // só anima se já passou o primeiro paint
+    if (this.renderReady) {
+      this.animateValues();
+    }
   }
 
   // =========================
   // animação (com cancel)
   // =========================
   animateValues() {
-    // cancela animação anterior
     if (this.animationFrameId !== null) {
       cancelAnimationFrame(this.animationFrameId);
       this.animationFrameId = null;
@@ -319,28 +322,29 @@ export class MultiRingChartComponent implements OnInit, OnChanges {
     return (this.animatedFat / this.gordura.max) * 100;
   }
 
+  // ✅ agora SEM negativo, e com fallback pro 1º frame
   get caloriasOffset() {
+    if (!this.renderReady) return this.caloriasCircumference;
     const pct = (this.animatedCalories / this.calorias.max) * 100;
-    const raw = this.caloriasCircumference * (1 - Math.min(pct, 100) / 100);
-    return -raw;
+    return this.caloriasCircumference * (1 - Math.min(pct, 100) / 100);
   }
 
   get proteinasOffset() {
+    if (!this.renderReady) return this.proteinasCircumference;
     const pct = (this.animatedProtein / this.proteinas.max) * 100;
-    const raw = this.proteinasCircumference * (1 - Math.min(pct, 100) / 100);
-    return -raw;
+    return this.proteinasCircumference * (1 - Math.min(pct, 100) / 100);
   }
 
   get carbOffset() {
+    if (!this.renderReady) return this.carbCircumference;
     const pct = (this.animatedCarbs / this.carb.max) * 100;
-    const raw = this.carbCircumference * (1 - Math.min(pct, 100) / 100);
-    return -raw;
+    return this.carbCircumference * (1 - Math.min(pct, 100) / 100);
   }
 
   get gorduraOffset() {
+    if (!this.renderReady) return this.gorduraCircumference;
     const pct = (this.animatedFat / this.gordura.max) * 100;
-    const raw = this.gorduraCircumference * (1 - Math.min(pct, 100) / 100);
-    return -raw;
+    return this.gorduraCircumference * (1 - Math.min(pct, 100) / 100);
   }
 
   get formattedCalories() {

@@ -1056,7 +1056,8 @@ select.input-field option {
         position: absolute;
         display: block;
         width: 100%;
-        top: -250px;
+        top: -270px;
+        margin-left: 15px;
         font-family: "Helvetica";
         color: #444;
         max-width: 800px;
@@ -1102,7 +1103,7 @@ select.input-field option {
         display: flex;
         flex-direction: column;
         margin-top: -10px;
-        margin-left: -15px;
+        margin-left: 0px;
     }
 
     h3 {
@@ -1185,12 +1186,12 @@ select.input-field option {
     .profile-actions {
         display: flex;
         flex-direction: column;
-        margin-left: 45px;
+        margin-left: 65px;
     }
 
     .submit-btn,
     .cancel-btn {
-        width: 200px;
+        width: 240px;
         padding: 14px;
         border: none;
         border-radius: 20px;
@@ -1226,7 +1227,7 @@ select.input-field option {
         max-width: 753px;
         padding: 14px 0;
         margin-top: 30px;
-        margin-left: -46px;
+        margin-left: -88px;
         background: transparent;
         color: #d32f2f;
         border: none;

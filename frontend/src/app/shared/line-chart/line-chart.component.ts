@@ -166,30 +166,33 @@ export class LineChartComponent implements OnInit, OnChanges {
       '1 mês': 30,
       '1 trimestre': 90,
       '1 semestre': 180,
-      '1 ano': 365,
+      '1 ano': 365
     };
-
     const days = daysMap[this.selectedPeriod] || 7;
 
     this.http
       .get<IntakeData[]>(`${this.apiUrl}/intake/history?user_id=${userId}&days=${days}`)
-      .subscribe((data) => {
-        // nova referência
-        this.rawData = JSON.parse(JSON.stringify(data));
+      .subscribe(data => {
+        // 1) guarda o valor REAL
+        this.rawData = data ?? [];
 
-        // zera animação
-        this.animatedData = this.rawData.map((item) => ({
-          ...item,
-          calorias: 0,
-          proteinas: 0,
-          carbo: 0,
-          gordura: 0,
+        // 2) monta o valor INICIAL cheio (começa lotado)
+        this.animatedData = this.rawData.map(item => ({
+          date: item.date,
+          calorias: this.goals.calorias,
+          proteinas: this.goals.proteinas,
+          carbo: this.goals.carbo,
+          gordura: this.goals.gordura
         }));
 
+        // 3) força detecção
         this.cdr.detectChanges();
+
+        // 4) anima descendo até o real
         this.animateData();
       });
   }
+
 
   reload(): void {
     this.loadHistory();
@@ -221,21 +224,32 @@ export class LineChartComponent implements OnInit, OnChanges {
   // animação
   // ===================
   animateData() {
-    const duration = 1000;
+    const duration = 900; // ms
     const start = performance.now();
+
+    // snapshot do estado CHEIO (o que tá na tela agora)
+    const startData = this.animatedData.map(item => ({ ...item }));
+    // alvo = dados reais
+    const targetData = this.rawData.map(item => ({ ...item }));
 
     const animate = (time: number) => {
       const elapsed = time - start;
       const progress = Math.min(elapsed / duration, 1);
-      const easeOut = 1 - Math.pow(1 - progress, 3);
+      // easing pra ficar gostoso
+      const ease = 1 - Math.pow(1 - progress, 3);
 
-      this.animatedData = this.rawData.map((item) => ({
-        date: item.date,
-        calorias: item.calorias * easeOut,
-        proteinas: item.proteinas * easeOut,
-        carbo: item.carbo * easeOut,
-        gordura: item.gordura * easeOut,
-      }));
+      // faz LERP campo a campo
+      this.animatedData = startData.map((startItem, idx) => {
+        const targetItem = targetData[idx] ?? startItem;
+
+        return {
+          date: targetItem.date,
+          calorias: startItem.calorias + (targetItem.calorias - startItem.calorias) * ease,
+          proteinas: startItem.proteinas + (targetItem.proteinas - startItem.proteinas) * ease,
+          carbo: startItem.carbo + (targetItem.carbo - startItem.carbo) * ease,
+          gordura: startItem.gordura + (targetItem.gordura - startItem.gordura) * ease,
+        };
+      });
 
       this.cdr.detectChanges();
 
@@ -246,6 +260,7 @@ export class LineChartComponent implements OnInit, OnChanges {
 
     requestAnimationFrame(animate);
   }
+
 
   // ===================
   // formatação de eixos
