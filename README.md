@@ -1,5 +1,5 @@
 # DieTI — Alimente sua Saúde  
-> **PT-BR primeiro** • _Role para a versão **EN** abaixo_
+> **PT-BR primeiro** •  **EN** version below
 
 [English version ↓](#dieti--feed-your-health)
 
