@@ -82,7 +82,7 @@
 }
 
 /*Celulares*/
-@media (max-width: 300px) {
+@media (max-width: 425px) {
   * {
     box-sizing: border-box;
     margin: 0;
@@ -109,8 +109,9 @@
   }
 
   .logo {
-    max-width: 300px;
+    max-width: 350px;
     height: auto;
+    margin-top: 250px;
   }
 
   .footer {

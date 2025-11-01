@@ -26,6 +26,7 @@ interface FoodData {
   proteinas: number;
   carbo: number;
   gordura: number;
+  date?: string;
 }
 
 @Component({
@@ -396,7 +397,6 @@ export class HomePageComponent implements AfterViewInit {
           consumed.gordura = consumed.gordura / 100;
         } else {
             consumed = this.tacoService.calculateForGrams(this.selectedFood, this.grams);
-            alert(consumed)
         }
     } else if (this.selectedRecipe) {
       const caloriasTotal = this.selectedRecipe.calorias ?? 0;
@@ -420,6 +420,8 @@ export class HomePageComponent implements AfterViewInit {
     this.updateCharts();
 
     // 3) monta payload
+    const localDate = new Date().toISOString().split('T')[0];
+
     const foodData: FoodData = {
       user_id: userId,
       description: this.selectedFood?.description || this.selectedRecipe?.name,
@@ -428,6 +430,8 @@ export class HomePageComponent implements AfterViewInit {
       proteinas: Number(consumed.proteinas) || 0,
       carbo: Number(consumed.carbo) || 0,
       gordura: Number(consumed.gordura) || 0,
+      // @ts-ignore
+      date: localDate,
     };
 
     // 4) envia pro backend
@@ -487,7 +491,9 @@ export class HomePageComponent implements AfterViewInit {
       return;
     }
 
-    this.http.get(`${this.apiUrl}/intake/today?user_id=${userId}`).subscribe({
+    const localDate = new Date().toISOString().split('T')[0];
+
+    this.http.get(`${this.apiUrl}/intake/today?user_id=${userId}&date=${localDate}`).subscribe({
       next: (data: any) => {
         this.dailyIntake = {
           calorias: data.calorias || 0,

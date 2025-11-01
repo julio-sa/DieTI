@@ -297,7 +297,7 @@
   }
 }
 
-@media (max-width: 300px) {
+@media (max-width: 425px) {
   .controls {
     position: relative;
     width: 260px;
@@ -305,7 +305,7 @@
     flex-direction: row;
     gap: 250px;
     margin-top: 60px;
-    margin-left: 315px;
+    margin-left: 283px;
   }
 
   .controls span {

@@ -519,13 +519,13 @@ details li {
 }
 
 /*Mobile*/
-@media (max-width: 300px) {
+@media (max-width: 425px) {
   .saved-recipes-container {
     padding: 20px;
-    margin-left: 40px;
+    margin-left: 55px;
     margin-top: 80px;
     font-family: Helvetica;
-    width: calc(100% - 90px);
+    width: 100%;
   }
 
   .back-arrow {
@@ -561,7 +561,7 @@ details li {
     margin-bottom: 15px;
     margin-left: -55px;
     background-color: #fbfbfbc0;
-    width: 290px;
+    width: 100%;
   }
 
   .recipe-card h3 {

@@ -193,7 +193,7 @@ h3 {
 
 .input-field {
     width: 100%;
-    max-width: 300px;
+    max-width: 412px;
     padding: 12px;
     margin: 10px;
     border: none;
@@ -673,7 +673,7 @@ select.input-field option {
 
     .input-field {
         width: 100%;
-        max-width: 300px;
+        max-width: 412px;
         padding: 12px;
         margin: 10px;
         border: none;
@@ -966,7 +966,7 @@ select.input-field option {
 }
 
 /*Mobile*/
-@media (max-width: 300px) {
+@media (max-width: 425px) {
     .profile-header {
         position: absolute;
         display: flex;
@@ -981,7 +981,7 @@ select.input-field option {
     .profile-title {
         position: relative;
         top: 35px;
-        left: -60px;
+        left: -120px;
         font-size: 22px;
         width: 100%;
         text-align: center;
@@ -1008,9 +1008,9 @@ select.input-field option {
 
     .logo-image {
         position: absolute;
-        top: 30px;
-        right: 10px;
-        width: 80px;
+        top: 25px;
+        right: 20px;
+        width: 120px;
     }
 
     .page-container {
@@ -1056,7 +1056,7 @@ select.input-field option {
         position: absolute;
         display: block;
         width: 100%;
-        top: -140px;
+        top: -250px;
         font-family: "Helvetica";
         color: #444;
         max-width: 800px;

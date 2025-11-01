@@ -63,7 +63,7 @@
 
 .submit-btn {
   width: 100%;
-  max-width: 300px;
+  max-width: 412px;
   padding: 14px;
   background-color: #a6e5ff;
   color: white;
@@ -81,7 +81,7 @@
 
 .input-group {
   width: 100%;
-  max-width: 300px;
+  max-width: 412px;
   margin-bottom: 20px;
 }
 
@@ -167,7 +167,7 @@
 
   .submit-btn {
     width: 100%;
-    max-width: 300px;
+    max-width: 412px;
     padding: 14px;
     background-color: #a6e5ff;
     color: white;
@@ -185,7 +185,7 @@
 
   .input-group {
     width: 100%;
-    max-width: 300px;
+    max-width: 412px;
     margin-bottom: 20px;
   }
 
@@ -212,7 +212,7 @@
 }
 
 /*Celular*/
-@media (max-width: 300px) {
+@media (max-width: 425px) {
   .page-container {
     display: flex;
     flex-direction: column;
@@ -270,7 +270,7 @@
 
   .submit-btn {
     width: 100%;
-    max-width: 300px;
+    max-width: 412px;
     padding: 14px;
     background-color: #a6e5ff;
     color: white;
@@ -288,7 +288,7 @@
 
   .input-group {
     width: 100%;
-    max-width: 300px;
+    max-width: 412px;
     margin-bottom: 20px;
   }
 

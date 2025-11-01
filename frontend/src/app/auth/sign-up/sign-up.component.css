@@ -227,7 +227,7 @@ select.input-field option {
 }
 
 /*Celular*/
-@media (max-width: 300px) {
+@media (max-width: 425px) {
   .page-container {
     display: flex;
     flex-direction: column;
@@ -253,7 +253,7 @@ select.input-field option {
   .logo-image {
     max-width: 200px;
     height: auto;
-    margin-top: 30px;
+    margin-top: -100px;
   }
 
   .sign-up-form {

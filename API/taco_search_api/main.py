@@ -213,8 +213,8 @@ async def search_by_code(food_id: int):
         raise HTTPException(status_code=404, detail=f"Food with code '{food_id}' not found.")
 
 @app.get("/intake/today")
-async def get_today_intake(user_id: str):
-    today = datetime.datetime.now().strftime("%Y-%m-%d")
+async def get_today_intake(user_id: str, date: str | None = None):
+    today = date or datetime.datetime.now().strftime("%Y-%m-%d")
     intake = await daily_intake_collection.find_one({"user_id": user_id, "date": today})
     if not intake:
         return {"calorias": 0, "proteinas": 0, "carbo": 0, "gordura": 0, "date": today}
@@ -224,7 +224,7 @@ async def get_today_intake(user_id: str):
 @app.post("/intake/add")
 async def add_intake(request: AddIntakeRequest):
     today = datetime.datetime.now().strftime("%Y-%m-%d")
-    result = await daily_intake_collection.update_one(
+    await daily_intake_collection.update_one(
         {"user_id": request.user_id, "date": today},
         {"$inc": {
             "calorias": request.calorias,
@@ -234,11 +234,12 @@ async def add_intake(request: AddIntakeRequest):
         }},
         upsert=True
     )
+    await update_historical_intake(request.user_id, today)
     return {"message": "Intake updated successfully"}
 
 @app.get("/food/daily")
-async def get_daily_food(user_id: str):
-    today = datetime.datetime.now().strftime("%Y-%m-%d")
+async def get_daily_food(user_id: str, date: str | None = None):
+    today = date or datetime.datetime.now().strftime("%Y-%m-%d")
     cursor = daily_log_intake_collection.find({"user_id": user_id, "date": today})
     foods = await cursor.to_list(length=100)
     for food in foods:
@@ -251,15 +252,16 @@ async def add_food(food: dict):
     if not user_id:
         raise HTTPException(status_code=400, detail="User ID is required")
 
-    today = datetime.datetime.now().strftime("%Y-%m-%d")
-    date = food.get("date") or today
+    date = food.get("date") or datetime.datetime.now().strftime("%Y-%m-%d")
 
     calorias = float(food.get("calorias") or 0.0)
     proteinas = float(food.get("proteinas") or 0.0)
     carbo = float(food.get("carbo") or 0.0)
     gordura = float(food.get("gordura") or 0.0)
 
+    doc_id = ObjectId()
     doc = {
+        "_id": doc_id,
         "user_id": user_id,
         "description": food["description"],
         "grams": food["grams"],
@@ -267,17 +269,20 @@ async def add_food(food: dict):
         "proteinas": proteinas,
         "carbo": carbo,
         "gordura": gordura,
-        "date": date
+        "date": date,
     }
 
-    # salva no log do dia (sempre)
+    # 1) salva no diário
     await daily_log_intake_collection.insert_one(doc)
 
-    # se for registro retroativo (data != hoje), já salva no histórico também
-    if date != today:
-        await historical_log_intake_collection.insert_one(doc)
+    # 2) salva no histórico também (upsert pra não duplicar)
+    await historical_log_intake_collection.update_one(
+        {"_id": doc_id},
+        {"$set": doc},
+        upsert=True
+    )
 
-    # recalcula totais
+    # 3) recalcula agregados
     await update_daily_intake(user_id, date)
     await update_historical_intake(user_id, date)
 
@@ -472,23 +477,24 @@ async def delete_recipe(recipe_id: str, user_id: str = Query(...)):
 async def rollover_daily_food():
     today = datetime.datetime.now().strftime("%Y-%m-%d")
     yesterday = (datetime.datetime.now() - datetime.timedelta(days=1)).strftime("%Y-%m-%d")
+
     user_ids_processed = set()
     cursor = daily_log_intake_collection.find({"date": yesterday})
     moved = 0
+
     async for food in cursor:
-        await historical_log_intake_collection.insert_one(food)
+        # agora só garante que tá no histórico
+        await historical_log_intake_collection.update_one(
+            {"_id": food["_id"]},
+            {"$set": food},
+            upsert=True
+        )
+        # e remove do diário
         await daily_log_intake_collection.delete_one({"_id": food["_id"]})
         user_ids_processed.add(food["user_id"])
         moved += 1
+
     for user_id in user_ids_processed:
         await update_historical_intake(user_id, yesterday)
-    return {"message": "Rollover completed", "moved": moved}
 
-@app.get("/")
-async def root():
-    return {
-        "status": "ok",
-        "name": "DieTI TACO API",
-        "docs": "/docs",
-        "redoc": "/redoc"
-    }
+    return {"message": "Rollover completed", "moved": moved}
