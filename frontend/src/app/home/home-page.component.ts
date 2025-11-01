@@ -137,9 +137,7 @@ export class HomePageComponent implements AfterViewInit {
     });
 
     // PWA
-    window.addEventListener('beforeinstallprompt', (event) => {
-      event.preventDefault();
-      this.installPromptEvent = event;
+    window.addEventListener('pwa-install-available', () => {
       this.showInstallPrompt = true;
       this.cdr.detectChanges();
     });
@@ -580,15 +578,17 @@ export class HomePageComponent implements AfterViewInit {
   }
 
   installApp() {
-    if (this.installPromptEvent) {
-      this.installPromptEvent.prompt();
-      this.installPromptEvent.userChoice.then(() => {
-        this.installPromptEvent = null;
-        this.showInstallPrompt = false;
-        this.cdr.detectChanges();
-      });
-    }
+    const promptEvent = (window as any).__pwaInstallPrompt;
+    if (!promptEvent) return;
+
+    promptEvent.prompt();
+    promptEvent.userChoice.then(() => {
+      (window as any).__pwaInstallPrompt = null;
+      this.showInstallPrompt = false;
+      this.cdr.detectChanges();
+    });
   }
+
 
   triggerInstall() {
     this.installApp();
