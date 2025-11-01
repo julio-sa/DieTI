@@ -980,7 +980,7 @@ select.input-field option {
 
     .profile-title {
         position: relative;
-        top: 35px;
+        top: 33px;
         left: -120px;
         font-size: 22px;
         width: 100%;
@@ -990,7 +990,7 @@ select.input-field option {
     .edit {
         position: absolute;
         width: 20px;
-        top: 38px;
+        top: 35px;
         left: 130px;
         cursor: pointer;
         z-index: 10;
@@ -1056,7 +1056,7 @@ select.input-field option {
         position: absolute;
         display: block;
         width: 100%;
-        top: -270px;
+        top: -200px;
         margin-left: 15px;
         font-family: "Helvetica";
         color: #444;

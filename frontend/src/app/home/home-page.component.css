@@ -1066,6 +1066,7 @@ h4 {
     position: relative;
     height: 800px;
     max-height: 800px;
+    margin-top: 20px;
     font-family: Helvetica;
   }
 
