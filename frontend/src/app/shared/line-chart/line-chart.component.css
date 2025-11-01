@@ -303,13 +303,13 @@
     width: 260px;
     display: flex;
     flex-direction: row;
-    gap: 250px;
+    gap: 200px;
     margin-top: 60px;
-    margin-left: 283px;
+    margin-left: 300px;
   }
 
   .controls span {
-    width: 60px;
+    width: 100px;
     height: auto;
     font-size: 10px;
     padding: auto;
@@ -321,10 +321,20 @@
     left: -155px;
   }
 
+  .options {
+    width: 100px;
+  }
+  
+  .custom-select .options li {
+    padding: 8px 10px;
+    font-size: 10px;
+    width: 100px;
+  }
+
   .custom-select::after {
     content: '˅';
     position: absolute;
-    left: 50px;
+    right: -25px;
     top: 50%;
     transform: translateY(-50%) rotate(0deg);
     font-size: 0.8em;
