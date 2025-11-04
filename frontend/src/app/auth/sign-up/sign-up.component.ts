@@ -60,10 +60,20 @@ export class SignUpComponent implements AfterViewInit {
       return;
     }
 
-    const { confirmPassword, ...userData } = this.registerForm.value;
+    const formData = this.registerForm.value;
 
-    this.http.post(`${this.backendUrl}/api/auth/sign-up`, userData).subscribe({
-      next: () => {
+    this.http.post(`${this.backendUrl}/api/auth/sign-up`, formData).subscribe({
+      next: (res: any) => {
+        // ✅ Salva os dados do novo usuário
+        localStorage.setItem('token', res.token);
+        localStorage.setItem('userId', res.user.id);
+        localStorage.setItem('userName', res.user.name);
+        
+        // ✅ Salva as metas do usuário
+        if (res.user.goals) {
+          localStorage.setItem('goals', JSON.stringify(res.user.goals));
+        }
+
         Swal.fire({
           icon: 'success',
           title: 'Bem vindo a uma vida saudável!',
