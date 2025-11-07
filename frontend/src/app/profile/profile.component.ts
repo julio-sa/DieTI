@@ -25,6 +25,7 @@ export class ProfileComponent implements OnInit {
     deleteForm: FormGroup;
     deleteError = '';
     deleting = false;
+    todayDate = new Date().toISOString().split('T')[0];
 
     // ID do usuário logado
     private userId: string | null = null;
