@@ -96,6 +96,15 @@ export class SignUpComponent implements AfterViewInit {
     return form.get('password')?.value === form.get('confirmPassword')?.value
       ? null : { mismatch: true };
   }
+
+  formatDateForInput(dateString: string): string {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear();
+    return `${year}-${month}-${day}`;
+  }
 }
 
 // Função de validação personalizada

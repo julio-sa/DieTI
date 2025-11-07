@@ -26,7 +26,7 @@
             </li>
             <li class="lbl-user">
               <img src="../../assets/images/age.svg" alt="age" class="profile-icons">
-              Birth date: {{ registerForm.value.bdate }}
+              Data de nascimento: {{ registerForm.value.bdate | date:'dd/MM/yyyy' }}
             </li>
             <li class="lbl-user">
               <img src="../../assets/images/weight.svg" alt="weight" class="profile-icons">
@@ -70,7 +70,8 @@
           <label for="input-field" i18n class="field-name">Email</label>
           <input type="text" class="input-field" formControlName="email" />
           <label for="input-field" i18n class="field-name">Data de Nascimento</label>
-          <input type="text" class="input-field" formControlName="age" />
+          <input type="date" class="input-field" [value]="formatDateForInput(registerForm.get('bdate')?.value)" 
+          (input)="registerForm.get('bdate')?.setValue($event.target['value'])" formControlName="bdate" />
           <label for="input-field" i18n class="field-name">Peso</label>
           <input type="text" class="input-field" formControlName="weight" />
           <label for="input-field" i18n class="field-name">Altura</label>
