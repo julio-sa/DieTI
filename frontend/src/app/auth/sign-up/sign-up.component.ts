@@ -25,6 +25,7 @@ export class SignUpComponent implements AfterViewInit {
     carbo: 320,
     gordura: 80
   };
+  todayDate = new Date().toISOString().split('T')[0];
 
   @ViewChild('nameInput', { static: true }) nameInput!: ElementRef;
 
