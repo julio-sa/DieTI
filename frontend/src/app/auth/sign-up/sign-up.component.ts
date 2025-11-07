@@ -69,7 +69,7 @@ export class SignUpComponent implements AfterViewInit {
         return;
       }
     }
-    
+
     const formData = this.registerForm.value;
 
     this.http.post(`${this.backendUrl}/api/auth/sign-up`, formData).subscribe({
@@ -117,21 +117,23 @@ export class SignUpComponent implements AfterViewInit {
 
   parseDateInput(event: any) {
     const value = event.target.value;
-    const parts = value.split('/');
-    
+    if (!value) return;
+
+    // Para inputs do tipo date, o valor já está em yyyy-MM-dd
+    const parts = value.split('-');
     if (parts.length === 3) {
-        const day = parseInt(parts[0]);
-        const month = parseInt(parts[1]) - 1; // Meses são 0-11
-        const year = parseInt(parts[2]);
+      const year = parseInt(parts[0]);
+      const month = parseInt(parts[1]) - 1; // Meses são 0-11
+      const day = parseInt(parts[2]);
+
+      if (!isNaN(year) && !isNaN(month) && !isNaN(day)) {
+        // Cria a data no fuso local
+        const date = new Date(year, month, day);
         
-        if (!isNaN(day) && !isNaN(month) && !isNaN(year)) {
-            const date = new Date(year, month, day);
-            if (date.getFullYear() === year && 
-                date.getMonth() === month && 
-                date.getDate() === day) {
-                this.registerForm.get('bdate')?.setValue(date.toISOString().split('T')[0]);
-            }
-        }
+        // Formata para ISO sem alterar o dia
+        const isoDate = date.toISOString().split('T')[0];
+        this.registerForm.get('bdate')?.setValue(isoDate);
+      }
     }
   }
 }

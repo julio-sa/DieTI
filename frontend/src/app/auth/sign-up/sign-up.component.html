@@ -24,7 +24,8 @@
       <!-- BDATE -->
       <input 
         i18n
-        type="text" 
+        type="date"
+        formControlName="bdate" 
         placeholder="dd/mm/yyyy"
         [value]="formatDateInput(registerForm.get('bdate')?.value)"
         (input)="parseDateInput($event)"
