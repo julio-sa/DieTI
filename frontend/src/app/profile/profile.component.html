@@ -26,7 +26,7 @@
             </li>
             <li class="lbl-user">
               <img src="../../assets/images/age.svg" alt="age" class="profile-icons">
-              {{ registerForm.value.age }} years
+              Birth date: {{ registerForm.value.bdate }}
             </li>
             <li class="lbl-user">
               <img src="../../assets/images/weight.svg" alt="weight" class="profile-icons">
@@ -69,7 +69,7 @@
           <input type="text" class="input-field" formControlName="name" />
           <label for="input-field" i18n class="field-name">Email</label>
           <input type="text" class="input-field" formControlName="email" />
-          <label for="input-field" i18n class="field-name">Idade</label>
+          <label for="input-field" i18n class="field-name">Data de Nascimento</label>
           <input type="text" class="input-field" formControlName="age" />
           <label for="input-field" i18n class="field-name">Peso</label>
           <input type="text" class="input-field" formControlName="weight" />

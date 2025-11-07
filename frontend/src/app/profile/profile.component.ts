@@ -48,7 +48,7 @@ export class ProfileComponent implements OnInit {
         this.registerForm = this.fb.group({
             name: ['', Validators.required],
             email: ['', [Validators.required, Validators.email]],
-            age: ['', Validators.required],
+            bdate: ['', Validators.required],
             weight: ['', Validators.required],
             height: ['', Validators.required]
         });
@@ -156,7 +156,7 @@ export class ProfileComponent implements OnInit {
             this.originalData = {
                 name: user.name,
                 email: user.email,
-                age: user.age,
+                bdate: user.bdate,
                 weight: user.weight,
                 height: user.height,
                 objective: user.objective

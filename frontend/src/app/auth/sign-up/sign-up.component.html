@@ -21,10 +21,10 @@
         Um email válido é requerido.
       </div>
 
-      <!-- AGE -->
-      <input i18n type="number" id="age" formControlName="age" class="input-field" placeholder="Idade">
-      <div *ngIf="registerForm.get('age')?.touched && registerForm.get('age')?.invalid" class="error-msg" i18n>
-        Idade é requerida.
+      <!-- BDATE -->
+      <input i18n type="number" id="age" formControlName="age" class="input-field" placeholder="Data de nascimemto (DD-MM-AAAA)">
+      <div *ngIf="registerForm.get('bdate')?.touched && registerForm.get('bdate')?.invalid" class="error-msg" i18n>
+        Data de nascimento é requerida.
       </div>
 
       <!-- WEIGHT -->

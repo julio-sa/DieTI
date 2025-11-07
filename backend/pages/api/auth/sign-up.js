@@ -10,9 +10,9 @@ const handler = async (req, res) => {
   try {
     await connectDB();
 
-    const { id, name, email, password, age, weight, height, goals } = req.body;
+    const { id, name, email, password, bdate, weight, height, goals } = req.body;
 
-    if (!name || !email || !password || !age || !weight || !height) {
+    if (!name || !email || !password || !bdate || !weight || !height) {
       return res.status(400).json({ message: "Faltando informações obrigatórias" });
     }
 
@@ -36,7 +36,7 @@ const handler = async (req, res) => {
       name,
       email,
       password: hashedPassword,
-      age,
+      bdate,
       weight,
       height,
       goals: userGoals

@@ -34,7 +34,7 @@ export class SignUpComponent implements AfterViewInit {
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', Validators.required],
-      age: ['', Validators.required],
+      bdate: ['', Validators.required],
       weight: ['', Validators.required],
       height: ['', Validators.required],
       goals: this.fb.group({

@@ -24,12 +24,12 @@ const handler = async (req, res) => {
         const userId = decoded.userId;
 
         // Dados recebidos do formulário
-        const { name, email, age, weight, height } = req.body;
+        const { name, email, bdate, weight, height } = req.body;
 
         // Atualiza o usuário no MongoDB
         const updatedUser = await User.findByIdAndUpdate(
             userId,
-            { name, email, age, weight, height },
+            { name, email, bdate, weight, height },
             { new: true }
         );
 

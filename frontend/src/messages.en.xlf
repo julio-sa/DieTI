@@ -170,8 +170,8 @@
         <note category="location">src/app/auth/sign-up/sign-up.component.html:27,28</note>
       </notes>
       <segment>
-        <source>Idade é requerida.</source>
-        <target>Age is required.</target>
+        <source>Data de nascimento é requerida.</source>
+        <target>Birth date is required.</target>
       </segment>
     </unit>
     <unit id="3286292030164225064">
