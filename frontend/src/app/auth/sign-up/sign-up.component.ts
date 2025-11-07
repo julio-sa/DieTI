@@ -61,6 +61,15 @@ export class SignUpComponent implements AfterViewInit {
       return;
     }
 
+    const bdateValue = this.registerForm.get('bdate')?.value;
+    if (bdateValue) {
+      const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+      if (!dateRegex.test(bdateValue)) {
+        this.registerForm.get('bdate')?.setErrors({ invalidFormat: true });
+        return;
+      }
+    }
+    
     const formData = this.registerForm.value;
 
     this.http.post(`${this.backendUrl}/api/auth/sign-up`, formData).subscribe({

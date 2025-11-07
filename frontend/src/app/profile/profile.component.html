@@ -73,7 +73,7 @@
           <input 
             i18n
             type="text" 
-            placeholder="DD/MM/YYYY"
+            placeholder="dd/mm/yyyy"
             [value]="formatDateInput(registerForm.get('bdate')?.value)"
             (input)="parseDateInput($event)"
             max = "{{ todayDate }}"
