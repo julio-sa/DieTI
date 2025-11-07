@@ -90,6 +90,15 @@ export class ProfileComponent implements OnInit {
             return;
         }
 
+        const bdateValue = this.registerForm.get('bdate')?.value;
+        if (bdateValue) {
+        const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+        if (!dateRegex.test(bdateValue)) {
+            this.registerForm.get('bdate')?.setErrors({ invalidFormat: true });
+            return;
+        }
+        }
+
         const token = localStorage.getItem('token');
         const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
 
