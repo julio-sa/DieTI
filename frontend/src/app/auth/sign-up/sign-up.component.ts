@@ -1,7 +1,7 @@
 import { CommonModule, Location } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { AfterViewInit, Component, ElementRef, ViewChild } from "@angular/core";
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators, ValidatorFn } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import Swal from 'sweetalert2';
 import { environment } from '../../../environments/environment';
@@ -34,7 +34,7 @@ export class SignUpComponent implements AfterViewInit {
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', Validators.required],
-      bdate: ['', Validators.required],
+      bdate: ['', Validators.required, minAgeValidator(13)],
       weight: ['', Validators.required],
       height: ['', Validators.required],
       goals: this.fb.group({
@@ -95,4 +95,22 @@ export class SignUpComponent implements AfterViewInit {
     return form.get('password')?.value === form.get('confirmPassword')?.value
       ? null : { mismatch: true };
   }
+}
+
+// Função de validação personalizada
+export function minAgeValidator(minAge: number): ValidatorFn {
+  return (control: AbstractControl): {[key: string]: any} | null => {
+    if (!control.value) return null;
+    
+    const birthDate = new Date(control.value);
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+    
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+    
+    return age >= minAge ? null : { minAge: { requiredAge: minAge, actualAge: age } };
+  };
 }

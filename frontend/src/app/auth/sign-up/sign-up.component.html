@@ -22,9 +22,9 @@
       </div>
 
       <!-- BDATE -->
-      <input i18n type="number" id="age" formControlName="age" class="input-field" placeholder="Data de nascimemto (DD-MM-AAAA)">
+      <input i18n type="date" id="bdate" formControlName="bdate" class="input-field" placeholder="Data de nascimento">
       <div *ngIf="registerForm.get('bdate')?.touched && registerForm.get('bdate')?.invalid" class="error-msg" i18n>
-        Data de nascimento é requerida.
+        Data de nascimento é inválida.
       </div>
 
       <!-- WEIGHT -->

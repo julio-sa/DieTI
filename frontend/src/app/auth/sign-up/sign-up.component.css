@@ -284,7 +284,7 @@ select.input-field option {
     transition: border 0.2s ease, background-color 0.2s ease;
     color: #666;
   }
-
+  
   .input-field:focus {
     border: 2px solid #00bfff;
     background-color: #ffffff;
