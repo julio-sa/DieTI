@@ -5,13 +5,41 @@ import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModu
 import { Router, RouterModule } from '@angular/router';
 import Swal from 'sweetalert2';
 import { environment } from '../../../environments/environment';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MAT_DATE_FORMATS } from '@angular/material/core';
+
+export const MY_DATE_FORMATS = {
+  parse: {
+    dateInput: 'DD/MM/YYYY',
+  },
+  display: {
+    dateInput: 'DD/MM/YYYY',
+    monthYearLabel: 'MMM YYYY',
+    dateA11yLabel: 'DD/MM/YYYY',
+    monthYearA11yLabel: 'MMMM YYYY',
+  },
+};
 
 @Component({
   standalone: true,
   selector: "app-sign-up",
-  imports: [CommonModule, FormsModule, RouterModule, ReactiveFormsModule],
+  imports: [CommonModule, 
+            FormsModule, 
+            RouterModule, 
+            ReactiveFormsModule,
+            MatDatepickerModule,
+            MatInputModule,
+            MatFormFieldModule,
+            MatNativeDateModule
+          ],
   templateUrl: "./sign-up.component.html",
-  styleUrls: ["./sign-up.component.css"]
+  styleUrls: ["./sign-up.component.css"],
+  providers: [
+    { provide: MAT_DATE_FORMATS, useValue: MY_DATE_FORMATS }
+  ]
 })
 export class SignUpComponent implements AfterViewInit {
   registerForm: FormGroup;
@@ -25,7 +53,13 @@ export class SignUpComponent implements AfterViewInit {
     carbo: 320,
     gordura: 80
   };
-  todayDate = new Date().toISOString().split('T')[0];
+
+  // Propriedades
+  showCalendar = false;
+  currentMonth = new Date().toLocaleString('pt-BR', { month: 'long' });
+  currentYear = new Date().getFullYear();
+  calendarDays: any[] = [];
+  isMobileDevice = window.innerWidth <= 768;
 
   @ViewChild('nameInput', { static: true }) nameInput!: ElementRef;
 
@@ -53,6 +87,15 @@ export class SignUpComponent implements AfterViewInit {
 
   goBack(): void {
     this.router.navigate(['/sign-in']);
+  }
+
+  onDateChange(event: any) {
+    // Converte para formato ISO sem alterar o dia
+    if (event.value) {
+      const date = new Date(event.value);
+      const isoDate = date.toISOString().split('T')[0];
+      this.registerForm.get('bdate')?.setValue(isoDate);
+    }
   }
 
   onSubmit() {
@@ -117,22 +160,20 @@ export class SignUpComponent implements AfterViewInit {
 
   parseDateInput(event: any) {
     const value = event.target.value;
-    if (!value) return;
-
-    // Para inputs do tipo date, o valor já está em yyyy-MM-dd
-    const parts = value.split('-');
+    const parts = value.split('/');
+    
     if (parts.length === 3) {
-      const year = parseInt(parts[0]);
-      const month = parseInt(parts[1]) - 1; // Meses são 0-11
-      const day = parseInt(parts[2]);
-
-      if (!isNaN(year) && !isNaN(month) && !isNaN(day)) {
-        // Cria a data no fuso local
+      const day = parseInt(parts[0]);
+      const month = parseInt(parts[1]) - 1;
+      const year = parseInt(parts[2]);
+      
+      if (!isNaN(day) && !isNaN(month) && !isNaN(year)) {
         const date = new Date(year, month, day);
-        
-        // Formata para ISO sem alterar o dia
-        const isoDate = date.toISOString().split('T')[0];
-        this.registerForm.get('bdate')?.setValue(isoDate);
+        if (date.getFullYear() === year && 
+            date.getMonth() === month && 
+            date.getDate() === day) {
+          this.registerForm.get('bdate')?.setValue(date.toISOString().split('T')[0]);
+        }
       }
     }
   }

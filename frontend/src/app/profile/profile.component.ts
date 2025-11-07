@@ -25,7 +25,13 @@ export class ProfileComponent implements OnInit {
     deleteForm: FormGroup;
     deleteError = '';
     deleting = false;
-    todayDate = new Date().toISOString().split('T')[0];
+
+    // Propriedades
+    showCalendar = false;
+    currentMonth = new Date().toLocaleString('pt-BR', { month: 'long' });
+    currentYear = new Date().getFullYear();
+    calendarDays: any[] = [];
+    isMobileDevice = window.innerWidth <= 768;
 
     // ID do usuário logado
     private userId: string | null = null;
@@ -62,10 +68,107 @@ export class ProfileComponent implements OnInit {
 
     ngOnInit(): void {
         this.loadUserData();
+        this.generateCalendar();
     }
 
     goBack(): void {
         this.router.navigate(['/home']);
+    }
+
+    toggleCalendar() {
+        this.showCalendar = !this.showCalendar;
+        if (this.showCalendar) {
+            this.generateCalendar();
+        }
+    }
+
+    hideCalendar() {
+        setTimeout(() => {
+            this.showCalendar = false;
+        }, 200);
+    }
+
+    generateCalendar() {
+        const today = new Date();
+        const firstDay = new Date(this.currentYear, this.currentMonthIndex, 1);
+        const lastDay = new Date(this.currentYear, this.currentMonthIndex + 1, 0);
+        
+        this.calendarDays = [];
+        
+        // Dias do mês anterior
+        const prevMonthLastDay = new Date(this.currentYear, this.currentMonthIndex, 0).getDate();
+        for (let i = 0; i < firstDay.getDay(); i++) {
+            this.calendarDays.push({
+            date: prevMonthLastDay - firstDay.getDay() + i + 1,
+            isOtherMonth: true,
+            isSelected: false
+            });
+        }
+        
+        // Dias do mês atual
+        for (let i = 1; i <= lastDay.getDate(); i++) {
+            const date = new Date(this.currentYear, this.currentMonthIndex, i);
+            this.calendarDays.push({
+            date: i,
+            isToday: date.toDateString() === today.toDateString(),
+            isSelected: this.isDateSelected(date),
+            isOtherMonth: false
+            });
+        }
+        
+        // Dias do próximo mês
+        const nextMonthDays = 42 - this.calendarDays.length;
+        for (let i = 1; i <= nextMonthDays; i++) {
+            this.calendarDays.push({
+            date: i,
+            isOtherMonth: true,
+            isSelected: false
+            });
+        }
+    }
+
+    selectDate(day: any) {
+        if (day.isOtherMonth) return;
+        
+        const date = new Date(this.currentYear, this.currentMonthIndex, day.date);
+        this.registerForm.get('bdate')?.setValue(date.toISOString().split('T')[0]);
+        this.showCalendar = false;
+        this.formatDateInput(date.toISOString().split('T')[0]);
+    }
+
+    isDateSelected(date: Date): boolean {
+        const selectedDate = new Date(this.registerForm.get('bdate')?.value || '');
+        return selectedDate.toDateString() === date.toDateString();
+        }
+
+        get currentMonthIndex(): number {
+        const months = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho',
+                        'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
+        return months.indexOf(this.currentMonth.toLowerCase());
+    }
+
+    prevMonth() {
+        if (this.currentMonthIndex === 0) {
+            this.currentMonth = 'dezembro';
+            this.currentYear--;
+        } else {
+            const months = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho',
+                            'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
+            this.currentMonth = months[this.currentMonthIndex - 1];
+        }
+        this.generateCalendar();
+    }
+
+    nextMonth() {
+        if (this.currentMonthIndex === 11) {
+            this.currentMonth = 'janeiro';
+            this.currentYear++;
+        } else {
+            const months = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho',
+                            'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
+            this.currentMonth = months[this.currentMonthIndex + 1];
+        }
+        this.generateCalendar();
     }
 
     goToEditProfile(): void {
@@ -279,24 +382,22 @@ export class ProfileComponent implements OnInit {
         return `${day}/${month}/${year}`;
     }
 
-    parseDateInput(event: any) {
+  parseDateInput(event: any) {
     const value = event.target.value;
-    if (!value) return;
-
-    // Para inputs do tipo date, o valor já está em yyyy-MM-dd
-    const parts = value.split('-');
+    const parts = value.split('/');
+    
     if (parts.length === 3) {
-      const year = parseInt(parts[0]);
-      const month = parseInt(parts[1]) - 1; // Meses são 0-11
-      const day = parseInt(parts[2]);
-
-      if (!isNaN(year) && !isNaN(month) && !isNaN(day)) {
-        // Cria a data no fuso local
+      const day = parseInt(parts[0]);
+      const month = parseInt(parts[1]) - 1;
+      const year = parseInt(parts[2]);
+      
+      if (!isNaN(day) && !isNaN(month) && !isNaN(year)) {
         const date = new Date(year, month, day);
-        
-        // Formata para ISO sem alterar o dia
-        const isoDate = date.toISOString().split('T')[0];
-        this.registerForm.get('bdate')?.setValue(isoDate);
+        if (date.getFullYear() === year && 
+            date.getMonth() === month && 
+            date.getDate() === day) {
+          this.registerForm.get('bdate')?.setValue(date.toISOString().split('T')[0]);
+        }
       }
     }
   }

@@ -70,15 +70,48 @@
           <label for="input-field" i18n class="field-name">Email</label>
           <input type="text" class="input-field" formControlName="email" />
           <label for="input-field" i18n class="field-name">Data de Nascimento</label>
+          <div class="date-input-wrapper">
           <input 
-            i18n
-            type="date"
-            formControlName="bdate"  
+            type="text" 
+            id="bdate"
+            formControlName="bdate"
+            class="input-field date-input"
             placeholder="dd/mm/yyyy"
             [value]="formatDateInput(registerForm.get('bdate')?.value)"
             (input)="parseDateInput($event)"
-            max = "{{ todayDate }}"
-            class="input-field" />
+            (focus)="showCalendar = true"
+            (blur)="hideCalendar()"
+            (click)="showCalendar = true"
+            maxlength="10" />
+          
+          <span class="calendar-icon" (click)="toggleCalendar()">
+            📅
+          </span>
+        </div>
+
+        <!-- Calendário personalizado (simplificado) -->
+        <div class="custom-calendar" *ngIf="showCalendar && !isMobileDevice">
+          <div class="calendar-header">
+            <button (click)="prevMonth()" class="nav-button">←</button>
+            <span>{{ currentMonth }} {{ currentYear }}</span>
+            <button (click)="nextMonth()" class="nav-button">→</button>
+          </div>
+          <div class="calendar-body">
+            <div class="weekdays">
+              <div>Dom</div><div>Seg</div><div>Ter</div><div>Qua</div><div>Qui</div><div>Sex</div><div>Sáb</div>
+            </div>
+            <div class="days">
+              <!-- Dias do mês -->
+              <div *ngFor="let day of calendarDays" 
+                  [class.today]="day.isToday"
+                  [class.selected]="day.isSelected"
+                  [class.other-month]="day.isOtherMonth"
+                  (click)="selectDate(day)">
+                {{ day.date }}
+              </div>
+            </div>
+          </div>
+        </div>
           <label for="input-field" i18n class="field-name">Peso</label>
           <input type="text" class="input-field" formControlName="weight" />
           <label for="input-field" i18n class="field-name">Altura</label>

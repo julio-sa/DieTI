@@ -22,15 +22,18 @@
       </div>
 
       <!-- BDATE -->
-      <input 
-        i18n
-        type="date"
-        formControlName="bdate" 
-        placeholder="dd/mm/yyyy"
-        [value]="formatDateInput(registerForm.get('bdate')?.value)"
-        (input)="parseDateInput($event)"
-        max = "{{ todayDate }}"
-        class="input-field" />
+      <mat-form-field appearance="outline">
+        <mat-label>Data de Nascimento</mat-label>
+        <input 
+          matInput 
+          formControlName="bdate" 
+          [matDatepicker]="bdatePicker"
+          placeholder="dd/mm/yyyy"
+          (dateChange)="onDateChange($event)">
+        <mat-datepicker-toggle matSuffix [for]="bdatePicker"></mat-datepicker-toggle>
+        <mat-datepicker #bdatePicker></mat-datepicker>
+      </mat-form-field>
+
       <div *ngIf="registerForm.get('bdate')?.touched && registerForm.get('bdate')?.invalid" class="error-msg" i18n>
         Data de nascimento é inválida.
       </div>

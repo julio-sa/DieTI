@@ -78,6 +78,45 @@
   color: #959494;
 }
 
+.mat-form-field {
+  width: 100%;
+}
+
+.mat-form-field-appearance-outline .mat-form-field-wrapper {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.mat-form-field-appearance-outline .mat-form-field-infix {
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.mat-form-field-appearance-outline .mat-form-field-label {
+  font-size: 14px;
+}
+
+.mat-datepicker-content {
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.mat-calendar-body-cell {
+  height: 40px;
+  width: 40px;
+  font-size: 14px;
+}
+
+.mat-calendar-body-selected {
+  background-color: #00bfff;
+  color: white;
+}
+
+.mat-calendar-body-today {
+  border: 2px solid #00bfff;
+}
+
 /* Estilo específico para o select */
 select.input-field {
   appearance: none;
