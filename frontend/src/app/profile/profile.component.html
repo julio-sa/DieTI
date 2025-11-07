@@ -70,8 +70,14 @@
           <label for="input-field" i18n class="field-name">Email</label>
           <input type="text" class="input-field" formControlName="email" />
           <label for="input-field" i18n class="field-name">Data de Nascimento</label>
-          <input type="date" class="input-field" [value]="formatDateForInput(registerForm.get('bdate')?.value)" 
-          (input)="registerForm.get('bdate')?.setValue($event.target['value'])" formControlName="bdate" />
+          <input 
+            i18n
+            type="text" 
+            placeholder="DD/MM/YYYY"
+            [value]="formatDateInput(registerForm.get('bdate')?.value)"
+            (input)="parseDateInput($event)"
+            max = "{{ todayDate }}"
+            class="input-field" />
           <label for="input-field" i18n class="field-name">Peso</label>
           <input type="text" class="input-field" formControlName="weight" />
           <label for="input-field" i18n class="field-name">Altura</label>

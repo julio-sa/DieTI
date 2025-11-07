@@ -260,12 +260,32 @@ export class ProfileComponent implements OnInit {
         }
     }
 
-    formatDateForInput(dateString: string): string {
-        if (!dateString) return '';
-        const date = new Date(dateString);
-        const day = date.getDate().toString().padStart(2, '0');
-        const month = (date.getMonth() + 1).toString().padStart(2, '0');
-        const year = date.getFullYear();
-        return `${year}-${month}-${day}`;
+    formatDateInput(date: string): string {
+        if (!date) return '';
+        const d = new Date(date);
+        const day = d.getDate().toString().padStart(2, '0');
+        const month = (d.getMonth() + 1).toString().padStart(2, '0');
+        const year = d.getFullYear();
+        return `${day}/${month}/${year}`;
+    }
+
+    parseDateInput(event: any) {
+        const value = event.target.value;
+        const parts = value.split('/');
+        
+        if (parts.length === 3) {
+            const day = parseInt(parts[0]);
+            const month = parseInt(parts[1]) - 1; // Meses são 0-11
+            const year = parseInt(parts[2]);
+            
+            if (!isNaN(day) && !isNaN(month) && !isNaN(year)) {
+                const date = new Date(year, month, day);
+                if (date.getFullYear() === year && 
+                    date.getMonth() === month && 
+                    date.getDate() === day) {
+                    this.registerForm.get('bdate')?.setValue(date.toISOString().split('T')[0]);
+                }
+            }
+        }
     }
 }

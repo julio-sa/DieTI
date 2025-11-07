@@ -22,9 +22,14 @@
       </div>
 
       <!-- BDATE -->
-      <input i18n type="date" id="bdate" formControlName="bdate" class="input-field" max="{{ todayDate }}" 
-      [value]="formatDateForInput(registerForm.get('bdate')?.value)" (input)="registerForm.get('bdate')?.setValue($event.target['value'])"
-      placeholder="Data de nascimento">
+      <input 
+        i18n
+        type="text" 
+        placeholder="DD/MM/YYYY"
+        [value]="formatDateInput(registerForm.get('bdate')?.value)"
+        (input)="parseDateInput($event)"
+        max = "{{ todayDate }}"
+        class="input-field" />
       <div *ngIf="registerForm.get('bdate')?.touched && registerForm.get('bdate')?.invalid" class="error-msg" i18n>
         Data de nascimento é inválida.
       </div>
