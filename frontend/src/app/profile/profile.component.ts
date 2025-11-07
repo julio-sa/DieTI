@@ -220,7 +220,7 @@ export class ProfileComponent implements OnInit {
 
         try {
             // Primeiro valida as credenciais
-            const validationResponse = await fetch('environment.backendUrl/api/auth/validate-credentials', {
+            const validationResponse = await fetch(`${this.backendUrl}/api/auth/validate-credentials`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
