@@ -66,8 +66,3 @@ export default async function handler(req, res) {
 
   return res.status(200).json({ message: 'Código de recuperação enviado.' });
 }
-
-process.on('SIGINT', async () => {
-  await client.close();
-  process.exit(0);
-});
