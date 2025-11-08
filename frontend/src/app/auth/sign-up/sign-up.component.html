@@ -1,88 +1,69 @@
 <div class="page-container">
-  <!-- Seta para voltar -->
-  <div class="back-arrow" (click)="goBack()">
-    &#x276E; <!-- Código da seta esquerda “❮” -->
-  </div>
-
-  <!-- Imagem da logo -->
+  <div class="back-arrow" (click)="goBack()">&#x276E;</div>
   <img src="assets/images/logo.svg" alt="DieTI" class="logo-image">
 
   <form class="sign-up-form" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
     <div class="input-group">
-      <!-- NAME -->
       <input i18n type="text" id="name" #nameInput formControlName="name" class="input-field" placeholder="Nome">
       <div *ngIf="registerForm.get('name')?.touched && registerForm.get('name')?.invalid" class="error-msg" i18n>
         Nome é requerido.
       </div>
 
-      <!-- EMAIL -->
       <input i18n type="email" id="email" formControlName="email" class="input-field" placeholder="Email">
       <div *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.invalid" class="error-msg" i18n>
         Um email válido é requerido.
       </div>
 
-      <!-- BDATE -->
-      <mat-form-field appearance="outline">
-        <mat-label>Data de Nascimento</mat-label>
-        <input 
-          matInput 
-          formControlName="bdate" 
-          [matDatepicker]="bdatePicker"
-          placeholder="dd/mm/yyyy"
-          (dateChange)="onDateChange($event)">
-        <mat-datepicker-toggle matSuffix [for]="bdatePicker"></mat-datepicker-toggle>
-        <mat-datepicker #bdatePicker></mat-datepicker>
-      </mat-form-field>
-
-      <div *ngIf="registerForm.get('bdate')?.touched && registerForm.get('bdate')?.invalid" class="error-msg" i18n>
-        Data de nascimento é inválida.
+      <input 
+        i18n 
+        type="text" 
+        id="bdate"
+        formControlName="bdate" 
+        class="input-field" 
+        placeholder="dd/mm/yyyy"
+        (input)="onDateInput($event)"
+        maxlength="10" />
+      <div *ngIf="registerForm.get('bdate')?.touched && !isValidDate(registerForm.get('bdate')?.value)" class="error-msg" i18n>
+        Data inválida.
       </div>
 
-      <!-- WEIGHT -->
       <input i18n type="number" id="weight" formControlName="weight" class="input-field" placeholder="Peso (kg)">
       <div *ngIf="registerForm.get('weight')?.touched && registerForm.get('weight')?.invalid" class="error-msg" i18n>
         Peso é requerido.
       </div>
 
-      <!-- HEIGHT -->
       <input i18n type="number" id="height" formControlName="height" class="input-field" placeholder="Altura (cm)">
       <div *ngIf="registerForm.get('height')?.touched && registerForm.get('height')?.invalid" class="error-msg" i18n>
         Altura é requerida.
       </div>
 
       <div formGroupName="goals">
-        <!-- CALORIES -->
         <input type="number" id="calories" name="calories" formControlName="calorias" class="input-field" placeholder="Meta de Calorias (kcal)     Ex: 2500"/>
         <div *ngIf="registerForm.get('goals.calorias')?.touched && registerForm.get('goals.calorias')?.invalid" class="error-msg" i18n>
           Meta Calórica é requerida.
         </div>
   
-        <!-- PROTEINS -->
         <input type="number" id="proteins" name="proteins" formControlName="proteinas" class="input-field" placeholder="Meta de Proteínas (g)       Ex: 180"/>
         <div *ngIf="registerForm.get('goals.proteinas')?.touched && registerForm.get('goals.proteinas')?.invalid" class="error-msg" i18n>
           Meta de Proteínas é requerida.
         </div>
   
-        <!-- CARBOHYDRATES -->
         <input type="number" id="carbs" name="carbs" formControlName="carbo" class="input-field" placeholder="Meta de Carboidratos (g)  Ex: 300"/>
         <div *ngIf="registerForm.get('goals.carbo')?.touched && registerForm.get('goals.carbo')?.invalid" class="error-msg" i18n>
           Meta de Carboidratos é requerida.
         </div>
   
-        <!-- FAT -->
         <input type="number" id="fats" name="fats" formControlName="gordura" class="input-field" placeholder="Meta de Gorduras (g)        Ex: 80"/>
         <div *ngIf="registerForm.get('goals.gordura')?.touched && registerForm.get('goals.gordura')?.invalid" class="error-msg" i18n>
           Meta de Gordura é requerida.
         </div>
       </div>
 
-      <!-- PASSWORD -->
       <input i18n type="password" id="password" formControlName="password" class="input-field" placeholder="Senha">
       <div *ngIf="registerForm.get('password')?.touched && registerForm.get('password')?.invalid" class="error-msg" i18n>
         Senha deve ter no mínimo 6 caracteres.
       </div>
 
-      <!-- CONFIRM PASSWORD -->
       <input i18n type="password" id="confirmPassword" formControlName="confirmPassword" class="input-field" placeholder="Confirme a senha">
       <div *ngIf="registerForm.errors?.['mismatch'] && registerForm.get('confirmPassword')?.touched" class="error-msg" i18n>
         Senhas não conferem.

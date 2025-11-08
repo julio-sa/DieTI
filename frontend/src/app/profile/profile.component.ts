@@ -14,7 +14,6 @@ import { GoalService, Goals } from '../services/goal.service';
     templateUrl: './profile.component.html',
     styleUrls: ['./profile.component.css']
 })
-
 export class ProfileComponent implements OnInit {
     isEditing: boolean = false;
     registerForm: FormGroup;
@@ -26,24 +25,10 @@ export class ProfileComponent implements OnInit {
     deleteError = '';
     deleting = false;
 
-    // Propriedades
-    showCalendar = false;
-    currentMonth = new Date().toLocaleString('pt-BR', { month: 'long' });
-    currentYear = new Date().getFullYear();
-    calendarDays: any[] = [];
-    isMobileDevice = window.innerWidth <= 768;
-
-    // ID do usuário logado
     private userId: string | null = null;
-
-    private readonly apiUrl = environment.apiUrl;
     private readonly backendUrl = environment.backendUrl;
 
     @ViewChild('nameInput') nameInput!: ElementRef
-    @ViewChild('emailInput') emailInput!: ElementRef
-    @ViewChild('ageInput') ageInput!: ElementRef
-    @ViewChild('weightInput') weightInput!: ElementRef
-    @ViewChild('heightInput') heightInput!: ElementRef
 
     constructor(
         private goalService: GoalService,
@@ -62,122 +47,20 @@ export class ProfileComponent implements OnInit {
         this.deleteForm = this.fb.group({
             email: ['', [Validators.required, Validators.email]],
             password: ['', [Validators.required]]
-            });
+        });
         this.goalService.goals$.subscribe(g => this.goals = g);
     }
 
     ngOnInit(): void {
         this.loadUserData();
-        this.generateCalendar();
     }
 
     goBack(): void {
         this.router.navigate(['/home']);
     }
 
-    toggleCalendar() {
-        this.showCalendar = !this.showCalendar;
-        if (this.showCalendar) {
-            this.generateCalendar();
-        }
-    }
-
-    hideCalendar() {
-        setTimeout(() => {
-            this.showCalendar = false;
-        }, 200);
-    }
-
-    generateCalendar() {
-        const today = new Date();
-        const firstDay = new Date(this.currentYear, this.currentMonthIndex, 1);
-        const lastDay = new Date(this.currentYear, this.currentMonthIndex + 1, 0);
-        
-        this.calendarDays = [];
-        
-        // Dias do mês anterior
-        const prevMonthLastDay = new Date(this.currentYear, this.currentMonthIndex, 0).getDate();
-        for (let i = 0; i < firstDay.getDay(); i++) {
-            this.calendarDays.push({
-            date: prevMonthLastDay - firstDay.getDay() + i + 1,
-            isOtherMonth: true,
-            isSelected: false
-            });
-        }
-        
-        // Dias do mês atual
-        for (let i = 1; i <= lastDay.getDate(); i++) {
-            const date = new Date(this.currentYear, this.currentMonthIndex, i);
-            this.calendarDays.push({
-            date: i,
-            isToday: date.toDateString() === today.toDateString(),
-            isSelected: this.isDateSelected(date),
-            isOtherMonth: false
-            });
-        }
-        
-        // Dias do próximo mês
-        const nextMonthDays = 42 - this.calendarDays.length;
-        for (let i = 1; i <= nextMonthDays; i++) {
-            this.calendarDays.push({
-            date: i,
-            isOtherMonth: true,
-            isSelected: false
-            });
-        }
-    }
-
-    selectDate(day: any) {
-        if (day.isOtherMonth) return;
-        
-        const date = new Date(this.currentYear, this.currentMonthIndex, day.date);
-        this.registerForm.get('bdate')?.setValue(date.toISOString().split('T')[0]);
-        this.showCalendar = false;
-        this.formatDateInput(date.toISOString().split('T')[0]);
-    }
-
-    isDateSelected(date: Date): boolean {
-        const selectedDate = new Date(this.registerForm.get('bdate')?.value || '');
-        return selectedDate.toDateString() === date.toDateString();
-        }
-
-        get currentMonthIndex(): number {
-        const months = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho',
-                        'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
-        return months.indexOf(this.currentMonth.toLowerCase());
-    }
-
-    prevMonth() {
-        if (this.currentMonthIndex === 0) {
-            this.currentMonth = 'dezembro';
-            this.currentYear--;
-        } else {
-            const months = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho',
-                            'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
-            this.currentMonth = months[this.currentMonthIndex - 1];
-        }
-        this.generateCalendar();
-    }
-
-    nextMonth() {
-        if (this.currentMonthIndex === 11) {
-            this.currentMonth = 'janeiro';
-            this.currentYear++;
-        } else {
-            const months = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho',
-                            'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
-            this.currentMonth = months[this.currentMonthIndex + 1];
-        }
-        this.generateCalendar();
-    }
-
     goToEditProfile(): void {
-        if (!this.isEditing) {
-            this.isEditing = true;
-        }
-        else {
-            this.isEditing = false;
-        }
+        this.isEditing = !this.isEditing;
     }
 
     onGoalInput(event: any, field: keyof Goals) {
@@ -187,74 +70,93 @@ export class ProfileComponent implements OnInit {
         }
     }
 
+    // Máscara para dd/mm/yyyy
+    onDateInput(event: any) {
+        let value = event.target.value.replace(/\D/g, '');
+        if (value.length >= 5) {
+            value = value.replace(/(\d{2})(\d{2})(\d)/, '$1/$2/$3');
+        } else if (value.length >= 3) {
+            value = value.replace(/(\d{2})(\d)/, '$1/$2');
+        }
+        this.registerForm.get('bdate')?.setValue(value, { emitEvent: false });
+    }
+
+    // Valida se a data é válida no formato dd/mm/yyyy
+    isValidDate(dateStr: string): boolean {
+        const regex = /^(\d{2})\/(\d{2})\/(\d{4})$/;
+        const match = dateStr.match(regex);
+        if (!match) return false;
+
+        const day = parseInt(match[1], 10);
+        const month = parseInt(match[2], 10);
+        const year = parseInt(match[3], 10);
+
+        if (year < 1900 || year > 2100 || month < 1 || month > 12 || day < 1 || day > 31) return false;
+
+        const daysInMonth = [31, 28 + (year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0) ? 1 : 0), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+        return day <= daysInMonth[month - 1];
+    }
+
     onSubmit() {
         if (this.registerForm.invalid) {
             this.registerForm.markAllAsTouched();
             return;
         }
 
-        const bdateValue = this.registerForm.get('bdate')?.value;
-        if (bdateValue) {
-        const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
-        if (!dateRegex.test(bdateValue)) {
-            this.registerForm.get('bdate')?.setErrors({ invalidFormat: true });
+        const bdate = this.registerForm.get('bdate')?.value;
+        if (!bdate || !this.isValidDate(bdate)) {
+            alert('Data de nascimento inválida. Use o formato dd/mm/yyyy.');
             return;
         }
-        }
+
+        // ✅ Correção definitiva: formatação manual SEM Date().toISOString()
+        const [day, month, year] = bdate.split('/').map(Number);
+        const isoDate = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+
+        const formData = {
+            ...this.registerForm.value,
+            bdate: isoDate
+        };
 
         const token = localStorage.getItem('token');
         const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
 
-        this.http.put(`${this.backendUrl}/api/profile/update`, this.registerForm.value, { headers }).subscribe({
+        this.http.put(`${this.backendUrl}/api/profile/update`, formData, { headers }).subscribe({
             next: (response: any) => {
                 this.isEditing = false;
                 this.loadUserData();
                 Swal.fire({
                     icon: 'success',
-                    title: 'Profile Updated!',
-                    text: response.message,
-                    confirmButtonText: 'Close'
+                    title: 'Perfil atualizado!',
+                    confirmButtonText: 'Fechar'
                 });
             },
             error: (err) => {
                 if (err.status === 401) {
                     Swal.fire({
                         icon: 'warning',
-                        title: 'Expired Session',
-                        text: 'Please, login again.',
-                    }).then(() => {
-                        this.router.navigate(['/login']);
-                    });
+                        title: 'Sessão expirada',
+                        text: 'Faça login novamente.',
+                    }).then(() => this.router.navigate(['/login']));
                 } else {
                     Swal.fire({
                         icon: 'error',
-                        title: 'Oops...',
-                        text: 'Error updating profile. Try again.',
-                        confirmButtonText: 'Close'
+                        title: 'Erro ao atualizar',
+                        text: 'Tente novamente.',
+                        confirmButtonText: 'Fechar'
                     });
                 }
             }
-        })
-        this.goalService.updateGoals(this.goals);
+        });
 
-        this.isEditing = false;
+        this.goalService.updateGoals(this.goals);
     }
 
     loadUserData() {
         const token = localStorage.getItem('token');
         this.userId = localStorage.getItem('userId');
 
-        if (!this.userId) {
-            Swal.fire({
-            icon: 'error',
-            title: 'Erro',
-            text: 'ID do usuário não encontrado. Faça login novamente.'
-            });
-            this.router.navigate(['/login']);
-            return;
-        }
-
-        if (!token) {
+        if (!this.userId || !token) {
             this.router.navigate(['/login']);
             return;
         }
@@ -264,141 +166,111 @@ export class ProfileComponent implements OnInit {
         this.http.get(`${this.backendUrl}/api/profile/profile`, { headers }).subscribe({
             next: (res: any) => {
             const user = res.user;
-            
-            // Atualiza os dados do formulário
+
+            // ✅ Formata a data ISO SEM fuso horário
+            let formattedBdate = '';
+            if (user.bdate) {
+                // Extrai AAAA-MM-DD da string ISO
+                const isoDate = user.bdate.split('T')[0]; // "2002-05-26"
+                const [year, month, day] = isoDate.split('-');
+                formattedBdate = `${day}/${month}/${year}`; // "26/05/2002"
+            }
+
             this.originalData = {
                 name: user.name,
                 email: user.email,
-                bdate: user.bdate,
+                bdate: user.bdate, // mantém o valor ISO original
                 weight: user.weight,
-                height: user.height,
-                objective: user.objective
+                height: user.height
             };
-            this.registerForm.patchValue(this.originalData);
 
-            // ✅ Atualiza as metas se existirem
+            // Define o valor formatado no formulário
+            this.registerForm.patchValue({
+                ...this.originalData,
+                bdate: formattedBdate
+            });
+
             if (user.goals) {
                 this.goals = { ...user.goals };
-                this.goalService.updateGoals(this.goals); // Atualiza o serviço também
+                this.goalService.updateGoals(this.goals);
             }
             },
             error: (err) => {
             if (err.status === 401) {
-                Swal.fire({
-                icon: 'warning',
-                title: 'Expired Session',
-                text: 'Please, login again.',
-                }).then(() => {
-                this.router.navigate(['/login']);
-                });
+                Swal.fire({ icon: 'warning', title: 'Sessão expirada', text: 'Faça login novamente.' })
+                .then(() => this.router.navigate(['/login']));
             } else {
-                this.errorMessage = 'Fail to load profile.';
+                this.errorMessage = 'Falha ao carregar perfil.';
             }
             }
         });
-        }
+    }
 
     cancelEdit() {
-        this.registerForm.patchValue(this.originalData)
+        if (this.originalData.bdate) {
+            const isoDate = this.originalData.bdate.split('T')[0];
+            const [year, month, day] = isoDate.split('-');
+            const formattedBdate = `${day}/${month}/${year}`;
+            this.registerForm.get('bdate')?.setValue(formattedBdate);
+        }
         this.isEditing = false;
-    };
+    }
 
-    // Abre o modal
+    // Modal de exclusão (mantido igual)
     openDeleteAccountModal(): void {
         this.showDeleteModal = true;
         this.deleteForm.reset();
         this.deleteError = '';
     }
 
-    // Fecha o modal
     closeDeleteModal(): void {
         this.showDeleteModal = false;
         this.deleteError = '';
     }
 
-    // Confirma a exclusão
     async confirmDeleteAccount(): Promise<void> {
         const confirmed = window.confirm("Tem certeza que deseja deletar sua conta?");
         if (!confirmed) return;
 
         try {
-            // Primeiro valida as credenciais
             const validationResponse = await fetch(`${this.backendUrl}/api/auth/validate-credentials`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                email: this.deleteForm.value.email,
-                password: this.deleteForm.value.password
-            })
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email: this.deleteForm.value.email,
+                    password: this.deleteForm.value.password
+                })
             });
 
-            if (!validationResponse.ok) {
-            throw new Error('Falha na validação');
-            }
+            if (!validationResponse.ok) throw new Error('Falha na validação');
 
-            // Depois exclui a conta
             const deleteResponse = await fetch(`${this.backendUrl}/api/auth/delete-account`, {
-            method: 'DELETE',
-            headers: { 
-                'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                'Content-Type': 'application/json'
-            }
+                method: 'DELETE',
+                headers: { 
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                    'Content-Type': 'application/json'
+                }
             });
 
-            if (!deleteResponse.ok) {
-            throw new Error('Falha ao excluir conta');
-            }
+            if (!deleteResponse.ok) throw new Error('Falha ao excluir conta');
 
-            // Limpa os dados locais
             localStorage.clear();
             sessionStorage.clear();
 
             Swal.fire({
-            icon: 'success',
-            title: 'Conta excluída!',
-            text: 'Sua conta foi removida com sucesso.',
-            confirmButtonText: 'OK'
-            }).then(() => {
-            this.router.navigate(['/sign-in']);
-            });
-
+                icon: 'success',
+                title: 'Conta excluída!',
+                text: 'Sua conta foi removida com sucesso.',
+                confirmButtonText: 'OK'
+            }).then(() => this.router.navigate(['/sign-in']));
         } catch (error) {
             console.error('Erro:', error);
             Swal.fire({
-            icon: 'error',
-            title: 'Erro',
-            text: 'Falha ao processar a solicitação.',
-            confirmButtonText: 'Fechar'
+                icon: 'error',
+                title: 'Erro',
+                text: 'Falha ao processar a solicitação.',
+                confirmButtonText: 'Fechar'
             });
         }
     }
-
-    formatDateInput(date: string): string {
-        if (!date) return '';
-        const d = new Date(date);
-        const day = d.getDate().toString().padStart(2, '0');
-        const month = (d.getMonth() + 1).toString().padStart(2, '0');
-        const year = d.getFullYear();
-        return `${day}/${month}/${year}`;
-    }
-
-  parseDateInput(event: any) {
-    const value = event.target.value;
-    const parts = value.split('/');
-    
-    if (parts.length === 3) {
-      const day = parseInt(parts[0]);
-      const month = parseInt(parts[1]) - 1;
-      const year = parseInt(parts[2]);
-      
-      if (!isNaN(day) && !isNaN(month) && !isNaN(year)) {
-        const date = new Date(year, month, day);
-        if (date.getFullYear() === year && 
-            date.getMonth() === month && 
-            date.getDate() === day) {
-          this.registerForm.get('bdate')?.setValue(date.toISOString().split('T')[0]);
-        }
-      }
-    }
-  }
 }

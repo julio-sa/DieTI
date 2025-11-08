@@ -78,43 +78,25 @@
   color: #959494;
 }
 
-.mat-form-field {
+.date-input-wrapper {
   width: 100%;
+  position: relative;
 }
 
-.mat-form-field-appearance-outline .mat-form-field-wrapper {
-  padding-top: 0;
-  padding-bottom: 0;
+.date-input-wrapper .input-field {
+  cursor: pointer;
 }
 
-.mat-form-field-appearance-outline .mat-form-field-infix {
-  padding: 8px 12px;
-  border-radius: 8px;
-  font-size: 14px;
-}
-
-.mat-form-field-appearance-outline .mat-form-field-label {
-  font-size: 14px;
-}
-
-.mat-datepicker-content {
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-}
-
-.mat-calendar-body-cell {
-  height: 40px;
-  width: 40px;
-  font-size: 14px;
-}
-
-.mat-calendar-body-selected {
-  background-color: #00bfff;
-  color: white;
-}
-
-.mat-calendar-body-today {
-  border: 2px solid #00bfff;
+/* Ícone do calendário opcional à direita */
+.date-input-wrapper::after {
+  content: '📅';
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: #666;
+  font-size: 16px;
 }
 
 /* Estilo específico para o select */
@@ -128,6 +110,37 @@ select.input-field {
 /* Cor das opções do select */
 select.input-field option {
   color: #959494;
+}
+
+/* Wrapper para posicionar o ícone e o input oculto */
+.date-input-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+/* Estilo do ícone */
+.calendar-icon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #666;
+  font-size: 18px;
+  z-index: 2;
+  pointer-events: none; /* Permite que cliques passem para o input abaixo */
+}
+
+/* Input oculto do Material - posicionado sobre o ícone */
+.material-date-input {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 40px;
+  height: 100%;
+  opacity: 0;
+  z-index: 3;
+  cursor: pointer;
 }
 
 .error-msg {
@@ -313,11 +326,11 @@ select.input-field option {
 
   .input-field {
     width: 100%;
-    padding: 8px;
+    padding: 12px;
     margin: 5px 0;
     border: none;
     border-radius: 10px;
-    font-size: 12px;
+    font-size: 14px;
     background-color: #f9f4f4;
     outline: none;
     transition: border 0.2s ease, background-color 0.2s ease;
@@ -352,20 +365,20 @@ select.input-field option {
 
   .error-msg {
     color: red;
-    font-size: 0.5rem;
+    font-size: 0.7rem;
     margin-top: 2px;
     margin-bottom: 8px;
   }
 
   .submit-btn {
     width: 100%;
-    padding: 10px;
+    padding: 12px;
     margin-top: 10px;
     background-color: #00bfff;
     color: white;
     border: none;
     border-radius: 10px;
-    font-size: 14px;
+    font-size: 16px;
     cursor: pointer;
     transition: background-color 0.3s ease;
   }

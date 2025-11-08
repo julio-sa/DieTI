@@ -101,10 +101,10 @@
 }
 
 .userData {
-    margin-left: -60px;
+    margin-left: -100px;
     display: flex;
     flex-wrap: wrap;
-    gap: 140px;
+    gap: 100px;
     justify-content: flex-start;
 }
 
@@ -120,7 +120,7 @@
 .userDataUl {
     list-style: none;
     margin-top: -30px;
-    margin-left: 10px;
+    margin-left: 5px;
     padding: 0;
 }
 
@@ -223,102 +223,6 @@ select.input-field {
 select.input-field option {
     color: #666;
     background-color: #fff;
-}
-
-.date-input-wrapper {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.date-input {
-  flex: 1;
-  padding: 8px 12px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 14px;
-  outline: none;
-}
-
-.calendar-icon {
-  position: absolute;
-  right: 10px;
-  cursor: pointer;
-  color: #666;
-  font-size: 16px;
-}
-
-.custom-calendar {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  background: white;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  z-index: 1000;
-  width: 280px;
-  padding: 10px;
-}
-
-.calendar-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
-  font-weight: bold;
-}
-
-.nav-button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 16px;
-}
-
-.weekdays {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 5px;
-  margin-bottom: 5px;
-}
-
-.weekdays div {
-  text-align: center;
-  font-weight: bold;
-  font-size: 12px;
-}
-
-.days {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 5px;
-}
-
-.days div {
-  text-align: center;
-  padding: 5px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-}
-
-.days div:hover {
-  background-color: #f0f0f0;
-}
-
-.days div.selected {
-  background-color: #00bfff;
-  color: white;
-}
-
-.days div.today {
-  border: 2px solid #00bfff;
-}
-
-.days div.other-month {
-  color: #999;
-  opacity: 0.7;
 }
 
 .profile-actions {
@@ -1076,8 +980,8 @@ select.input-field option {
 
     .profile-title {
         position: relative;
-        top: 33px;
-        left: -120px;
+        top: 110px;
+        left: -150px;
         font-size: 22px;
         width: 100%;
         text-align: center;
@@ -1086,8 +990,8 @@ select.input-field option {
     .edit {
         position: absolute;
         width: 20px;
-        top: 35px;
-        left: 130px;
+        top: 114px;
+        left: 100px;
         cursor: pointer;
         z-index: 10;
     }
@@ -1134,7 +1038,7 @@ select.input-field option {
         align-items: center;
         width: 100%;
         max-width: 1200px;
-        margin-top: -30px;
+        margin-top: -150px;
         padding: 20px;
         background-color: white;
     }
@@ -1198,8 +1102,8 @@ select.input-field option {
         width: 100%;
         display: flex;
         flex-direction: column;
-        margin-top: 40px;
-        margin-left: 0px;
+        margin-top: -40px;
+        margin-left: 15px;
     }
 
     h3 {
@@ -1247,7 +1151,7 @@ select.input-field option {
     }
 
     .input-field {
-        width: 260px;
+        width: 290px;
         padding: 12px;
         margin: 10px;
         border: none;
@@ -1282,7 +1186,7 @@ select.input-field option {
     .profile-actions {
         display: flex;
         flex-direction: column;
-        margin-left: 65px;
+        margin-left: 80px;
     }
 
     .submit-btn,

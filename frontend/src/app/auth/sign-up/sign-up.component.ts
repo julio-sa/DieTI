@@ -1,50 +1,20 @@
 import { CommonModule, Location } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { AfterViewInit, Component, ElementRef, ViewChild } from "@angular/core";
-import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators, ValidatorFn } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import Swal from 'sweetalert2';
 import { environment } from '../../../environments/environment';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatNativeDateModule } from '@angular/material/core';
-import { MAT_DATE_FORMATS } from '@angular/material/core';
-
-export const MY_DATE_FORMATS = {
-  parse: {
-    dateInput: 'DD/MM/YYYY',
-  },
-  display: {
-    dateInput: 'DD/MM/YYYY',
-    monthYearLabel: 'MMM YYYY',
-    dateA11yLabel: 'DD/MM/YYYY',
-    monthYearA11yLabel: 'MMMM YYYY',
-  },
-};
 
 @Component({
   standalone: true,
   selector: "app-sign-up",
-  imports: [CommonModule, 
-            FormsModule, 
-            RouterModule, 
-            ReactiveFormsModule,
-            MatDatepickerModule,
-            MatInputModule,
-            MatFormFieldModule,
-            MatNativeDateModule
-          ],
+  imports: [CommonModule, FormsModule, RouterModule, ReactiveFormsModule],
   templateUrl: "./sign-up.component.html",
-  styleUrls: ["./sign-up.component.css"],
-  providers: [
-    { provide: MAT_DATE_FORMATS, useValue: MY_DATE_FORMATS }
-  ]
+  styleUrls: ["./sign-up.component.css"]
 })
 export class SignUpComponent implements AfterViewInit {
   registerForm: FormGroup;
-  errorMessage: string = '';
-
   private readonly backendUrl = environment.backendUrl;
 
   goals = {
@@ -54,13 +24,6 @@ export class SignUpComponent implements AfterViewInit {
     gordura: 80
   };
 
-  // Propriedades
-  showCalendar = false;
-  currentMonth = new Date().toLocaleString('pt-BR', { month: 'long' });
-  currentYear = new Date().getFullYear();
-  calendarDays: any[] = [];
-  isMobileDevice = window.innerWidth <= 768;
-
   @ViewChild('nameInput', { static: true }) nameInput!: ElementRef;
 
   constructor(private fb: FormBuilder, private http: HttpClient, private router: Router, private location: Location) {
@@ -69,7 +32,7 @@ export class SignUpComponent implements AfterViewInit {
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', Validators.required],
-      bdate: ['', Validators.required, minAgeValidator(13)],
+      bdate: ['', Validators.required],
       weight: ['', Validators.required],
       height: ['', Validators.required],
       goals: this.fb.group({
@@ -89,59 +52,45 @@ export class SignUpComponent implements AfterViewInit {
     this.router.navigate(['/sign-in']);
   }
 
-  onDateChange(event: any) {
-    // Converte para formato ISO sem alterar o dia
-    if (event.value) {
-      const date = new Date(event.value);
-      const isoDate = date.toISOString().split('T')[0];
-      this.registerForm.get('bdate')?.setValue(isoDate);
+  // Máscara para dd/mm/yyyy
+  onDateInput(event: any) {
+    let value = event.target.value.replace(/\D/g, '');
+    if (value.length >= 5) {
+      value = value.replace(/(\d{2})(\d{2})(\d)/, '$1/$2/$3');
+    } else if (value.length >= 3) {
+      value = value.replace(/(\d{2})(\d)/, '$1/$2');
     }
+    this.registerForm.get('bdate')?.setValue(value, { emitEvent: false });
   }
 
-  onSubmit() {
-    if (this.registerForm.invalid) {
-      this.registerForm.markAllAsTouched();
-      return;
+  // Valida se a data é válida no formato dd/mm/yyyy
+  isValidDate(dateStr: string): boolean {
+    const regex = /^(\d{2})\/(\d{2})\/(\d{4})$/;
+    const match = dateStr.match(regex);
+    if (!match) return false;
+
+    const day = parseInt(match[1], 10);
+    const month = parseInt(match[2], 10);
+    const year = parseInt(match[3], 10);
+
+    if (year < 1900 || year > 2100 || month < 1 || month > 12 || day < 1 || day > 31) return false;
+
+    // Verifica dias por mês (incluindo ano bissexto)
+    const daysInMonth = [31, 28 + (year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0) ? 1 : 0), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+    return day <= daysInMonth[month - 1];
+  }
+
+  // Calcula idade
+  getAge(dateStr: string): number {
+    const [day, month, year] = dateStr.split('/').map(Number);
+    const birthDate = new Date(year, month - 1, day);
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
     }
-
-    const bdateValue = this.registerForm.get('bdate')?.value;
-    if (bdateValue) {
-      const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
-      if (!dateRegex.test(bdateValue)) {
-        this.registerForm.get('bdate')?.setErrors({ invalidFormat: true });
-        return;
-      }
-    }
-
-    const formData = this.registerForm.value;
-
-    this.http.post(`${this.backendUrl}/api/auth/sign-up`, formData).subscribe({
-      next: (res: any) => {
-        // ✅ Salva os dados do novo usuário
-        localStorage.setItem('token', res.token);
-        localStorage.setItem('userId', res.user.id);
-        localStorage.setItem('userName', res.user.name);
-        
-        // ✅ Salva as metas do usuário
-        if (res.user.goals) {
-          localStorage.setItem('goals', JSON.stringify(res.user.goals));
-        }
-
-        Swal.fire({
-          icon: 'success',
-          title: 'Bem vindo a uma vida saudável!',
-          text: 'Sua conta foi criada com sucesso.',
-          confirmButtonText: 'Vamos lá!'
-        }).then(() => this.router.navigate(['/home']));
-      },
-      error: () => {
-        Swal.fire({
-          icon: 'error',
-          title: 'Oops...',
-          text: 'Erro ao criar sua conta.',
-        });
-      }
-    });
+    return age;
   }
 
   password_confirmation(form: FormGroup) {
@@ -149,50 +98,56 @@ export class SignUpComponent implements AfterViewInit {
       ? null : { mismatch: true };
   }
 
-  formatDateInput(date: string): string {
-    if (!date) return '';
-    const d = new Date(date);
-    const day = d.getDate().toString().padStart(2, '0');
-    const month = (d.getMonth() + 1).toString().padStart(2, '0');
-    const year = d.getFullYear();
-    return `${day}/${month}/${year}`;
-  }
+  onSubmit() {
+    if (!this.registerForm.get('name')?.value ||
+        !this.registerForm.get('email')?.value ||
+        !this.registerForm.get('password')?.value ||
+        !this.registerForm.get('weight')?.value ||
+        !this.registerForm.get('height')?.value) {
+      alert('Preencha todos os campos obrigatórios.');
+      return;
+    }
 
-  parseDateInput(event: any) {
-    const value = event.target.value;
-    const parts = value.split('/');
-    
-    if (parts.length === 3) {
-      const day = parseInt(parts[0]);
-      const month = parseInt(parts[1]) - 1;
-      const year = parseInt(parts[2]);
-      
-      if (!isNaN(day) && !isNaN(month) && !isNaN(year)) {
-        const date = new Date(year, month, day);
-        if (date.getFullYear() === year && 
-            date.getMonth() === month && 
-            date.getDate() === day) {
-          this.registerForm.get('bdate')?.setValue(date.toISOString().split('T')[0]);
+    const bdate = this.registerForm.get('bdate')?.value;
+    if (!bdate) {
+      alert('Data de nascimento é obrigatória.');
+      return;
+    }
+
+    if (!this.isValidDate(bdate)) {
+      alert('Data de nascimento inválida. Use o formato dd/mm/yyyy.');
+      return;
+    }
+
+    const age = this.getAge(bdate);
+    if (age < 13 || age > 120) {
+      alert('Idade deve estar entre 13 e 120 anos.');
+      return;
+    }
+
+    // ✅ CORREÇÃO: formatação manual SEM Date().toISOString()
+    const [day, month, year] = bdate.split('/').map(Number);
+    const isoDate = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+
+    const formData = {
+      ...this.registerForm.value,
+      bdate: isoDate
+    };
+
+    this.http.post(`${this.backendUrl}/api/auth/sign-up`, formData).subscribe({
+      next: (res: any) => {
+        localStorage.setItem('token', res.token);
+        localStorage.setItem('userId', res.user.id);
+        localStorage.setItem('userName', res.user.name);
+        if (res.user.goals) {
+          localStorage.setItem('goals', JSON.stringify(res.user.goals));
         }
+        Swal.fire({ icon: 'success', title: 'Conta criada!', confirmButtonText: 'Vamos lá!' })
+          .then(() => this.router.navigate(['/home']));
+      },
+      error: () => {
+        Swal.fire({ icon: 'error', title: 'Erro ao criar conta.' });
       }
-    }
+    });
   }
-}
-
-// Função de validação personalizada
-export function minAgeValidator(minAge: number): ValidatorFn {
-  return (control: AbstractControl): {[key: string]: any} | null => {
-    if (!control.value) return null;
-    
-    const birthDate = new Date(control.value);
-    const today = new Date();
-    let age = today.getFullYear() - birthDate.getFullYear();
-    const monthDiff = today.getMonth() - birthDate.getMonth();
-    
-    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-      age--;
-    }
-    
-    return age >= minAge ? null : { minAge: { requiredAge: minAge, actualAge: age } };
-  };
 }
