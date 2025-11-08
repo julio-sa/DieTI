@@ -1,7 +1,10 @@
 import connectDB from '../../../lib/mongodb';
 import User from '../../../models/User';
-import { collection_reset_tokens } from '../../../lib/db'; // Importe a coleção
+import { collection_reset_tokens } from '../../../lib/db';
 import crypto from 'crypto';
+import nodemailer from 'nodemailer';
+
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 export default async function handler(req, res) {
   const allowedOrigins = ['http://localhost:4200', 'https://dieti.vercel.app'];
@@ -48,20 +51,13 @@ export default async function handler(req, res) {
   );
 
   const transporter = nodemailer.createTransporter({
-    host: 'smtp.seuservidor.com', // ex: smtp.gmail.com
+    host: 'smtp.gmail.com',
     port: 587,
     secure: false,
     auth: {
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_PASS
     }
-  });
-
-  await transporter.sendMail({
-    from: '"DieTI" <noreply@dieti.com>',
-    to: email,
-    subject: 'Recuperação de Senha - DieTI',
-    text: `Seu código de recuperação é: ${code}. Ele expira em 15 minutos.`
   });
 
   return res.status(200).json({ message: 'Código de recuperação enviado.' });
