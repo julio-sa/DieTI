@@ -47,12 +47,6 @@ export class RecoveryCodeComponent implements OnInit {
   }
 
   async onSubmit() {
-    console.log('Enviando:', {
-      email: this.email,
-      code: this.code,
-      newPassword: this.newPassword
-    });
-
     try {
       await firstValueFrom(
         this.http.post(`${this.backendUrl}/api/auth/reset-password`, {
