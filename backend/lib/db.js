@@ -6,16 +6,17 @@ const dbName = 'DieTI';
 let client;
 let collection_reset_tokens;
 
-async function init() {
-  if (collection_reset_tokens) return;
+async function connectDB() {
+  if (!client) {
+    client = new MongoClient(uri);
+    await client.connect();
+  }
 
-  client = new MongoClient(uri);
-  await client.connect();
-  
-  const db = client.db(dbName);
-  collection_reset_tokens = db.collection('password_reset_tokens');
+  if (!collection_reset_tokens) {
+    const db = client.db(dbName);
+    collection_reset_tokens = db.collection('password_reset_tokens');
+  }
+  return collection_reset_tokens;
 }
 
-init();
-
-export { collection_reset_tokens, client as mongoClient };
+export { connectDB, collection_reset_tokens };

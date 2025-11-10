@@ -1,6 +1,6 @@
 import connectDB from '../../../lib/mongodb';
 import User from '../../../models/User';
-import { collection_reset_tokens } from '../../../lib/db';
+import { connectDB } from '../../../lib/db';
 import crypto from 'crypto';
 import nodemailer from 'nodemailer';
 
@@ -26,7 +26,7 @@ export default async function handler(req, res) {
   }
   res.setHeader('Access-Control-Allow-Credentials', 'true');
 
-  await connectDB();
+  const collection_reset_tokens = await connectDB();
 
   const { email } = req.body;
 
@@ -55,8 +55,8 @@ export default async function handler(req, res) {
     port: 587,
     secure: false,
     auth: {
-      user: process.env.EMAIL_USER,    // ex: julio.ccbeu@gmail.com
-      pass: process.env.EMAIL_PASS     // Senha de App (16 caracteres)
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS
     }
   });
 
