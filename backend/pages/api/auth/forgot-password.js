@@ -82,9 +82,9 @@ export default async function handler(req, res) {
       from: process.env.EMAIL_FROM,
       subject: 'Recuperação de Senha - DieTI',
       text: `Seu código de recuperação é: ${code}. Ele expira em 15 minutos.`,
-      // opcionalmente:
       html: `<p>Seu código de recuperação é:</p><h2>${code}</h2><p>Ele expira em 15 minutos.</p>`
     };
+
 
     const [response] = await sgMail.send(msg);
     console.log('📩 Forgot password email status:', response.statusCode);
