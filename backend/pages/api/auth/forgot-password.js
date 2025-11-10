@@ -52,27 +52,28 @@ export default async function handler(req, res) {
   );
 
   // ✅ Configuração do Nodemailer com Gmail
-  const transporter = nodemailer.createTransporter({
-    host: 'smtp.gmail.com',
-    port: 587,
-    secure: false,
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS
-    }
-  });
+  // const transporter = nodemailer.createTransporter({
+  //   host: 'smtp.gmail.com',
+  //   port: 587,
+  //   secure: false,
+  //   auth: {
+  //     user: process.env.EMAIL_USER,
+  //     pass: process.env.EMAIL_PASS
+  //   }
+  // });
 
-  try {
-    await transporter.sendMail({
-      from: `"DieTI" <${process.env.EMAIL_USER}>`,
-      to: email,
-      subject: 'Recuperação de Senha - DieTI',
-      text: `Seu código de recuperação é: ${code}. Ele expira em 15 minutos.`
-    });
+  // try {
+  //   await transporter.sendMail({
+  //     from: `"DieTI" <${process.env.EMAIL_USER}>`,
+  //     to: email,
+  //     subject: 'Recuperação de Senha - DieTI',
+  //     text: `Seu código de recuperação é: ${code}. Ele expira em 15 minutos.`
+  //   });
 
-    return res.status(200).json({ message: 'Código de recuperação enviado.' });
-  } catch (error) {
-    console.error('Erro ao enviar email:', error);
-    return res.status(500).json({ message: 'Falha ao enviar o email. Tente novamente mais tarde.' });
-  }
+  //   return res.status(200).json({ message: 'Código de recuperação enviado.' });
+  // } catch (error) {
+  //   console.error('Erro ao enviar email:', error);
+  //   return res.status(500).json({ message: 'Falha ao enviar o email. Tente novamente mais tarde.' });
+  // }
+  return res.status(200).json({ message: 'Código gerado com sucesso.' });
 }
