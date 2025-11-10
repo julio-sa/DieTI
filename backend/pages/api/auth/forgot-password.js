@@ -3,7 +3,6 @@ import User from '../../../models/User';
 import { collection_reset_tokens } from '../../../lib/db';
 import crypto from 'crypto';
 import nodemailer from 'nodemailer';
-import sgMail from '@sendgrid/mail';
 
 export default async function handler(req, res) {
   const allowedOrigins = ['http://localhost:4200', 'https://dieti.vercel.app'];
