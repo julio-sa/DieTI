@@ -1,21 +1,34 @@
+// lib/db.js
 import { MongoClient } from 'mongodb';
 
 const uri = process.env.MONGO_URI;
 const dbName = 'DieTI';
 
-let client;
-let collection_reset_tokens;
-
-async function init() {
-  if (collection_reset_tokens) return;
-
-  client = new MongoClient(uri);
-  await client.connect();
-  
-  const db = client.db(dbName);
-  collection_reset_tokens = db.collection('password_reset_tokens');
+if (!uri) {
+  throw new Error('MONGO_URI não está definido');
 }
 
-init();
+let client;
+let db;
+let resetTokensCollection;
 
-export { collection_reset_tokens, client as mongoClient };
+async function getDb() {
+  if (db) return db;
+
+  if (!client) {
+    client = new MongoClient(uri);
+    await client.connect();
+    console.log('✅ MongoDB conectado');
+  }
+
+  db = client.db(dbName);
+  return db;
+}
+
+export async function getResetTokensCollection() {
+  if (resetTokensCollection) return resetTokensCollection;
+
+  const db = await getDb();
+  resetTokensCollection = db.collection('password_reset_tokens');
+  return resetTokensCollection;
+}
