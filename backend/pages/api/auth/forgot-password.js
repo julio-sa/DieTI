@@ -1,4 +1,4 @@
-import connectDB from '../../../lib/mongodb';
+import connectMongoDB from '../../../lib/mongodb';
 import User from '../../../models/User';
 import { connectDB } from '../../../lib/db';
 import crypto from 'crypto';
@@ -20,6 +20,8 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ message: 'Método não permitido' });
   }
+
+  await connectMongoDB();
 
   if (allowedOrigins.includes(origin)) {
     res.setHeader('Access-Control-Allow-Origin', origin);
