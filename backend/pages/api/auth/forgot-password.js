@@ -91,7 +91,7 @@ export default async function handler(req, res) {
 
     return res.status(200).json({ message: 'Código de recuperação enviado.' });
   } catch (err) {
-    console.error('❌ Erro no forgot-password:', err);
+    console.error('❌ Erro no forgot-password:', err.response?.body || err);
     return res.status(500).json({
       message: 'Erro ao enviar o código de recuperação. Tente novamente em instantes.'
     });
