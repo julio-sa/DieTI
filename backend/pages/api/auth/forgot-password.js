@@ -2,7 +2,13 @@ import connectDB from '../../../lib/mongodb';
 import User from '../../../models/User';
 import { getResetTokensCollection } from '../../../lib/db';
 import crypto from 'crypto';
-import nodemailer from 'nodemailer';
+import sgMail from '@sendgrid/mail';
+
+if (!process.env.SENDGRID_API_KEY) {
+  console.error('❌ SENDGRID_API_KEY não configurado');
+} else {
+  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+}
 
 export default async function handler(req, res) {
   const allowedOrigins = ['http://localhost:4200', 'https://dieti.vercel.app'];
@@ -39,7 +45,7 @@ export default async function handler(req, res) {
 
     const user = await User.findOne({ email });
 
-    // resposta neutra
+    // resposta neutra pra não vazar se existe ou não
     if (!user) {
       return res
         .status(200)
@@ -63,36 +69,25 @@ export default async function handler(req, res) {
       { upsert: true }
     );
 
-    // validação mínima das envs
-    if (!process.env.SENDGRID_API_KEY) {
-      console.error('❌ Env faltando: SENDGRID_API_KEY');
+    if (!process.env.SENDGRID_API_KEY || !process.env.EMAIL_FROM) {
+      console.error('❌ Falta SENDGRID_API_KEY ou EMAIL_FROM');
       return res.status(500).json({
         message:
           'Configuração de envio de e-mail ausente. Contate o suporte da aplicação.'
       });
     }
 
-    const transporter = nodemailer.createTransport({
-      host: 'smtp.sendgrid.net',
-      port: 587,
-      secure: false,
-      auth: {
-        user: 'apikey', // literal, é assim mesmo
-        pass: process.env.SENDGRID_API_KEY
-      }
-    });
-
-    const from =
-      process.env.EMAIL_FROM || 'DieTI <no-reply@dieti.app>'; // ajusta depois se tiver domínio
-
-    const info = await transporter.sendMail({
-      from,
+    const msg = {
       to: email,
+      from: process.env.EMAIL_FROM,
       subject: 'Recuperação de Senha - DieTI',
-      text: `Seu código de recuperação é: ${code}. Ele expira em 15 minutos.`
-    });
+      text: `Seu código de recuperação é: ${code}. Ele expira em 15 minutos.`,
+      // opcionalmente:
+      html: `<p>Seu código de recuperação é:</p><h2>${code}</h2><p>Ele expira em 15 minutos.</p>`
+    };
 
-    console.log('📩 Forgot password email sent:', info.messageId);
+    const [response] = await sgMail.send(msg);
+    console.log('📩 Forgot password email status:', response.statusCode);
 
     return res.status(200).json({ message: 'Código de recuperação enviado.' });
   } catch (err) {
