@@ -523,7 +523,7 @@ details li {
   .saved-recipes-container {
     padding: 20px;
     margin-left: 55px;
-    margin-top: 80px;
+    margin-top: 120px;
     font-family: Helvetica;
     width: 100%;
   }
@@ -539,11 +539,10 @@ details li {
   }
 
   .logo-image {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      width: 45%;
-      max-width: 350px;
+    position: absolute;
+    top: 30px;
+    right: 5px;
+    width: 150px;
   }
 
   .title {

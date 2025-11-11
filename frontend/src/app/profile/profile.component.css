@@ -1008,9 +1008,9 @@ select.input-field option {
 
     .logo-image {
         position: absolute;
-        top: 25px;
-        right: 20px;
-        width: 120px;
+        top: 30px;
+        right: 5px;
+        width: 150px;
     }
 
     .page-container {
