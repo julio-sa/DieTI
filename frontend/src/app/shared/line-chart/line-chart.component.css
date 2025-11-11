@@ -299,13 +299,14 @@
 
 @media (max-width: 425px) {
   .controls {
-    position: relative;
-    width: 260px;
+    position: static;
     display: flex;
-    flex-direction: row;
-    gap: 200px;
-    margin-top: 60px;
-    margin-left: 300px;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    max-width: 320px;
+    margin: 40px auto 0;      /* centraliza horizontalmente */
   }
 
   .controls span {
@@ -316,28 +317,35 @@
   }
 
   .custom-select {
-    width: 25%;
-    margin-bottom: 8px;
-    left: -155px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 48%;               /* dois selects lado a lado */
+    margin: 0;
+    left: auto;               /* remove deslocamento */
   }
 
-  .options {
-    width: 100px;
-  }
-  
-  .custom-select .options li {
-    padding: 8px 10px;
+  .custom-select span {
+    padding: 6px 8px;
     font-size: 10px;
-    width: 100px;
+  }
+
+  .custom-select .options {
+    width: 100%;
+  }
+
+  .custom-select .options li {
+    padding: 6px 8px;
+    font-size: 10px;
   }
 
   .custom-select::after {
     content: '˅';
     position: absolute;
-    right: -25px;
+    right: 8px;
     top: 50%;
     transform: translateY(-50%) rotate(0deg);
-    font-size: 0.8em;
+    font-size: 0.7em;
     color: #333;
     pointer-events: none;
     transition: transform 0.2s ease;
@@ -350,8 +358,25 @@
 
   .chart-container {
     position: relative;
-    display: inline-block;
-    margin-top: -10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin: 15px auto 0;      /* logo abaixo dos controls, centralizado */
+  }
+
+  .chart-scroll {
+    width: 100%;
+    max-width: 320px;
+    margin: 0 auto;
+    overflow-x: auto;         /* se tiver muitos pontos no eixo X */
+  }
+
+  .chart-svg {
+    width: 100%;
+    height: 240px;            /* ajusta a altura pro mobile */
+    display: block;
+    margin: 0 auto;
   }
 
   .chart-tooltip {
@@ -374,16 +399,6 @@
 
   .has-tooltip:hover {
     r: 8 !important;
-  }
-
-  .chart-scroll {
-    width: 350px;
-  }
-
-  .chart-svg {
-    position: relative;
-    height: 270px;
-    width: 300px;
   }
 
   h3 {
