@@ -16,7 +16,6 @@ export default function withCors(handler) {
       return;
     }
 
-    // Chama o handler real
     return handler(req, res);
   };
 }
