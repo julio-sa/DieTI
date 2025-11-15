@@ -69,7 +69,6 @@ export class HomePageComponent implements AfterViewInit {
   isOnline = true;
   pendingFoods: FoodData[] = [];
 
-  // estado “oficial” mostrado nos anéis
   dailyIntake = {
     calorias: 0,
     proteinas: 0,
@@ -77,7 +76,6 @@ export class HomePageComponent implements AfterViewInit {
     gordura: 0,
   };
 
-  // metas
   goals = {
     calorias: 2704,
     proteinas: 176,
@@ -85,7 +83,6 @@ export class HomePageComponent implements AfterViewInit {
     gordura: 80,
   };
 
-  // dados que alimentam o componente do gráfico
   caloriasData = { value: 0, max: this.goals.calorias };
   proteinasData = { value: 0, max: this.goals.proteinas };
   carbData = { value: 0, max: this.goals.carbo };
@@ -96,7 +93,6 @@ export class HomePageComponent implements AfterViewInit {
     private tacoService: TacoService,
     private cdr: ChangeDetectorRef
   ) {
-    // busca com debounce
     this.searchSubject
       .pipe(debounceTime(300), distinctUntilChanged())
       .subscribe((term) => {
@@ -117,14 +113,10 @@ export class HomePageComponent implements AfterViewInit {
         }
       });
 
-    // online/offline
     this.isOnline = navigator.onLine;
     window.addEventListener('online', () => this.handleOnline());
-    window.addEventListener('offline', () => {
-      this.isOnline = false;
-    });
+    window.addEventListener('offline', () => { this.isOnline = false; });
 
-    // PWA
     window.addEventListener('pwa-install-available', () => {
       this.showInstallPrompt = true;
       this.cdr.detectChanges();
@@ -132,7 +124,6 @@ export class HomePageComponent implements AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    // metas do localStorage
     const savedGoals = localStorage.getItem('goals');
     if (savedGoals) {
       try {
@@ -148,25 +139,18 @@ export class HomePageComponent implements AfterViewInit {
       }
     }
 
-    // inicia gráfico com metas corretas
     this.updateCharts();
 
-    // carrega dados do dia
     this.loadDailyIntake();
     this.loadFavoriteRecipes();
 
-    // acessibilidade
     this.buttonLeft.nativeElement.focus();
 
-    // clique global
     document.addEventListener('click', this.handleClickOutside.bind(this));
 
     this.cdr.detectChanges();
   }
 
-  // =============================
-  // online
-  // =============================
   private async handleOnline() {
     this.isOnline = true;
     this.cdr.detectChanges();
@@ -183,18 +167,12 @@ export class HomePageComponent implements AfterViewInit {
       }
 
       this.pendingFoods = failed;
-      // revalida com backend, mas sem reanimar (apenas corrige se precisar)
       this.verifyAndCorrectFromServer();
     }
   }
 
-  // =============================
-  // UI helpers
-  // =============================
   handleClickOutside(event: MouseEvent) {
-    if (!this.popupVisible && this.searchResults.length === 0) {
-      return;
-    }
+    if (!this.popupVisible && this.searchResults.length === 0) return;
 
     const input = this.foodInput?.nativeElement;
     const results = this.searchResultsContainer?.nativeElement;
@@ -258,10 +236,7 @@ export class HomePageComponent implements AfterViewInit {
     if (parts.length === 0) {
       return { mainName: '', details: [] };
     }
-    return {
-      mainName: parts[0],
-      details: parts.slice(1),
-    };
+    return { mainName: parts[0], details: parts.slice(1) };
   }
 
   onKeyDown(event: KeyboardEvent) {
@@ -325,9 +300,7 @@ export class HomePageComponent implements AfterViewInit {
     this.cdr.detectChanges();
   }
 
-  // =============================
-  // adicionar alimento — animação otimista única
-  // =============================
+  // ========= adicionar alimento: animação otimista + payload antes de fechar popup =========
   addFood() {
     if ((!this.selectedFood && !this.selectedRecipe) || !this.grams || this.grams <= 0) return;
 
@@ -338,20 +311,20 @@ export class HomePageComponent implements AfterViewInit {
     }
 
     // 1) calcula consumo do item
-    let consumed: any;
+    let consumed: { calorias: number; proteinas: number; carbo: number; gordura: number };
     if (this.selectedFood) {
       if ((this.selectedFood as any).type === 'recipe') {
-        // receitas do search/combined vêm com totals em 100g
-        consumed = this.tacoService.calculateForGrams(this.selectedFood, this.grams);
-        consumed.calorias = consumed.calorias / 100;
-        consumed.proteinas = consumed.proteinas / 100;
-        consumed.carbo = consumed.carbo / 100;
-        consumed.gordura = consumed.gordura / 100;
+        const tmp = this.tacoService.calculateForGrams(this.selectedFood, this.grams);
+        consumed = {
+          calorias: tmp.calorias / 100,
+          proteinas: tmp.proteinas / 100,
+          carbo: tmp.carbo / 100,
+          gordura: tmp.gordura / 100,
+        };
       } else {
         consumed = this.tacoService.calculateForGrams(this.selectedFood, this.grams);
       }
-    } else if (this.selectedRecipe) {
-      // favorito salvo (totais já salvos)
+    } else {
       const fator = this.grams / 100;
       consumed = {
         calorias: (this.selectedRecipe.calorias ?? 0) * fator,
@@ -361,17 +334,16 @@ export class HomePageComponent implements AfterViewInit {
       };
     }
 
-    // 2) animação otimista: atualiza o estado local e o gráfico JÁ
-    this.applyLocalConsumption(consumed);
-
-    // 3) fecha rapidamente o popup (sem travar a UI)
-    this.closePopup();
-
-    // 4) monta payload para o backend
+    // 2) **MONTA O PAYLOAD ANTES** de fechar o popup (evita perder description)
     const localDate = new Date().toISOString().split('T')[0];
+    const description =
+      (this.selectedFood && this.selectedFood.description) ||
+      (this.selectedRecipe && this.selectedRecipe.name) ||
+      'item';
+
     const foodData: FoodData = {
       user_id: userId,
-      description: this.selectedFood?.description || this.selectedRecipe?.name,
+      description,
       grams: this.grams,
       calorias: Number(consumed.calorias) || 0,
       proteinas: Number(consumed.proteinas) || 0,
@@ -380,21 +352,23 @@ export class HomePageComponent implements AfterViewInit {
       date: localDate,
     };
 
-    // 5) persistência: SOMENTE /food/add (NÃO chamar /intake/add)
+    // 3) animação otimista imediata
+    this.applyLocalConsumption(consumed);
+
+    // 4) fecha popup rápido
+    this.closePopup();
+
+    // 5) persiste (somente /food/add)
     if (this.isOnline) {
       this.http.post(`${this.apiUrl}/food/add`, foodData).subscribe({
-        next: () => {
-          // não reanima: apenas confere se o servidor está igual
-          this.verifyAndCorrectFromServer();
-        },
+        next: () => this.verifyAndCorrectFromServer(),
         error: (err) => {
-          const isActuallyOffline = !navigator.onLine;
-          if (isActuallyOffline) {
+          const actuallyOffline = !navigator.onLine;
+          if (actuallyOffline) {
             this.queueOffline(foodData);
           } else {
-            // CORS/500: mantém valor otimista e avisa
             console.error('Falha ao salvar no servidor:', err);
-            alert('Falha ao salvar no servidor (CORS/500). Verifique o backend.');
+            alert('Falha ao salvar no servidor (HTTP 500/CORS). Verifique o backend.');
           }
         },
       });
@@ -403,7 +377,7 @@ export class HomePageComponent implements AfterViewInit {
     }
   }
 
-  // Confere o que está exibido vs o backend e corrige sem reanimar
+  // Confere com o backend e corrige sem reanimar
   private verifyAndCorrectFromServer() {
     const userId = localStorage.getItem('userId');
     if (!userId) return;
@@ -426,19 +400,14 @@ export class HomePageComponent implements AfterViewInit {
           Math.abs(server.gordura - local.gordura) < 0.0001;
 
         if (!same) {
-          // Corrige sem chamar animação de novo: atualiza datasource e
-          // deixa o componente do gráfico levar do valor animado atual até o novo sem pulo
           this.dailyIntake = server;
           this.updateCharts();
           this.cdr.detectChanges();
         }
 
-        // Atualiza o line chart silenciosamente
         setTimeout(() => this.lineChartComponent?.reload(), 100);
       },
-      error: () => {
-        // mantém otimista
-      },
+      error: () => { /* mantém otimista */ },
     });
   }
 
@@ -449,7 +418,7 @@ export class HomePageComponent implements AfterViewInit {
       carbo: this.dailyIntake.carbo + consumed.carbo,
       gordura: this.dailyIntake.gordura + consumed.gordura,
     };
-    this.updateCharts(); // dispara UMA animação
+    this.updateCharts();
   }
 
   private queueOffline(foodData: FoodData) {
@@ -457,9 +426,6 @@ export class HomePageComponent implements AfterViewInit {
     alert('Alimento adicionado offline. Será sincronizado quando online.');
   }
 
-  // =============================
-  // gráficos
-  // =============================
   updateCharts() {
     this.caloriasData = { value: this.dailyIntake.calorias, max: this.goals.calorias };
     this.proteinasData = { value: this.dailyIntake.proteinas, max: this.goals.proteinas };
@@ -484,7 +450,7 @@ export class HomePageComponent implements AfterViewInit {
           carbo: data.carbo || 0,
           gordura: data.gordura || 0,
         };
-        this.updateCharts();   // UMA animação inicial
+        this.updateCharts();
         this.cdr.detectChanges();
       },
       error: (err) => {

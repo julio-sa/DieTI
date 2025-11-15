@@ -70,11 +70,14 @@ class NutritionalInfo(BaseModel):
     date: str | None = None
 
 class AddIntakeRequest(BaseModel):
-    user_id: str
-    calorias: float
-    proteinas: float
-    carbo: float
-    gordura: float
+    user_id: str = Field(..., description="User ID")
+    description: str = Field(..., description="Food or recipe description")
+    grams: float = Field(..., gt=0)
+    calorias: float = 0.0
+    proteinas: float = 0.0
+    carbo: float = 0.0
+    gordura: float = 0.0
+    date: str | None = None
 
 # --- 4. FUNÇÕES AUXILIARES ---
 def normalize_text(text: str) -> str:
@@ -248,28 +251,23 @@ async def get_daily_food(user_id: str, date: str | None = None):
     return foods
 
 @app.post("/food/add")
-async def add_food(food: dict):
+async def add_food(food: AddIntakeRequest):
     user_id = food.get("user_id")
     if not user_id:
         raise HTTPException(status_code=400, detail="User ID is required")
 
-    date = food.get("date") or datetime.datetime.now().strftime("%Y-%m-%d")
-
-    calorias = float(food.get("calorias") or 0.0)
-    proteinas = float(food.get("proteinas") or 0.0)
-    carbo = float(food.get("carbo") or 0.0)
-    gordura = float(food.get("gordura") or 0.0)
+    date = food.date or datetime.datetime.now().strftime("%Y-%m-%d")
 
     doc_id = ObjectId()
     doc = {
         "_id": doc_id,
         "user_id": user_id,
-        "description": food["description"],
-        "grams": food["grams"],
-        "calorias": calorias,
-        "proteinas": proteinas,
-        "carbo": carbo,
-        "gordura": gordura,
+        "description": food.description,
+        "grams": float(food.grams),
+        "calorias": float(food.calorias or 0.0),
+        "proteinas": float(food.proteinas or 0.0),
+        "carbo": float(food.carbo or 0.0),
+        "gordura": float(food.gordura or 0.0),
         "date": date,
     }
 
