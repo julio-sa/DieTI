@@ -23,6 +23,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:4200",
+        "http://127.0.0.1:4200",
         "https://dieti-backend.onrender.com",
         "https://dieti.vercel.app"],
     allow_credentials=True,
@@ -309,9 +310,10 @@ async def update_food(food_id: str, updates: dict):
     if result.matched_count == 0:
         raise HTTPException(status_code=404, detail="Food not found")
 
-    # ✅ Atualiza totais diários
+    # ✅ Recalcula histórico E diário
     food = await daily_log_intake_collection.find_one({"_id": ObjectId(food_id)})
     if food:
+        await update_daily_intake(food["user_id"], food["date"])  # <— ADICIONE ESTA LINHA
         await update_historical_intake(food["user_id"], food["date"])
 
     return {"msg": "Updated"}

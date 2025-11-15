@@ -11,7 +11,7 @@
       <li><button class="menu-item" [routerLink]="['/profile']" i18n>Perfil</button></li>
       <li><button class="menu-item" [routerLink]="['/create-recipe']" i18n>Criar Prato</button></li>
       <li><button class="menu-item" [routerLink]="['/saved-recipes']" i18n>Pratos Salvos</button></li>
-      <li><button class="menu-item" i18n>Configurações</button></li>
+      <!-- <li><button class="menu-item" i18n>Configurações</button></li> -->
       <li><button class="menu-item" [routerLink]="['/sign-in']" i18n>Sair</button></li>
     </ul>
   </div>
@@ -118,13 +118,12 @@
 
   <div class="progress-container">
     <app-multi-ring-chart
+      class="multi-ring-chart"
       [style.display]="isLeftActive ? 'block' : 'none'"
       [calorias]="caloriasData"
       [proteinas]="proteinasData"
       [carb]="carbData"
       [gordura]="gorduraData"
-      (refreshData)="onDataChanged()"
-      class="multi-ring-chart"
     ></app-multi-ring-chart>
 
     @if (favoriteRecipes && favoriteRecipes.length > 0) {

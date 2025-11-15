@@ -68,97 +68,51 @@
       (mouseleave)="hideTooltip()"
     />
 
-    <!-- Valores alinhados com cada anel -->
-    <image href="../../../assets/images/kcal.svg"
-    i18n
-    x="51"
-    y="51.3"
-    width="10"
-    height="10"
-    (mouseenter)="onIconHover($event, 'calorias', animatedCalories, calorias.max)"
-    (mouseleave)="hideTooltip()"
-    cursor="pointer"/>
+    <!-- Valores -->
+    <image href="../../../assets/images/kcal.svg" x="51" y="51.3" width="10" height="10" (mouseenter)="onIconHover($event, 'calorias', animatedCalories, calorias.max)" (mouseleave)="hideTooltip()" cursor="pointer"/>
     <text x="65" y="80" text-anchor="left" font-size="7" font-family="Helvetica" fill="#006e8c" dy="-21" cursor="pointer" (click)="openDailyFoodPopup()">
       {{ formattedCalories }} / {{ calorias.max }}
     </text>
 
-    <image href="../../../assets/images/protein.svg"
-    i18n
-    x="51"
-    y="67.3"
-    width="10"
-    height="10"
-    (mouseenter)="onIconHover($event, 'proteinas', animatedProtein, proteinas.max)"
-    (mouseleave)="hideTooltip()"
-    cursor="pointer"/>
+    <image href="../../../assets/images/protein.svg" x="51" y="67.3" width="10" height="10" (mouseenter)="onIconHover($event, 'proteinas', animatedProtein, proteinas.max)" (mouseleave)="hideTooltip()" cursor="pointer"/>
     <text x="65" y="80" text-anchor="left" font-size="7" font-family="Helvetica" fill="#006e8c" dy="-5" cursor="pointer" (click)="openDailyFoodPopup()">
       {{ formattedProtein }} / {{ proteinas.max }}
     </text>
 
-    <image href="../../../assets/images/carb.svg"
-    i18n
-    x="51"
-    y="83.4"
-    width="10"
-    height="10"
-    (mouseenter)="onIconHover($event, 'carbo', animatedCarbs, carb.max)"
-    (mouseleave)="hideTooltip()"
-    cursor="pointer"/>
+    <image href="../../../assets/images/carb.svg" x="51" y="83.4" width="10" height="10" (mouseenter)="onIconHover($event, 'carbo', animatedCarbs, carb.max)" (mouseleave)="hideTooltip()" cursor="pointer"/>
     <text x="65" y="80" text-anchor="left" font-size="7" font-family="Helvetica" fill="#006e8c" dy="10.9" cursor="pointer" (click)="openDailyFoodPopup()">
       {{ formattedCarb }} / {{ carb.max }}
     </text>
 
-    <image href="../../../assets/images/fat.svg"
-    i18n
-    x="51"
-    y="98.5"
-    width="10"
-    height="10"
-    (mouseenter)="onIconHover($event, 'gordura', animatedFat, gordura.max)"
-    (mouseleave)="hideTooltip()"
-    cursor="pointer"/>
+    <image href="../../../assets/images/fat.svg" x="51" y="98.5" width="10" height="10" (mouseenter)="onIconHover($event, 'gordura', animatedFat, gordura.max)" (mouseleave)="hideTooltip()" cursor="pointer"/>
     <text x="65" y="80" text-anchor="left" font-size="7" font-family="Helvetica" fill="#006e8c" dy="27" cursor="pointer" (click)="openDailyFoodPopup()">
       {{ formattedFat }} / {{ gordura.max }}
     </text>
   </svg>
+
   @if (showTooltip) {
-    <div 
-        class="chart-tooltip" 
-        #tooltip 
-        [style.left.px]="tooltipX" 
-        [style.top.px]="tooltipY">
-        {{ tooltipText }}
+    <div class="chart-tooltip" #tooltip [style.left.px]="tooltipX" [style.top.px]="tooltipY">
+      {{ tooltipText }}
     </div>
   }
-  <!-- Popup de alimentos do dia -->
+
   @if (showDailyPopup) {
     <div class="popup-overlay" (click)="closePopup()">
       <div class="popup" (click)="$event.stopPropagation()">
         <h3 i18n>Registros de hoje</h3>
-        
         <ul class="food-list">
           @for (food of dailyFoods; track food._id) {
             <li class="food-item">
               @if (selectedFoodToEdit && selectedFoodToEdit._id === food._id) {
-                <!-- Modo edição: mostra somente gramas editáveis -->
                 <div class="edit-mode">
-                  <!-- Descrição em modo somente leitura -->
                   <span class="food-description">{{ food.description }}</span>
-                  
-                  <!-- Gramas editáveis -->
-                  <input 
-                    type="number" 
-                    [(ngModel)]="selectedFoodToEdit.grams" 
-                    class="edit-input" 
-                    min="1" />
-                    
+                  <input type="number" [(ngModel)]="selectedFoodToEdit.grams" class="edit-input" min="1" />
                   <div class="actions">
                     <button (click)="saveEditedFood()" class="btn-edit" i18n>Salvar</button>
                     <button (click)="selectedFoodToEdit = null" class="btn-cancel" i18n>Cancelar</button>
                   </div>
                 </div>
               } @else {
-                <!-- Modo visualização -->
                 <div class="view-mode">
                   <span>{{ food.description }} — {{ food.grams | number:'1.2-2' }}g ({{ food.calorias | number:'1.2-2' }} kcal)</span>
                   <div class="actions">
@@ -170,7 +124,6 @@
             </li>
           }
         </ul>
-
         <button (click)="closePopup()" class="btn-close" i18n>Fechar</button>
       </div>
     </div>
