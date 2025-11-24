@@ -305,7 +305,6 @@ select.input-field option {
   .logo-image {
     max-width: 200px;
     height: auto;
-    margin-top: -100px;
   }
 
   .sign-up-form {
