@@ -1,6 +1,5 @@
 <!-- Seleção de métrica -->
 <div class="controls">
-  <!-- Select de métrica personalizado -->
   <div class="custom-select" (click)="toggleMetricOptions()">
     <span>{{ getMetricLabel(metric) }}</span>
     @if (showMetricOptions) {
@@ -37,21 +36,33 @@
 <div class="chart-container">
   <div class="chart-scroll">
     <svg
-      width="300"
-      height="300"
-      viewBox="0 0 300 300"
+      [attr.width]="svgWidth"
+      [attr.height]="svgHeight"
+      [attr.viewBox]="'0 0 ' + svgWidth + ' ' + svgHeight"
       class="chart-svg"
       (mouseleave)="hideTooltip()">
 
-      <!-- Eixos -->
-      <line [attr.x1]="50" [attr.y1]="20" [attr.x2]="50" [attr.y2]="250" stroke="#ccc" />
-      <line [attr.x1]="50" [attr.y1]="250" [attr.x2]="680" [attr.y2]="250" stroke="#ccc" />
+      <!-- Eixo Y -->
+      <line
+        [attr.x1]="MARGIN.left"
+        [attr.y1]="MARGIN.top"
+        [attr.x2]="MARGIN.left"
+        [attr.y2]="svgHeight - MARGIN.bottom"
+        stroke="#ccc" />
+
+      <!-- Eixo X -->
+      <line
+        [attr.x1]="MARGIN.left"
+        [attr.y1]="svgHeight - MARGIN.bottom"
+        [attr.x2]="xAxisEnd"
+        [attr.y2]="svgHeight - MARGIN.bottom"
+        stroke="#ccc" />
 
       <!-- Labels do eixo Y -->
       @for (i of [0, 25, 50, 75, 100]; track i) {
         <text
-          [attr.x]="45"
-          [attr.y]="250 - i * 2"
+          [attr.x]="MARGIN.left - 5"
+          [attr.y]="svgHeight - MARGIN.bottom - i * 2"
           text-anchor="end"
           font-size="10"
           fill="#666">
@@ -60,8 +71,8 @@
 
         @if (i > 0) {
           <text
-            [attr.x]="45"
-            [attr.y]="265 - i * 2"
+            [attr.x]="MARGIN.left - 5"
+            [attr.y]="svgHeight - MARGIN.bottom + 15 - i * 2"
             text-anchor="end"
             font-size="9"
             fill="#999">
@@ -70,31 +81,33 @@
         }
       }
 
-      <!-- Labels do eixo X -->
+      <!-- Labels do eixo X (rarificados) -->
       @for (item of animatedData; track $index) {
-        <text
-          [attr.x]="65 + $index * pointSpacing"
-          [attr.y]="270"
-          text-anchor="middle"
-          font-size="12"
-          fill="#333">
-          {{ formatDate(item.date) }}
-        </text>
+        @if (shouldShowXLabel($index)) {
+          <text
+            [attr.x]="xPos($index)"
+            [attr.y]="svgHeight - MARGIN.bottom + 20"
+            text-anchor="middle"
+            [attr.font-size]="xLabelFontSize"
+            fill="#333">
+            {{ formatDate(item.date) }}
+          </text>
+        }
       }
 
-      <!-- Linha única -->
+      <!-- Linha -->
       <polyline
         fill="none"
         [attr.stroke]="colors[metric]"
-        stroke-width="3"
+        [attr.stroke-width]="strokeWidth"
         [attr.d]="getLinePath(animatedData, metric)" />
 
       <!-- Pontos -->
       @for (item of animatedData; track $index) {
         <circle
-          [attr.cx]="65 + $index * pointSpacing"
+          [attr.cx]="xPos($index)"
           [attr.cy]="getYCoord(getValue(item, metric), goals[metric])"
-          r="6"
+          [attr.r]="pointRadius"
           [attr.fill]="colors[metric]"
           class="has-tooltip"
           (mouseenter)="onPointHover($event, item, $index)"
@@ -121,17 +134,17 @@
       <div class="popup" (click)="$event.stopPropagation()">
         <h3 i18n>Alimentos – {{ historicalDate }}</h3>
 
-       @if (hasHistoricalFoods) {
-            <ul class="food-list">
-                @for (food of historicalFoods; track $index) {
-                <li>
-                    {{ food.description }}
-                    — {{ food.grams }} g
-                </li>
-                }
-            </ul>
+        @if (hasHistoricalFoods) {
+          <ul class="food-list">
+            @for (food of historicalFoods; track $index) {
+              <li>
+                {{ food.description }}
+                — {{ food.grams }} g
+              </li>
+            }
+          </ul>
         } @else {
-            <p style="margin-top: 1rem;">Nenhum alimento registrado nesse dia.</p>
+          <p style="margin-top: 1rem;">Nenhum alimento registrado nesse dia.</p>
         }
 
         <button (click)="showHistoricalPopup = false" i18n>Fechar</button>

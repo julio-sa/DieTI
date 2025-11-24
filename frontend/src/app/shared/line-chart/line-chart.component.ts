@@ -69,10 +69,8 @@ export class LineChartComponent implements OnInit, OnChanges {
 
   readonly numericFields: NumericField[] = ['calorias', 'proteinas', 'carbo', 'gordura'];
 
-  // nota: aqui use sempre os mesmos nomes no HTML
   readonly periodOptions = ['7 dias', '1 mês', '1 trimestre', '1 semestre', '1 ano'] as const;
 
-  // cores
   readonly colors: Record<NumericField, string> = {
     calorias: '#006e8c',
     proteinas: '#00bfff',
@@ -80,15 +78,96 @@ export class LineChartComponent implements OnInit, OnChanges {
     gordura: '#a5d8ff',
   };
 
+  // ---------- Layout dinâmico ----------
+  readonly MARGIN = { left: 50, right: 30, top: 20, bottom: 50 };
+
+  /** padding interno no eixo X para o 1º/último ponto não encostarem nas bordas */
+  get innerPad(): number {
+    // proporcional ao espaçamento, limitado a 8..15
+    return Math.max(8, Math.min(15, this.pointSpacing * 0.25));
+  }
+
+  get svgHeight(): number {
+    return 300; // altura base (CSS ajusta por breakpoint se necessário)
+  }
+
+  get svgWidth(): number {
+    const n = Math.max(this.animatedData.length, 1);
+    // largura interna = pad esquerda + (n-1)*spacing + pad direita
+    const inner = this.innerPad * 2 + Math.max(n - 1, 0) * this.pointSpacing;
+    return this.MARGIN.left + inner + this.MARGIN.right;
+  }
+
+  get xAxisEnd(): number {
+    return this.svgWidth - this.MARGIN.right;
+  }
+
+  xPos(index: number): number {
+    return this.MARGIN.left + this.innerPad + index * this.pointSpacing;
+  }
+
+  // ---------- Rótulos do eixo X rarificados ----------
+  get maxXLabels(): number {
+    const mobile = window.innerWidth <= 425;
+    if (this.selectedPeriod === '1 ano') {
+      // mais agressivo em 1 ano
+      return mobile ? 4 : 8;
+    }
+    return mobile ? 6 : 10;
+  }
+
+  get xLabelStep(): number {
+    const n = Math.max(this.animatedData.length, 1);
+    return Math.max(1, Math.ceil(n / this.maxXLabels));
+  }
+
+  shouldShowXLabel(index: number): boolean {
+    const last = this.animatedData.length - 1;
+    return index === 0 || index === last || index % this.xLabelStep === 0;
+  }
+
+  get xLabelFontSize(): number {
+    switch (this.selectedPeriod) {
+      case '7 dias':      return 12;
+      case '1 mês':       return 11;
+      case '1 trimestre': return 10;
+      case '1 semestre':  return 9;
+      case '1 ano':       return 8;
+      default:            return 10;
+    }
+  }
+
+  get pointRadius(): number {
+    switch (this.selectedPeriod) {
+      case '7 dias':      return 6;
+      case '1 mês':       return 5;
+      case '1 trimestre': return 4;
+      case '1 semestre':  return 3;
+      case '1 ano':       return 2;
+      default:            return 4;
+    }
+  }
+
+  get strokeWidth(): number {
+    switch (this.selectedPeriod) {
+      case '7 dias':      return 3;
+      case '1 mês':       return 2.5;
+      case '1 trimestre': return 2.2;
+      case '1 semestre':  return 2;
+      case '1 ano':       return 1.8;
+      default:            return 2.2;
+    }
+  }
+
+  // ===================
+  // popup de histórico
+  // ===================
   get hasHistoricalFoods(): boolean {
     return Array.isArray(this.historicalFoods) && this.historicalFoods.length > 0;
   }
 
   constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {}
 
-  // ===================
-  // popup de histórico
-  // ===================
   openHistoricalFoodPopup(item: IntakeData) {
     const userId = localStorage.getItem('userId');
     const token = localStorage.getItem('token');
@@ -127,7 +206,7 @@ export class LineChartComponent implements OnInit, OnChanges {
         error: (err) => {
           console.error('Erro ao buscar alimentos do histórico:', err);
           this.historicalFoods = [];
-          this.showHistoricalPopup = true; // mostra pra usuário saber que não tem
+          this.showHistoricalPopup = true;
           this.cdr.detectChanges();
         },
       });
@@ -173,10 +252,10 @@ export class LineChartComponent implements OnInit, OnChanges {
     this.http
       .get<IntakeData[]>(`${this.apiUrl}/intake/history?user_id=${userId}&days=${days}`)
       .subscribe(data => {
-        // 1) guarda o valor REAL
+        // valor REAL
         this.rawData = data ?? [];
 
-        // 2) monta o valor INICIAL cheio (começa lotado)
+        // valor INICIAL "cheio"
         this.animatedData = this.rawData.map(item => ({
           date: item.date,
           calorias: this.goals.calorias,
@@ -185,14 +264,10 @@ export class LineChartComponent implements OnInit, OnChanges {
           gordura: this.goals.gordura
         }));
 
-        // 3) força detecção
         this.cdr.detectChanges();
-
-        // 4) anima descendo até o real
         this.animateData();
       });
   }
-
 
   reload(): void {
     this.loadHistory();
@@ -227,18 +302,14 @@ export class LineChartComponent implements OnInit, OnChanges {
     const duration = 900; // ms
     const start = performance.now();
 
-    // snapshot do estado CHEIO (o que tá na tela agora)
     const startData = this.animatedData.map(item => ({ ...item }));
-    // alvo = dados reais
     const targetData = this.rawData.map(item => ({ ...item }));
 
     const animate = (time: number) => {
       const elapsed = time - start;
       const progress = Math.min(elapsed / duration, 1);
-      // easing pra ficar gostoso
       const ease = 1 - Math.pow(1 - progress, 3);
 
-      // faz LERP campo a campo
       this.animatedData = startData.map((startItem, idx) => {
         const targetItem = targetData[idx] ?? startItem;
 
@@ -261,9 +332,8 @@ export class LineChartComponent implements OnInit, OnChanges {
     requestAnimationFrame(animate);
   }
 
-
   // ===================
-  // formatação de eixos
+  // eixos / path
   // ===================
   private parseLocalDate(dateString: string): Date {
     const [year, month, day] = dateString.split('-').map(Number);
@@ -286,6 +356,11 @@ export class LineChartComponent implements OnInit, OnChanges {
       return weekday[finalDate.getDay()];
     }
 
+    if (this.selectedPeriod === '1 ano') {
+      const meses = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+      return meses[finalDate.getMonth()];
+    }
+
     return `${finalDate.getDate()}`;
   }
 
@@ -297,7 +372,7 @@ export class LineChartComponent implements OnInit, OnChanges {
   getLinePath(data: IntakeData[], field: NumericField): string {
     return data
       .map((d, i) => {
-        const x = 60 + i * this.pointSpacing;
+        const x = this.xPos(i);
         const value = d[field];
         const goal = this.goals[field];
         const y = this.getYCoord(value, goal);
@@ -307,26 +382,29 @@ export class LineChartComponent implements OnInit, OnChanges {
   }
 
   getYCoord(value: number, goal: number): number {
-    if (goal === 0) return 250;
+    if (goal === 0) return this.svgHeight - this.MARGIN.bottom;
     const percentage = Math.min(value / goal, 1);
-    return 250 - percentage * 200;
+    const usable = 200; // altura útil
+    const base = this.svgHeight - this.MARGIN.bottom;
+    return base - percentage * usable;
   }
 
   get pointSpacing(): number {
-    switch (this.selectedPeriod) {
-      case '7 dias':
-        return 90;
-      case '1 mês':
-        return 30;
-      case '1 trimestre':
-        return 15;
-      case '1 semestre':
-        return 8;
-      case '1 ano':
-        return 5;
-      default:
-        return 90;
-    }
+    const base = (() => {
+      switch (this.selectedPeriod) {
+        case '7 dias':      return 90;
+        case '1 mês':       return 28;
+        case '1 trimestre': return 14;
+        case '1 semestre':  return 8;
+        case '1 ano':       return 6;
+        default:            return 20;
+      }
+    })();
+
+    const n = Math.max(this.animatedData.length, 1);
+    if (n > 200) return Math.max(4, base * 0.8);
+    if (n > 120) return Math.max(5, base * 0.9);
+    return base;
   }
 
   // ===================

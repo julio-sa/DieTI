@@ -27,7 +27,7 @@
 }
 
 .custom-select.show-metric-options::after,
-.custom-select.show-period-options::after {
+custom-select.show-period-options::after {
   transform: translateY(-50%) rotate(180deg);
 }
 
@@ -91,6 +91,23 @@
   margin-top: -80px;
 }
 
+/* Scroll horizontal quando o SVG alargar */
+.chart-scroll {
+  width: 100%;
+  max-width: 620px;   /* ajuste conforme o layout da home */
+  overflow-x: auto;
+}
+
+/* O width é dinâmico via [attr.width]. Controlamos só a altura. */
+.chart-svg {
+  height: 300px;
+}
+
+/* Evita seleção acidental de labels */
+.chart-svg text {
+  user-select: none;
+}
+
 .chart-tooltip {
   position: absolute;
   background: rgba(0, 0, 0, 0.8);
@@ -113,16 +130,7 @@
   r: 8 !important;
 }
 
-.chart-scroll {
-  width: 300px;
-}
-
-.chart-svg {
-  width: 620px;
-  height: 480px;
-}
-
-/* Estilo da lista de alimentos do dia */
+/* Lista do popup */
 .food-list {
   list-style: none;
   padding: 0;
@@ -190,8 +198,9 @@
   transform: scale(1.05);
 }
 
-/*Responsividade*/
-/*Tablet*/
+/* =========================
+   Responsividade
+========================= */
 @media (max-width: 768px) {
   .controls {
     position: relative;
@@ -208,58 +217,14 @@
     margin-left: -380px;
   }
 
-  .custom-select::after {
-    content: '˅';
-    position: absolute;
-    right: 12px;
-    top: 50%;
-    transform: translateY(-50%) rotate(0deg);
-    font-size: 0.8em;
-    color: #333;
-    pointer-events: none;
-    transition: transform 0.2s ease;
-  }
-
-  .custom-select.show-metric-options::after,
-  .custom-select.show-period-options::after {
-    transform: translateY(-50%) rotate(180deg);
-  }
-  
   .custom-select span {
     padding: 6px 10px;
     font-size: 13px;
   }
-  
+
   .custom-select .options li {
     padding: 8px 10px;
     font-size: 13px;
-  }
-
-  .chart-container {
-    position: relative;
-    display: inline-block;
-  }
-
-  .chart-tooltip {
-    position: absolute;
-    background: rgba(0, 0, 0, 0.8);
-    color: white;
-    padding: 6px 10px;
-    border-radius: 4px;
-    font-size: 12px;
-    pointer-events: none;
-    white-space: nowrap;
-    z-index: 1000;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-  }
-
-  .has-tooltip {
-    cursor: pointer;
-    transition: r 0.2s ease;
-  }
-
-  .has-tooltip:hover {
-    r: 8 !important;
   }
 
   .chart-scroll {
@@ -267,9 +232,7 @@
   }
 
   .chart-svg {
-    position: relative;
-    height: 270px;
-    width: 480px;
+    height: 270px;   /* tablet */
   }
 
   .popup {
@@ -281,16 +244,16 @@
     max-height: 250px;
     margin: 10px 0;
   }
-  
+
   .food-list li {
     padding: 10px 14px;
     font-size: 13px;
   }
-  
+
   .food-list .food-values {
     font-size: 12px;
   }
-  
+
   .popup button {
     padding: 8px 16px;
     font-size: 13px;
@@ -306,23 +269,22 @@
     gap: 8px;
     width: 100%;
     max-width: 320px;
-    margin: 40px 22px 0;      /* centraliza horizontalmente */
+    margin: 40px 22px 0;
   }
 
   .controls span {
     width: 100px;
     height: auto;
     font-size: 10px;
-    padding: auto;
   }
 
   .custom-select {
     position: relative;
     display: flex;
     flex-direction: column;
-    width: 48%;               /* dois selects lado a lado */
+    width: 48%;
     margin: 0;
-    left: auto;               /* remove deslocamento */
+    left: auto;
   }
 
   .custom-select span {
@@ -351,54 +313,27 @@
     transition: transform 0.2s ease;
   }
 
-  .custom-select.show-metric-options::after,
-  .custom-select.show-period-options::after {
-    transform: translateY(-50%) rotate(180deg);
-  }
-
   .chart-container {
     position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
     width: 100%;
-    margin: 15px auto 0;      /* logo abaixo dos controls, centralizado */
+    margin: 15px auto 0;
   }
 
   .chart-scroll {
     width: 100%;
-    max-width: 320px;
+    max-width: 380px;       /* dá folga pra altura 300px */
     margin: 0 auto;
-    overflow-x: auto;         /* se tiver muitos pontos no eixo X */
+    overflow-x: auto;
   }
 
+  /* PEDIDO: altura do gráfico até 300px no mobile */
   .chart-svg {
-    width: 100%;
-    height: 240px;            /* ajusta a altura pro mobile */
+    height: 300px;          /* ↑ antes era 240px */
     display: block;
     margin: 0 -30px;
-  }
-
-  .chart-tooltip {
-    position: absolute;
-    background: rgba(0, 0, 0, 0.8);
-    color: white;
-    padding: 6px 10px;
-    border-radius: 4px;
-    font-size: 12px;
-    pointer-events: none;
-    white-space: nowrap;
-    z-index: 1000;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-  }
-
-  .has-tooltip {
-    cursor: pointer;
-    transition: r 0.2s ease;
-  }
-
-  .has-tooltip:hover {
-    r: 8 !important;
   }
 
   h3 {
@@ -417,7 +352,7 @@
     margin: 8px 0;
     font-size: 10px;
   }
-  
+
   .food-list li {
     padding: 8px 12px;
     font-size: 10px;
@@ -428,17 +363,17 @@
   .food-list p {
     font-size: 10px;
   }
-  
+
   .food-list .food-details {
     margin: 4px 0 0 0;
   }
-  
+
   .food-list .food-values {
     margin-top: 6px;
     font-size: 10px;
     align-self: flex-end;
   }
-  
+
   .popup button {
     padding: 6px 6px;
     font-size: 10px;
