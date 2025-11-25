@@ -88,7 +88,8 @@
   position: relative;
   display: flex;
   align-items: flex-start;
-  margin-top: -80px;
+  margin-top: -40px;
+  margin-left: 80px;
   width: 100%;
   overflow: hidden;
 }
@@ -117,8 +118,8 @@
 }
 
 .chart-svg {
-  width: 620px;
-  height: 480px;
+  width: 700px;
+  height: 310px;
 }
 
 .chart-tooltip {

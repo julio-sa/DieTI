@@ -1,8 +1,8 @@
 .chart-container {
   position: relative;
   display: inline-block;
-  width: 520px;
-  height: 520px;
+  width: 420px;
+  height: 470px;
 }
 
 .chart-tooltip {
