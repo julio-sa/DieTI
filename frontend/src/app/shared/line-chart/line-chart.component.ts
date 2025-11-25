@@ -8,6 +8,7 @@ import {
   OnChanges,
   OnInit,
   ViewChild,
+  NgZone,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { environment } from '../../../environments/environment';
@@ -49,16 +50,13 @@ interface ChartPoint {
 export class LineChartComponent implements OnInit, OnChanges {
   @Input() selectedPeriod = '7 dias';
   @Input() goals!: { calorias: number; proteinas: number; carbo: number; gordura: number };
-
   /** Largura da “janela” visível que rola (px). Não muda proporções do SVG. */
   @Input() viewportWidth = 300;
 
   @ViewChild('tooltip') tooltipElement!: ElementRef;
 
   private readonly apiUrl = environment.apiUrl;
-
-  // colado no eixo Y
-  private readonly x0 = 10;
+  private readonly x0 = 10; // “colado” no eixo Y
 
   // tooltip
   showTooltip = false;
@@ -73,13 +71,19 @@ export class LineChartComponent implements OnInit, OnChanges {
   // dados
   rawData: IntakeData[] = [];
   animatedData: ChartPoint[] = [];
+  currentValues: number[] = [];
 
-  // 🔓 precisa ser pública porque o template usa
+  // pública (template usa)
   viewMode: 'period' | 'monthDetail' | 'dailyPeriod' | 'weekDetail' = 'dailyPeriod';
   private selectedMonthKey: string | null = null;
 
   // legenda/indicadores
   private weekCaption: string = ''; // dd/MM — dd/MM quando em weekDetail
+
+  // controle de animação
+  private _rafId: number | null = null;
+  /** chave do último dataset animado (período+kind+tamanho+primeiro/último) */
+  private _lastDatasetKey = '';
 
   metric: NumericField = 'calorias';
 
@@ -93,7 +97,11 @@ export class LineChartComponent implements OnInit, OnChanges {
     gordura: '#a5d8ff',
   };
 
-  constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {}
+  constructor(
+    private http: HttpClient,
+    private cdr: ChangeDetectorRef,
+    private ngZone: NgZone
+  ) {}
 
   ngOnInit(): void { this.loadHistory(); }
   ngOnChanges(): void { this.loadHistory(); }
@@ -264,74 +272,176 @@ export class LineChartComponent implements OnInit, OnChanges {
 
   /** Diários filtrando por intervalo inclusive */
   private filterDailyForRange(startISO: string, endISO: string): ChartPoint[] {
-    const s = startISO;
-    const e = endISO;
-    return this.mapDaily(this.rawData).filter(p => p.date >= s && p.date <= e);
+    return this.mapDaily(this.rawData).filter(p => p.date >= startISO && p.date <= endISO);
   }
 
   private filterDailyForMonth(monthKey: string): ChartPoint[] {
     return this.mapDaily(this.rawData).filter((p) => p.date.startsWith(monthKey));
   }
 
-  // ===== animação =====
+  // ===== helpers de totais/format =====
+  private getMetricDisplayName(): string {
+    return ({ calorias: 'Calorias', proteinas: 'Proteínas', carbo: 'Carbo', gordura: 'Gordura' } as Record<NumericField,string>)[this.metric];
+  }
+
+  private getUnit(): string {
+    return this.metric === 'calorias' ? 'kcal' : 'g';
+  }
+
+  private formatQty(n: number): string {
+    // 1 casa decimal para suavizar somatórios de gramas
+    const val = Number.isFinite(n) ? n : 0;
+    return `${val.toLocaleString('pt-BR', { maximumFractionDigits: 1 })} ${this.getUnit()}`;
+  }
+
+  /** Soma do mês (YYYY-MM) no rawData para a métrica atual */
+  private sumMonth(monthKey: string): number {
+    const key = monthKey;
+    let total = 0;
+    for (const d of this.rawData) {
+      if (d.date.startsWith(key)) {
+        total += (d as any)[this.metric] as number;
+      }
+    }
+    return total;
+  }
+
+  /** Soma do intervalo inclusivo [startISO, endISO] */
+  private sumRange(startISO: string, endISO: string): number {
+    let total = 0;
+    for (const d of this.rawData) {
+      if (d.date >= startISO && d.date <= endISO) {
+        total += (d as any)[this.metric] as number;
+      }
+    }
+    return total;
+  }
+
+  // ===== helpers de animação =====
+  private buildDatasetKey(points: ChartPoint[]): string {
+    const kind = points[0]?.__meta?.kind ?? 'none';
+    const n = points.length;
+    const first = points[0]?.date ?? '';
+    const last = points[n - 1]?.date ?? '';
+    return `${this.selectedPeriod}|${kind}|${n}|${first}|${last}`;
+  }
+
+  private zerosLike(points: ChartPoint[]): ChartPoint[] {
+    return points.map(pt => ({
+      date: pt.date,
+      calorias: 0,
+      proteinas: 0,
+      carbo: 0,
+      gordura: 0,
+      __meta: pt.__meta,
+    }));
+  }
+
+  // ===== animação de dados (período / mês / semana) =====
   private animateTo(targetData: ChartPoint[]) {
-    const hasStart = this.animatedData.length === targetData.length;
-    const startData = hasStart
-      ? this.animatedData.map((x) => ({ ...x }))
-      : targetData.map((pt) => {
-          const goal = this.getGoalForPoint(pt);
+    if (this._rafId !== null) {
+      cancelAnimationFrame(this._rafId);
+      this._rafId = null;
+    }
+
+    const newKey = this.buildDatasetKey(targetData);
+    const sameShape =
+      (this.animatedData.length === targetData.length) &&
+      (this._lastDatasetKey === newKey);
+      
+    const startData: ChartPoint[] = sameShape
+      ? this.animatedData.map(x => ({ ...x }))
+      : this.zerosLike(targetData);
+
+    const duration = 900;
+    const t0 = performance.now();
+
+    this.ngZone.runOutsideAngular(() => {
+      const tick = (t: number) => {
+        const progress = Math.min((t - t0) / duration, 1);
+        const ease = 1 - Math.pow(1 - progress, 3);
+
+        const next = startData.map((s, i) => {
+          const tgt = targetData[i] ?? s;
           return {
-            date: pt.date,
-            calorias: this.goals.calorias ? goal : pt.calorias,
-            proteinas: this.goals.proteinas
-              ? pt.__meta?.kind === 'monthly'
-                ? this.goals.proteinas * (pt.__meta?.daysInMonth ?? 30)
-                : pt.__meta?.kind === 'weekly'
-                  ? this.goals.proteinas * (pt.__meta?.daysInWeek ?? 7)
-                  : this.goals.proteinas
-              : pt.proteinas,
-            carbo: this.goals.carbo
-              ? pt.__meta?.kind === 'monthly'
-                ? this.goals.carbo * (pt.__meta?.daysInMonth ?? 30)
-                : pt.__meta?.kind === 'weekly'
-                  ? this.goals.carbo * (pt.__meta?.daysInWeek ?? 7)
-                  : this.goals.carbo
-              : pt.carbo,
-            gordura: this.goals.gordura
-              ? pt.__meta?.kind === 'monthly'
-                ? this.goals.gordura * (pt.__meta?.daysInMonth ?? 30)
-                : pt.__meta?.kind === 'weekly'
-                  ? this.goals.gordura * (pt.__meta?.daysInWeek ?? 7)
-                  : this.goals.gordura
-              : pt.gordura,
-            __meta: pt.__meta,
+            date: tgt.date,
+            calorias: s.calorias + (tgt.calorias - s.calorias) * ease,
+            proteinas: s.proteinas + (tgt.proteinas - s.proteinas) * ease,
+            carbo: s.carbo + (tgt.carbo - s.carbo) * ease,
+            gordura: s.gordura + (tgt.gordura - s.gordura) * ease,
+            __meta: tgt.__meta,
           } as ChartPoint;
         });
 
-    const duration = 900;
-    const start = performance.now();
+        const nextVals = next.map(p => this.getValue(p, this.metric));
 
-    const animate = (time: number) => {
-      const progress = Math.min((time - start) / duration, 1);
-      const ease = 1 - Math.pow(1 - progress, 3);
+        this.ngZone.run(() => {
+          this.animatedData = next;
+          this.currentValues = nextVals;
+          this.cdr.detectChanges();
+        });
 
-      this.animatedData = startData.map((s, i) => {
-        const t = targetData[i] ?? s;
-        return {
-          date: t.date,
-          calorias: s.calorias + (t.calorias - s.calorias) * ease,
-          proteinas: s.proteinas + (t.proteinas - s.proteinas) * ease,
-          carbo: s.carbo + (t.carbo - s.carbo) * ease,
-          gordura: s.gordura + (t.gordura - s.gordura) * ease,
-          __meta: t.__meta,
-        };
-      });
+        if (progress < 1) {
+          this._rafId = requestAnimationFrame(tick);
+        } else {
+          this._rafId = null;
+          this._lastDatasetKey = newKey;
+        }
+      };
 
-      this.cdr.detectChanges();
-      if (progress < 1) requestAnimationFrame(animate);
-    };
+      // Inicia direto no RAF (sem “frame 0” antes)
+      this._rafId = requestAnimationFrame(tick);
+    });
+  }
 
-    requestAnimationFrame(animate);
+  // ===== animação ao trocar MÉTRICA =====
+  public onSelectMetric(field: NumericField) {
+    if (field === this.metric) {
+      this.showMetricOptions = false;
+      return;
+    }
+
+    const targetVals = (this.animatedData ?? []).map(p => this.getValue(p, field));
+    const startVals = (this.currentValues.length === targetVals.length)
+      ? [...this.currentValues]
+      : (this.animatedData ?? []).map(p => this.getValue(p, this.metric));
+
+    this.metric = field;
+    this.showMetricOptions = false;
+
+    if (this._rafId !== null) {
+      cancelAnimationFrame(this._rafId);
+      this._rafId = null;
+    }
+
+    const duration = 600;
+    const t0 = performance.now();
+
+    // frame 0
+    this.currentValues = startVals;
+    this.cdr.detectChanges();
+
+    this.ngZone.runOutsideAngular(() => {
+      const tick = (t: number) => {
+        const progress = Math.min((t - t0) / duration, 1);
+        const ease = 1 - Math.pow(1 - progress, 3);
+
+        const nextVals = startVals.map((sv, i) => sv + (targetVals[i] - sv) * ease);
+
+        this.ngZone.run(() => {
+          this.currentValues = nextVals;
+          this.cdr.detectChanges();
+        });
+
+        if (progress < 1) {
+          this._rafId = requestAnimationFrame(tick);
+        } else {
+          this._rafId = null;
+        }
+      };
+
+      this._rafId = requestAnimationFrame(tick);
+    });
   }
 
   // ===== interações =====
@@ -374,6 +484,10 @@ export class LineChartComponent implements OnInit, OnChanges {
     this.viewMode = period === '7 dias' || period === '1 mês' ? 'dailyPeriod' : 'period';
     this.selectedMonthKey = null;
     this.weekCaption = '';
+
+    // ao trocar período, invalida a chave do dataset anterior para garantir baseline 0
+    this._lastDatasetKey = '';
+
     this.loadHistory();
   }
 
@@ -418,21 +532,21 @@ export class LineChartComponent implements OnInit, OnChanges {
             ? res.data
             : [];
           this.historicalFoods = foods;
-          this.showHistoricalPopup = true; // painel abaixo
+          this.showHistoricalPopup = true;
           this.cdr.detectChanges();
         },
         error: (err) => {
           console.error('Erro ao buscar alimentos do histórico:', err);
           this.historicalFoods = [];
-          this.showHistoricalPopup = true; // painel vazio
+          this.showHistoricalPopup = true;
           this.cdr.detectChanges();
         },
       });
   }
 
   // ===== tooltip =====
-  onPointHover(event: MouseEvent, item: ChartPoint, _index: number) {
-    const value = this.getValue(item, this.metric);
+  onPointHover(event: MouseEvent, item: ChartPoint, index: number) {
+    const value = this.getRenderValue(index);
     const goal = this.getGoalForPoint(item);
 
     let label = '';
@@ -493,7 +607,7 @@ export class LineChartComponent implements OnInit, OnChanges {
     return `${this.formatDM(a)} — ${this.formatDM(b)}`;
   }
 
-  /** legenda do mês quando detalhando um mês (abaixo do gráfico) */
+  /** legenda do mês quando detalhando um mês (texto puro) */
   public getSelectedMonthLabel(): string {
     if (!this.selectedMonthKey) return '';
     const [yStr, mStr] = this.selectedMonthKey.split('-');
@@ -505,8 +619,17 @@ export class LineChartComponent implements OnInit, OnChanges {
     return this.formatMonthLabel(dummy);
   }
 
-  /** legenda geral do período para 1 trimestre / 1 semestre / 1 ano */
+  /** legenda do mês detalhado + total do parâmetro selecionado */
+  public getSelectedMonthCaptionWithTotal(): string {
+    if (!this.selectedMonthKey || this.viewMode !== 'monthDetail') return '';
+    const label = this.getSelectedMonthLabel();
+    const total = this.sumMonth(this.selectedMonthKey);
+    return `Mês: ${label} — ${this.getMetricDisplayName()}: ${this.formatQty(total)}`;
+  }
+
+  /** legenda geral do período para 1 tri/sem/ano — esconde em weekDetail **e** monthDetail */
   public getPeriodCaption(): string {
+    if (this.viewMode === 'weekDetail' || this.viewMode === 'monthDetail') return '';
     if (!['1 trimestre','1 semestre','1 ano'].includes(this.selectedPeriod) || this.animatedData.length === 0) return '';
     const first = this.animatedData[0];
     const last = this.animatedData[this.animatedData.length - 1];
@@ -515,13 +638,29 @@ export class LineChartComponent implements OnInit, OnChanges {
     return `Período: ${a} — ${b}`;
   }
 
-  /** legenda quando em detalhe de semana */
+  /** legenda janela de 1 mês (mostra intervalo + total do parâmetro) */
+  public getMonthWindowCaptionWithTotal(): string {
+    if (this.selectedPeriod !== '1 mês' || this.animatedData.length === 0) return '';
+    const dates = this.rawData.map(d => d.date).sort();
+    if (dates.length === 0) return '';
+    const start = dates[0];
+    const end = dates[dates.length - 1];
+    const total = this.sumRange(start, end);
+    return `${this.formatDM(start)} — ${this.formatDM(end)}: ${this.getMetricDisplayName()}: ${this.formatQty(total)}`;
+  }
+
+  /** legenda quando em detalhe de semana — usado no template */
   public getWeekCaption(): string {
     return this.viewMode === 'weekDetail' && this.weekCaption ? this.weekCaption : '';
   }
 
   getValue(data: ChartPoint, field: NumericField): number {
     return Number(data[field] || 0);
+  }
+
+  /** valor renderizado no frame atual (animação) */
+  public getRenderValue(index: number): number {
+    return this.currentValues[index] ?? 0;
   }
 
   public getGoalForPoint(pt: ChartPoint): number {
@@ -537,6 +676,31 @@ export class LineChartComponent implements OnInit, OnChanges {
     return base;
   }
 
+  /** meta usada para escalar os ticks do Y para o contexto atual */
+  public getYAxisScaleGoal(): number {
+    const base = this.goals?.[this.metric] || 0;
+    if (!base) return 0;
+
+    if (this.selectedPeriod === '1 mês' && this.animatedData[0]?.__meta?.kind === 'weekly') {
+      const d = this.animatedData[0].__meta?.daysInWeek ?? 7;
+      return Math.round(base * d);
+    }
+
+    if (this.viewMode === 'period' && this.animatedData[0]?.__meta?.kind === 'monthly') {
+      const d = this.animatedData[0].__meta?.daysInMonth ?? 30;
+      return Math.round(base * d);
+    }
+
+    return Math.round(base);
+  }
+
+  public getYAxisTickLabel(percent: number): string {
+    const total = this.getYAxisScaleGoal();
+    const value = Math.round((total * percent) / 100);
+    const formatted = value.toLocaleString('pt-BR');
+    return `${formatted} ${this.getUnit()}`;
+  }
+
   /** y a partir do % da meta */
   public tickY(percent: number): number {
     return 250 - percent * 2; // 0..100 -> 250..50
@@ -548,7 +712,7 @@ export class LineChartComponent implements OnInit, OnChanges {
     return 250 - percentage * 200;
   }
 
-  /** x do ponto: não muda o SVG, só o espaçamento */
+  /** x do ponto */
   public getX(index: number, n: number): number {
     return this.x0 + index * this.getPointSpacing(n);
   }
@@ -589,12 +753,32 @@ export class LineChartComponent implements OnInit, OnChanges {
     } else if (this.selectedPeriod === '1 trimestre') {
       factor = 0.40;
     } else if (this.selectedPeriod === '1 semestre') {
-      factor = 0.47;
+      factor = 0.50;
     } else if (this.selectedPeriod === '1 mês') {
       factor = 0.40;
     }
 
     return Math.max(3, Math.floor(base * factor));
+  }
+
+  // ===== cor do ponto conforme % da meta =====
+  /** >100% = vermelho; ≈100% (±0,5%) = verde claro; senão, cor da métrica */
+  public getPointFill(item: ChartPoint, index: number): string {
+    const goal = this.getGoalForPoint(item);
+    if (goal <= 0) return this.colors[this.metric];
+
+    const value = this.getRenderValue(index);
+    const ratio = value / goal;
+
+    const TOL = 0.005; // 0,5% de tolerância para não piscar
+
+    if (ratio > 1 + TOL) {
+      return '#e53935'; // vermelho
+    }
+    if (Math.abs(ratio - 1) <= TOL) {
+      return '#a5d6a7'; // verde claro
+    }
+    return this.colors[this.metric];
   }
 
   // ===== globais =====

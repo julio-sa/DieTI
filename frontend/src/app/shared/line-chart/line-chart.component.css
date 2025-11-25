@@ -113,9 +113,7 @@
   -webkit-overflow-scrolling: touch;
   overscroll-behavior-x: contain;
   touch-action: pan-x;
-
-  /* Folga mínima para o 1º label não cortar, ainda colado no eixo Y */
-  padding-left: 4px;
+  padding-left: 4px; /* evita cortar primeiro label colado no eixo */
 }
 
 .chart-svg {
@@ -288,4 +286,9 @@
     flex-direction: column;
     align-items: flex-start;
   }
+}
+/* Animação de fade-in para as opções */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
 }

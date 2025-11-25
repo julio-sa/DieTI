@@ -6,8 +6,8 @@
       <ul class="options">
         @for (field of numericFields; track field) {
           <li
-            (click)="metric = field; showMetricOptions = false"
-            (touchstart)="metric = field; showMetricOptions = false"
+            (click)="onSelectMetric(field)"
+            (touchstart)="onSelectMetric(field)"
             [class.active]="metric === field">
             {{ { calorias: 'Calorias', proteinas: 'Proteínas', carbo: 'Carbo', gordura: 'Gordura' }[field] }}
           </li>
@@ -23,7 +23,6 @@
         @for (period of periodOptions; track period) {
           <li
             (click)="selectPeriod(period); showPeriodOptions = false; $event.stopPropagation()"
-            (touchstart)="selectPeriod(period)"
             [class.active]="selectedPeriod === period">
             {{ period }}
           </li>
@@ -48,6 +47,15 @@
           fill="#666">
           {{ i }}%
         </text>
+        <!-- rótulo de valor + unidade para o tick -->
+        <text
+          [attr.x]="45"
+          [attr.y]="tickY(i) + 12"
+          text-anchor="end"
+          font-size="9"
+          fill="#999">
+          {{ getYAxisTickLabel(i) }}
+        </text>
       }
     </svg>
   </div>
@@ -71,9 +79,11 @@
           fill="#333"
           class="x-label"
           (click)="onPointClick(item, $event)">
-          {{ item.__meta?.kind === 'weekly'
+          {{
+            item.__meta?.kind === 'weekly'
               ? getWeekIndexLabel($index)
-              : (item.__meta?.kind === 'monthly' ? formatMonthLabel(item) : formatDate(item.date)) }}
+              : (item.__meta?.kind === 'monthly' ? formatMonthLabel(item) : formatDate(item.date))
+          }}
         </text>
       }
 
@@ -81,9 +91,9 @@
       @for (item of animatedData; track $index) {
         <circle
           [attr.cx]="getX($index, animatedData.length)"
-          [attr.cy]="getYCoord(getValue(item, metric), getGoalForPoint(item))"
+          [attr.cy]="getYCoord(getRenderValue($index), getGoalForPoint(item))"
           [attr.r]="item.__meta?.kind === 'monthly' ? 5 : 6"
-          [attr.fill]="colors[metric]"
+          [attr.fill]="getPointFill(item, $index)"
           class="has-tooltip"
           (mouseenter)="onPointHover($event, item, $index)"
           (mouseleave)="hideTooltip()"
@@ -107,7 +117,10 @@
   <div class="month-label">{{ getPeriodCaption() }}</div>
 }
 @if (viewMode === 'monthDetail' && getSelectedMonthLabel()) {
-  <div class="month-label">Mês: {{ getSelectedMonthLabel() }}</div>
+  <div class="month-label">{{ getSelectedMonthCaptionWithTotal() }}</div>
+}
+@if (selectedPeriod === '1 mês' && viewMode !== 'weekDetail') {
+  <div class="month-label">{{ getMonthWindowCaptionWithTotal() }}</div>
 }
 @if (getWeekCaption()) {
   <div class="month-label">{{ getWeekCaption() }}</div>
