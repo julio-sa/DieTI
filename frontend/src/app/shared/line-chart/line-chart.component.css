@@ -27,7 +27,7 @@
 }
 
 .custom-select.show-metric-options::after,
-custom-select.show-period-options::after {
+.custom-select.show-period-options::after {
   transform: translateY(-50%) rotate(180deg);
 }
 
@@ -48,9 +48,7 @@ custom-select.show-period-options::after {
   transition: all 0.2s ease;
 }
 
-.custom-select span:hover {
-  border-color: #00bfff;
-}
+.custom-select span:hover { border-color: #00bfff; }
 
 .custom-select .options {
   position: absolute;
@@ -85,27 +83,44 @@ custom-select.show-period-options::after {
   color: #006e8c;
 }
 
+/* ===== gráfico ===== */
 .chart-container {
   position: relative;
-  display: inline-block;
+  display: flex;
+  align-items: flex-start;
   margin-top: -80px;
+  width: 100%;
+  overflow: hidden;
 }
 
-/* Scroll horizontal quando o SVG alargar */
+/* eixo Y fixo */
+.y-axis {
+  position: sticky;
+  left: 0;
+  top: 0;
+  z-index: 3;
+  background: #fff;
+  box-shadow: 2px 0 0 rgba(0,0,0,0.03);
+}
+
+.y-axis-svg { display: block; }
+
+/* área que rola apenas o gráfico */
 .chart-scroll {
   width: 100%;
-  max-width: 620px;   /* ajuste conforme o layout da home */
   overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+  touch-action: pan-x;
+
+  /* Folga mínima para o 1º label não cortar, ainda colado no eixo Y */
+  padding-left: 4px;
 }
 
-/* O width é dinâmico via [attr.width]. Controlamos só a altura. */
 .chart-svg {
-  height: 300px;
-}
-
-/* Evita seleção acidental de labels */
-.chart-svg text {
-  user-select: none;
+  width: 620px;
+  height: 480px;
 }
 
 .chart-tooltip {
@@ -121,20 +136,33 @@ custom-select.show-period-options::after {
   box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
-.has-tooltip {
-  cursor: pointer;
-  transition: r 0.2s ease;
+.has-tooltip { cursor: pointer; transition: r 0.2s ease; }
+.has-tooltip:hover { r: 8 !important; }
+
+/* ===== labels/paineis abaixo ===== */
+.month-label {
+  margin: 10px 0 0 60px; /* alinha visualmente com o início do gráfico */
+  font-size: 14px;
+  color: #333;
+  font-weight: 600;
 }
 
-.has-tooltip:hover {
-  r: 8 !important;
+.history-panel {
+  margin: 12px 0 0 60px; /* fica abaixo do gráfico */
+  max-width: 640px;
 }
 
-/* Lista do popup */
+.history-panel h3 {
+  margin: 0 0 8px 0;
+  font-size: 16px;
+  color: #222;
+}
+
+/* Lista de alimentos */
 .food-list {
   list-style: none;
   padding: 0;
-  margin: 15px 0;
+  margin: 10px 0 0 0;
   max-height: 300px;
   overflow-y: auto;
   border: 1px solid #e0e0e0;
@@ -153,54 +181,16 @@ custom-select.show-period-options::after {
   transition: background-color 0.2s ease;
 }
 
-.food-list li:last-child {
-  border-bottom: none;
-}
+.food-list li:last-child { border-bottom: none; }
+.food-list li:hover { background-color: #f0f7ff; }
 
-.food-list li:hover {
-  background-color: #f0f7ff;
-}
-
-.food-list .food-name {
-  font-weight: 500;
-  flex: 1;
-}
-
-.food-list .food-details {
+.no-foods {
+  margin: 8px 0 0 0;
   color: #666;
-  font-size: 12px;
-  margin-left: 10px;
 }
 
-.food-list .food-values {
-  text-align: right;
-  font-size: 13px;
-  color: #555;
-}
-
-/* Botão de fechar no popup */
-.popup button {
-  background-color: #006e8c;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 20px;
-  font-size: 14px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  font-family: "Helvetica", "Arial", sans-serif;
-}
-
-.popup button:hover:not([disabled]) {
-  background-color: #005a70;
-  transform: scale(1.05);
-}
-
-/* =========================
-   Responsividade
-========================= */
+/* ===== responsividade ===== */
+/* Tablet */
 @media (max-width: 768px) {
   .controls {
     position: relative;
@@ -217,49 +207,16 @@ custom-select.show-period-options::after {
     margin-left: -380px;
   }
 
-  .custom-select span {
-    padding: 6px 10px;
-    font-size: 13px;
-  }
+  .custom-select span { padding: 6px 10px; font-size: 13px; }
+  .custom-select .options li { padding: 8px 10px; font-size: 13px; }
 
-  .custom-select .options li {
-    padding: 8px 10px;
-    font-size: 13px;
-  }
+  .chart-svg { position: relative; height: 270px; width: 480px; }
 
-  .chart-scroll {
-    max-width: 500px;
-  }
-
-  .chart-svg {
-    height: 270px;   /* tablet */
-  }
-
-  .popup {
-    margin-left: 110px;
-    width: 400px;
-  }
-
-  .food-list {
-    max-height: 250px;
-    margin: 10px 0;
-  }
-
-  .food-list li {
-    padding: 10px 14px;
-    font-size: 13px;
-  }
-
-  .food-list .food-values {
-    font-size: 12px;
-  }
-
-  .popup button {
-    padding: 8px 16px;
-    font-size: 13px;
-  }
+  .month-label { margin-left: 60px; }
+  .history-panel { margin-left: 60px; max-width: 480px; }
 }
 
+/* Mobile */
 @media (max-width: 425px) {
   .controls {
     position: static;
@@ -272,11 +229,7 @@ custom-select.show-period-options::after {
     margin: 40px 22px 0;
   }
 
-  .controls span {
-    width: 100px;
-    height: auto;
-    font-size: 10px;
-  }
+  .controls span { width: 100px; height: auto; font-size: 10px; }
 
   .custom-select {
     position: relative;
@@ -287,19 +240,9 @@ custom-select.show-period-options::after {
     left: auto;
   }
 
-  .custom-select span {
-    padding: 6px 8px;
-    font-size: 10px;
-  }
-
-  .custom-select .options {
-    width: 64%;
-  }
-
-  .custom-select .options li {
-    padding: 4px 8px;
-    font-size: 10px;
-  }
+  .custom-select span { padding: 6px 8px; font-size: 10px; }
+  .custom-select .options { width: 64%; }
+  .custom-select .options li { padding: 4px 8px; font-size: 10px; }
 
   .custom-select::after {
     content: '˅';
@@ -313,72 +256,36 @@ custom-select.show-period-options::after {
     transition: transform 0.2s ease;
   }
 
+  .custom-select.show-metric-options::after,
+  .custom-select.show-period-options::after {
+    transform: translateY(-50%) rotate(180deg);
+  }
+
   .chart-container {
     position: relative;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
     width: 100%;
     margin: 15px auto 0;
+    overflow: hidden;
   }
 
-  .chart-scroll {
-    width: 100%;
-    max-width: 380px;       /* dá folga pra altura 300px */
-    margin: 0 auto;
-    overflow-x: auto;
-  }
-
-  /* PEDIDO: altura do gráfico até 300px no mobile */
   .chart-svg {
-    height: 300px;          /* ↑ antes era 240px */
+    width: 100%;
+    height: 300px; /* <=425px: altura máxima 300px */
     display: block;
-    margin: 0 -30px;
+    margin: 0;
   }
 
-  h3 {
-    margin-top: 30px;
-    font-size: 14px;
-  }
+  .month-label { margin-left: 16px; }
+  .history-panel { margin-left: 16px; max-width: 320px; }
 
-  .popup {
-    margin-left: 30px;
-    width: 260px;
-    font-size: 10px;
-  }
-
-  .food-list {
-    max-height: 200px;
-    margin: 8px 0;
-    font-size: 10px;
-  }
-
+  .food-list { max-height: 200px; margin: 8px 0; font-size: 10px; }
   .food-list li {
     padding: 8px 12px;
     font-size: 10px;
     flex-direction: column;
     align-items: flex-start;
-  }
-
-  .food-list p {
-    font-size: 10px;
-  }
-
-  .food-list .food-details {
-    margin: 4px 0 0 0;
-  }
-
-  .food-list .food-values {
-    margin-top: 6px;
-    font-size: 10px;
-    align-self: flex-end;
-  }
-
-  .popup button {
-    padding: 6px 6px;
-    font-size: 10px;
-    width: 70px;
-    margin-top: 50px;
-    margin-left: 95px;
   }
 }

@@ -3,26 +3,41 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
-  EventEmitter,
   HostListener,
   Input,
   OnChanges,
   OnInit,
-  Output,
   ViewChild,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { environment } from '../../../environments/environment';
 
+type NumericField = 'calorias' | 'proteinas' | 'carbo' | 'gordura';
+
 interface IntakeData {
-  date: string;
+  date: string; // "YYYY-MM-DD"
   calorias: number;
   proteinas: number;
   carbo: number;
   gordura: number;
 }
 
-type NumericField = 'calorias' | 'proteinas' | 'carbo' | 'gordura';
+interface ChartPoint {
+  date: string; // diário: "YYYY-MM-DD" | semanal: "YYYY-MM-DD..YYYY-MM-DD" | mensal: "YYYY-MM"
+  calorias: number;
+  proteinas: number;
+  carbo: number;
+  gordura: number;
+  __meta?: {
+    kind: 'daily' | 'weekly' | 'monthly';
+    year: number;
+    month?: number;        // daily/weekly: mês do primeiro dia; monthly: 1..12
+    daysInMonth?: number;  // monthly
+    weekStart?: string;    // weekly: "YYYY-MM-DD"
+    weekEnd?: string;      // weekly: "YYYY-MM-DD"
+    daysInWeek?: number;   // weekly
+  };
+}
 
 @Component({
   selector: 'app-line-chart',
@@ -33,25 +48,17 @@ type NumericField = 'calorias' | 'proteinas' | 'carbo' | 'gordura';
 })
 export class LineChartComponent implements OnInit, OnChanges {
   @Input() selectedPeriod = '7 dias';
-  @Output() refreshData = new EventEmitter<void>();
-  @Input() goals!: {
-    calorias: number;
-    proteinas: number;
-    carbo: number;
-    gordura: number;
-  };
+  @Input() goals!: { calorias: number; proteinas: number; carbo: number; gordura: number };
+
+  /** Largura da “janela” visível que rola (px). Não muda proporções do SVG. */
+  @Input() viewportWidth = 300;
+
   @ViewChild('tooltip') tooltipElement!: ElementRef;
 
   private readonly apiUrl = environment.apiUrl;
 
-  // popup de histórico
-  historicalFoods: any[] = [];
-  historicalDate = '';
-  showHistoricalPopup = false;
-
-  // selects
-  showMetricOptions = false;
-  showPeriodOptions = false;
+  // colado no eixo Y
+  private readonly x0 = 10;
 
   // tooltip
   showTooltip = false;
@@ -59,16 +66,24 @@ export class LineChartComponent implements OnInit, OnChanges {
   tooltipX = 0;
   tooltipY = 0;
 
+  // selects
+  showMetricOptions = false;
+  showPeriodOptions = false;
+
   // dados
   rawData: IntakeData[] = [];
-  animatedData: IntakeData[] = [];
+  animatedData: ChartPoint[] = [];
+
+  // 🔓 precisa ser pública porque o template usa
+  viewMode: 'period' | 'monthDetail' | 'dailyPeriod' | 'weekDetail' = 'dailyPeriod';
+  private selectedMonthKey: string | null = null;
+
+  // legenda/indicadores
+  private weekCaption: string = ''; // dd/MM — dd/MM quando em weekDetail
 
   metric: NumericField = 'calorias';
 
-  private lastTouchTime = 0;
-
   readonly numericFields: NumericField[] = ['calorias', 'proteinas', 'carbo', 'gordura'];
-
   readonly periodOptions = ['7 dias', '1 mês', '1 trimestre', '1 semestre', '1 ano'] as const;
 
   readonly colors: Record<NumericField, string> = {
@@ -78,100 +93,305 @@ export class LineChartComponent implements OnInit, OnChanges {
     gordura: '#a5d8ff',
   };
 
-  // ---------- Layout dinâmico ----------
-  readonly MARGIN = { left: 50, right: 30, top: 20, bottom: 50 };
+  constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {}
 
-  /** padding interno no eixo X para o 1º/último ponto não encostarem nas bordas */
-  get innerPad(): number {
-    // proporcional ao espaçamento, limitado a 8..15
-    return Math.max(8, Math.min(15, this.pointSpacing * 0.25));
+  ngOnInit(): void { this.loadHistory(); }
+  ngOnChanges(): void { this.loadHistory(); }
+  public reload(): void { this.loadHistory(); }
+
+  // ===== carga =====
+  private daysFromPrevious25ToToday(): number {
+    const today = new Date();
+    const prevMonth = new Date(today.getFullYear(), today.getMonth() - 1, 25);
+    const msPerDay = 24 * 60 * 60 * 1000;
+    const diff = Math.ceil((today.setHours(0,0,0,0) as unknown as number - prevMonth.setHours(0,0,0,0)) / msPerDay) + 1;
+    return Math.max(diff, 1);
   }
 
-  get svgHeight(): number {
-    return 300; // altura base (CSS ajusta por breakpoint se necessário)
+  private getDaysForPeriod(): number {
+    if (this.selectedPeriod === '1 mês') return this.daysFromPrevious25ToToday();
+    const map: Record<string, number> = {
+      '7 dias': 7,
+      '1 trimestre': 90,
+      '1 semestre': 180,
+      '1 ano': 365,
+    };
+    return map[this.selectedPeriod] ?? 7;
   }
 
-  get svgWidth(): number {
-    const n = Math.max(this.animatedData.length, 1);
-    // largura interna = pad esquerda + (n-1)*spacing + pad direita
-    const inner = this.innerPad * 2 + Math.max(n - 1, 0) * this.pointSpacing;
-    return this.MARGIN.left + inner + this.MARGIN.right;
+  private loadHistory(): void {
+    const userId = localStorage.getItem('userId');
+    if (!userId) return;
+
+    const days = this.getDaysForPeriod();
+
+    this.http
+      .get<IntakeData[]>(`${this.apiUrl}/intake/history?user_id=${userId}&days=${days}`)
+      .subscribe((data) => {
+        this.rawData = (data ?? []).map((d) => ({
+          ...d,
+          calorias: Number(d.calorias || 0),
+          proteinas: Number(d.proteinas || 0),
+          carbo: Number(d.carbo || 0),
+          gordura: Number(d.gordura || 0),
+        }));
+
+        this.weekCaption = '';
+
+        if (this.selectedPeriod === '7 dias') {
+          this.viewMode = 'dailyPeriod';
+          this.selectedMonthKey = null;
+          const dailyPoints = this.mapDaily(this.rawData);
+          this.animateTo(dailyPoints);
+        } else if (this.selectedPeriod === '1 mês') {
+          // visão semanal (blocos de 7 dias)
+          this.viewMode = 'dailyPeriod';
+          this.selectedMonthKey = null;
+          const weekly = this.aggregateWeeklyWindow(this.rawData);
+          this.animateTo(weekly);
+        } else {
+          this.viewMode = 'period';
+          this.selectedMonthKey = null;
+          const monthlyPoints = this.aggregateMonthly(this.rawData);
+          this.animateTo(monthlyPoints);
+        }
+      });
   }
 
-  get xAxisEnd(): number {
-    return this.svgWidth - this.MARGIN.right;
+  private mapDaily(data: IntakeData[]): ChartPoint[] {
+    return data.map((d) => {
+      const [y, m] = d.date.split('-').map(Number);
+      return {
+        date: d.date,
+        calorias: d.calorias,
+        proteinas: d.proteinas,
+        carbo: d.carbo,
+        gordura: d.gordura,
+        __meta: { kind: 'daily', year: y, month: m },
+      } as ChartPoint;
+    });
   }
 
-  xPos(index: number): number {
-    return this.MARGIN.left + this.innerPad + index * this.pointSpacing;
-  }
+  private aggregateWeeklyWindow(data: IntakeData[]): ChartPoint[] {
+    if (data.length === 0) return [];
 
-  // ---------- Rótulos do eixo X rarificados ----------
-  get maxXLabels(): number {
-    const mobile = window.innerWidth <= 425;
-    if (this.selectedPeriod === '1 ano') {
-      // mais agressivo em 1 ano
-      return mobile ? 4 : 8;
+    const sorted = [...data].sort((a, b) => a.date.localeCompare(b.date));
+    const parse = (s: string) => {
+      const [yy, mm, dd] = s.split('-').map(Number);
+      return new Date(yy, mm - 1, dd);
+    };
+    const fmt = (d: Date) => {
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${y}-${m}-${day}`;
+    };
+    const addDays = (d: Date, n: number) => {
+      const nd = new Date(d);
+      nd.setDate(nd.getDate() + n);
+      return nd;
+    };
+
+    let start = parse(sorted[0].date);
+    const end = parse(sorted[sorted.length - 1].date);
+
+    const buckets: ChartPoint[] = [];
+
+    while (start <= end) {
+      const weekStart = new Date(start);
+      const weekEnd = addDays(weekStart, 6);
+      const capEnd = weekEnd > end ? end : weekEnd;
+
+      let kc = 0, pr = 0, cb = 0, gd = 0;
+      for (const d of sorted) {
+        const dt = parse(d.date);
+        if (dt >= weekStart && dt <= capEnd) {
+          kc += d.calorias; pr += d.proteinas; cb += d.carbo; gd += d.gordura;
+        }
+      }
+
+      const daysInWeek = Math.floor((capEnd.getTime() - weekStart.getTime()) / (24*3600*1000)) + 1;
+
+      const cp: ChartPoint = {
+        date: `${fmt(weekStart)}..${fmt(capEnd)}`,
+        calorias: kc, proteinas: pr, carbo: cb, gordura: gd,
+        __meta: {
+          kind: 'weekly',
+          year: weekStart.getFullYear(),
+          month: weekStart.getMonth() + 1,
+          weekStart: fmt(weekStart),
+          weekEnd: fmt(capEnd),
+          daysInWeek
+        }
+      };
+      buckets.push(cp);
+
+      start = addDays(capEnd, 1);
     }
-    return mobile ? 6 : 10;
+
+    return buckets;
   }
 
-  get xLabelStep(): number {
-    const n = Math.max(this.animatedData.length, 1);
-    return Math.max(1, Math.ceil(n / this.maxXLabels));
+  private aggregateMonthly(data: IntakeData[]): ChartPoint[] {
+    const buckets = new Map<string, { y: number; m: number; sum: IntakeData; days: number }>();
+
+    for (const d of data) {
+      const [y, m] = d.date.split('-').map(Number);
+      const key = `${y}-${String(m).padStart(2, '0')}`;
+      const bucket = buckets.get(key);
+      if (!bucket) {
+        buckets.set(key, { y, m, days: 1, sum: { ...d } });
+      } else {
+        bucket.days += 1;
+        bucket.sum.calorias += d.calorias;
+        bucket.sum.proteinas += d.proteinas;
+        bucket.sum.carbo += d.carbo;
+        bucket.sum.gordura += d.gordura;
+      }
+    }
+
+    return Array.from(buckets.entries())
+      .sort((a, b) => a[0].localeCompare(b[0]))
+      .map(([key, v]) => ({
+        date: key,
+        calorias: v.sum.calorias,
+        proteinas: v.sum.proteinas,
+        carbo: v.sum.carbo,
+        gordura: v.sum.gordura,
+        __meta: { kind: 'monthly', year: v.y, month: v.m, daysInMonth: v.days },
+      }));
   }
 
-  shouldShowXLabel(index: number): boolean {
-    const last = this.animatedData.length - 1;
-    return index === 0 || index === last || index % this.xLabelStep === 0;
+  /** Diários filtrando por intervalo inclusive */
+  private filterDailyForRange(startISO: string, endISO: string): ChartPoint[] {
+    const s = startISO;
+    const e = endISO;
+    return this.mapDaily(this.rawData).filter(p => p.date >= s && p.date <= e);
   }
 
-  get xLabelFontSize(): number {
-    switch (this.selectedPeriod) {
-      case '7 dias':      return 12;
-      case '1 mês':       return 11;
-      case '1 trimestre': return 10;
-      case '1 semestre':  return 9;
-      case '1 ano':       return 8;
-      default:            return 10;
+  private filterDailyForMonth(monthKey: string): ChartPoint[] {
+    return this.mapDaily(this.rawData).filter((p) => p.date.startsWith(monthKey));
+  }
+
+  // ===== animação =====
+  private animateTo(targetData: ChartPoint[]) {
+    const hasStart = this.animatedData.length === targetData.length;
+    const startData = hasStart
+      ? this.animatedData.map((x) => ({ ...x }))
+      : targetData.map((pt) => {
+          const goal = this.getGoalForPoint(pt);
+          return {
+            date: pt.date,
+            calorias: this.goals.calorias ? goal : pt.calorias,
+            proteinas: this.goals.proteinas
+              ? pt.__meta?.kind === 'monthly'
+                ? this.goals.proteinas * (pt.__meta?.daysInMonth ?? 30)
+                : pt.__meta?.kind === 'weekly'
+                  ? this.goals.proteinas * (pt.__meta?.daysInWeek ?? 7)
+                  : this.goals.proteinas
+              : pt.proteinas,
+            carbo: this.goals.carbo
+              ? pt.__meta?.kind === 'monthly'
+                ? this.goals.carbo * (pt.__meta?.daysInMonth ?? 30)
+                : pt.__meta?.kind === 'weekly'
+                  ? this.goals.carbo * (pt.__meta?.daysInWeek ?? 7)
+                  : this.goals.carbo
+              : pt.carbo,
+            gordura: this.goals.gordura
+              ? pt.__meta?.kind === 'monthly'
+                ? this.goals.gordura * (pt.__meta?.daysInMonth ?? 30)
+                : pt.__meta?.kind === 'weekly'
+                  ? this.goals.gordura * (pt.__meta?.daysInWeek ?? 7)
+                  : this.goals.gordura
+              : pt.gordura,
+            __meta: pt.__meta,
+          } as ChartPoint;
+        });
+
+    const duration = 900;
+    const start = performance.now();
+
+    const animate = (time: number) => {
+      const progress = Math.min((time - start) / duration, 1);
+      const ease = 1 - Math.pow(1 - progress, 3);
+
+      this.animatedData = startData.map((s, i) => {
+        const t = targetData[i] ?? s;
+        return {
+          date: t.date,
+          calorias: s.calorias + (t.calorias - s.calorias) * ease,
+          proteinas: s.proteinas + (t.proteinas - s.proteinas) * ease,
+          carbo: s.carbo + (t.carbo - s.carbo) * ease,
+          gordura: s.gordura + (t.gordura - s.gordura) * ease,
+          __meta: t.__meta,
+        };
+      });
+
+      this.cdr.detectChanges();
+      if (progress < 1) requestAnimationFrame(animate);
+    };
+
+    requestAnimationFrame(animate);
+  }
+
+  // ===== interações =====
+  onPointClick(item: ChartPoint, event?: Event) {
+    event?.stopPropagation();
+    event?.preventDefault();
+
+    // Clique em mês (1 tri/sem/ano) -> detalha dias do mês
+    if (this.viewMode === 'period' && item.__meta?.kind === 'monthly') {
+      this.selectedMonthKey = item.date; // "YYYY-MM"
+      this.viewMode = 'monthDetail';
+      this.weekCaption = '';
+      const daily = this.filterDailyForMonth(item.date);
+      this.animateTo(daily);
+      return;
+    }
+
+    // Clique em semana (quando período é 1 mês) -> detalha dias da semana
+    if ((this.viewMode === 'dailyPeriod') && item.__meta?.kind === 'weekly') {
+      const ws = item.__meta?.weekStart!;
+      const we = item.__meta?.weekEnd!;
+      this.viewMode = 'weekDetail';
+      this.weekCaption = `${this.formatDM(ws)} — ${this.formatDM(we)}`;
+      const daily = this.filterDailyForRange(ws, we);
+      this.animateTo(daily);
+      return;
+    }
+
+    // Popup apenas para pontos DIÁRIOS
+    if (
+      (this.viewMode === 'weekDetail' || this.viewMode === 'monthDetail' || this.viewMode === 'dailyPeriod')
+      && item.__meta?.kind === 'daily'
+    ) {
+      this.openHistoricalFoodPopupDaily(item);
     }
   }
 
-  get pointRadius(): number {
-    switch (this.selectedPeriod) {
-      case '7 dias':      return 6;
-      case '1 mês':       return 5;
-      case '1 trimestre': return 4;
-      case '1 semestre':  return 3;
-      case '1 ano':       return 2;
-      default:            return 4;
-    }
+  public selectPeriod(period: string) {
+    this.selectedPeriod = period;
+    this.viewMode = period === '7 dias' || period === '1 mês' ? 'dailyPeriod' : 'period';
+    this.selectedMonthKey = null;
+    this.weekCaption = '';
+    this.loadHistory();
   }
 
-  get strokeWidth(): number {
-    switch (this.selectedPeriod) {
-      case '7 dias':      return 3;
-      case '1 mês':       return 2.5;
-      case '1 trimestre': return 2.2;
-      case '1 semestre':  return 2;
-      case '1 ano':       return 1.8;
-      default:            return 2.2;
-    }
-  }
+  // ===== painel histórico abaixo =====
+  historicalFoods: any[] = [];
+  historicalDate = '';
+  showHistoricalPopup = false;
 
-  // ===================
-  // popup de histórico
-  // ===================
   get hasHistoricalFoods(): boolean {
     return Array.isArray(this.historicalFoods) && this.historicalFoods.length > 0;
   }
 
-  constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {}
+  private openHistoricalFoodPopupDaily(item: ChartPoint) {
+    const isDaily = item.__meta?.kind === 'daily' || /^\d{4}-\d{2}-\d{2}$/.test(item.date);
+    if (!isDaily) return;
 
-  openHistoricalFoodPopup(item: IntakeData) {
     const userId = localStorage.getItem('userId');
     const token = localStorage.getItem('token');
-
     if (!userId || !token) {
       alert('Sessão expirada. Faça login novamente.');
       return;
@@ -188,105 +408,50 @@ export class LineChartComponent implements OnInit, OnChanges {
       .get<any>(`${this.apiUrl}/food/history/${item.date}?user_id=${userId}`, { headers })
       .subscribe({
         next: (res: any) => {
-          const foods: any[] =
-            Array.isArray(res)
-              ? res
-              : Array.isArray(res?.foods)
-              ? res.foods
-              : Array.isArray(res?.items)
-              ? res.items
-              : Array.isArray(res?.data)
-              ? res.data
-              : [];
-
+          const foods: any[] = Array.isArray(res)
+            ? res
+            : Array.isArray(res?.foods)
+            ? res.foods
+            : Array.isArray(res?.items)
+            ? res.items
+            : Array.isArray(res?.data)
+            ? res.data
+            : [];
           this.historicalFoods = foods;
-          this.showHistoricalPopup = true;
+          this.showHistoricalPopup = true; // painel abaixo
           this.cdr.detectChanges();
         },
         error: (err) => {
           console.error('Erro ao buscar alimentos do histórico:', err);
           this.historicalFoods = [];
-          this.showHistoricalPopup = true;
+          this.showHistoricalPopup = true; // painel vazio
           this.cdr.detectChanges();
         },
       });
   }
 
-  onPointClick(item: IntakeData, event?: Event) {
-    if (event) {
-      event.stopPropagation();
-      event.preventDefault();
-    }
-    this.openHistoricalFoodPopup(item);
-  }
-
-  // ===================
-  // lifecycle
-  // ===================
-  ngOnInit(): void {
-    this.historicalFoods = [];
-    this.loadHistory();
-  }
-
-  ngOnChanges(): void {
-    this.loadHistory();
-    this.animateData();
-  }
-
-  // ===================
-  // carga do gráfico
-  // ===================
-  loadHistory() {
-    const userId = localStorage.getItem('userId');
-    if (!userId) return;
-
-    const daysMap: Record<string, number> = {
-      '7 dias': 7,
-      '1 mês': 30,
-      '1 trimestre': 90,
-      '1 semestre': 180,
-      '1 ano': 365
-    };
-    const days = daysMap[this.selectedPeriod] || 7;
-
-    this.http
-      .get<IntakeData[]>(`${this.apiUrl}/intake/history?user_id=${userId}&days=${days}`)
-      .subscribe(data => {
-        // valor REAL
-        this.rawData = data ?? [];
-
-        // valor INICIAL "cheio"
-        this.animatedData = this.rawData.map(item => ({
-          date: item.date,
-          calorias: this.goals.calorias,
-          proteinas: this.goals.proteinas,
-          carbo: this.goals.carbo,
-          gordura: this.goals.gordura
-        }));
-
-        this.cdr.detectChanges();
-        this.animateData();
-      });
-  }
-
-  reload(): void {
-    this.loadHistory();
-  }
-
-  // ===================
-  // tooltip
-  // ===================
-  onPointHover(event: MouseEvent, item: IntakeData, _index: number) {
+  // ===== tooltip =====
+  onPointHover(event: MouseEvent, item: ChartPoint, _index: number) {
     const value = this.getValue(item, this.metric);
-    const goal = this.goals[this.metric];
+    const goal = this.getGoalForPoint(item);
 
-    this.tooltipText = `${this.capitalize(this.metric)}: ${value.toFixed(1)} / ${goal}`;
+    let label = '';
+    if (item.__meta?.kind === 'monthly') {
+      label = this.formatMonthLabel(item);
+    } else if (item.__meta?.kind === 'weekly') {
+      label = this.formatWeekLabel(item);
+    } else {
+      label = this.formatDate(item.date);
+    }
 
-    const chartRect = (event.currentTarget as SVGCircleElement).ownerSVGElement?.parentElement?.getBoundingClientRect();
-    if (!chartRect) return;
+    this.tooltipText = `${label} — ${this.capitalize(this.metric)}: ${value.toFixed(1)} / ${goal}`;
 
-    this.tooltipX = event.clientX - chartRect.left + window.scrollX;
-    this.tooltipY = event.clientY - chartRect.top + window.scrollY - 30;
+    const container = (event.currentTarget as SVGCircleElement).closest('.chart-container') as HTMLElement;
+    if (!container) return;
+    const rect = container.getBoundingClientRect();
+
+    this.tooltipX = event.clientX - rect.left + 10;
+    this.tooltipY = event.clientY - rect.top - 30;
 
     this.showTooltip = true;
   }
@@ -295,128 +460,144 @@ export class LineChartComponent implements OnInit, OnChanges {
     this.showTooltip = false;
   }
 
-  // ===================
-  // animação
-  // ===================
-  animateData() {
-    const duration = 900; // ms
-    const start = performance.now();
-
-    const startData = this.animatedData.map(item => ({ ...item }));
-    const targetData = this.rawData.map(item => ({ ...item }));
-
-    const animate = (time: number) => {
-      const elapsed = time - start;
-      const progress = Math.min(elapsed / duration, 1);
-      const ease = 1 - Math.pow(1 - progress, 3);
-
-      this.animatedData = startData.map((startItem, idx) => {
-        const targetItem = targetData[idx] ?? startItem;
-
-        return {
-          date: targetItem.date,
-          calorias: startItem.calorias + (targetItem.calorias - startItem.calorias) * ease,
-          proteinas: startItem.proteinas + (targetItem.proteinas - startItem.proteinas) * ease,
-          carbo: startItem.carbo + (targetItem.carbo - startItem.carbo) * ease,
-          gordura: startItem.gordura + (targetItem.gordura - startItem.gordura) * ease,
-        };
-      });
-
-      this.cdr.detectChanges();
-
-      if (progress < 1) {
-        requestAnimationFrame(animate);
-      }
-    };
-
-    requestAnimationFrame(animate);
-  }
-
-  // ===================
-  // eixos / path
-  // ===================
+  // ===== helpers desenho/format =====
   private parseLocalDate(dateString: string): Date {
     const [year, month, day] = dateString.split('-').map(Number);
-    return new Date(year, month - 1, day);
+    return new Date(year, (month ?? 1) - 1, day ?? 1);
+  }
+
+  private formatDM(s: string): string {
+    const [Y,M,D] = s.split('-').map(Number);
+    return `${String(D).padStart(2,'0')}/${String(M).padStart(2,'0')}`;
   }
 
   formatDate(date: string): string {
     const d = this.parseLocalDate(date);
-    const today = new Date();
-
-    const isTomorrow =
-      d.getFullYear() === today.getFullYear() &&
-      d.getMonth() === today.getMonth() &&
-      d.getDate() === today.getDate() + 1;
-
-    const finalDate = isTomorrow ? new Date(d.getFullYear(), d.getMonth(), d.getDate() - 1) : d;
-
     if (this.selectedPeriod === '7 dias') {
       const weekday = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab'];
-      return weekday[finalDate.getDay()];
+      return weekday[d.getDay()];
     }
+    return `${d.getDate()}`;
+  }
 
-    if (this.selectedPeriod === '1 ano') {
-      const meses = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
-      return meses[finalDate.getMonth()];
+  public formatMonthLabel(pt: ChartPoint): string {
+    const months = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+    const m = (pt.__meta?.month ?? Number(pt.date.split('-')[1])) - 1;
+    const y = (pt.__meta?.year ?? Number(pt.date.split('-')[0])) % 100;
+    return `${months[Math.max(0, m)]}/${String(y).padStart(2,'0')}`;
+  }
+
+  public formatWeekLabel(pt: ChartPoint): string {
+    const a = pt.__meta?.weekStart ?? pt.date.split('..')[0];
+    const b = pt.__meta?.weekEnd ?? pt.date.split('..')[1];
+    return `${this.formatDM(a)} — ${this.formatDM(b)}`;
+  }
+
+  /** legenda do mês quando detalhando um mês (abaixo do gráfico) */
+  public getSelectedMonthLabel(): string {
+    if (!this.selectedMonthKey) return '';
+    const [yStr, mStr] = this.selectedMonthKey.split('-');
+    const dummy: ChartPoint = {
+      date: this.selectedMonthKey,
+      calorias: 0, proteinas: 0, carbo: 0, gordura: 0,
+      __meta: { kind: 'monthly', year: Number(yStr), month: Number(mStr), daysInMonth: 30 }
+    };
+    return this.formatMonthLabel(dummy);
+  }
+
+  /** legenda geral do período para 1 trimestre / 1 semestre / 1 ano */
+  public getPeriodCaption(): string {
+    if (!['1 trimestre','1 semestre','1 ano'].includes(this.selectedPeriod) || this.animatedData.length === 0) return '';
+    const first = this.animatedData[0];
+    const last = this.animatedData[this.animatedData.length - 1];
+    const a = this.formatMonthLabel(first);
+    const b = this.formatMonthLabel(last);
+    return `Período: ${a} — ${b}`;
+  }
+
+  /** legenda quando em detalhe de semana */
+  public getWeekCaption(): string {
+    return this.viewMode === 'weekDetail' && this.weekCaption ? this.weekCaption : '';
+  }
+
+  getValue(data: ChartPoint, field: NumericField): number {
+    return Number(data[field] || 0);
+  }
+
+  public getGoalForPoint(pt: ChartPoint): number {
+    const base = this.goals[this.metric] || 0;
+    if (pt.__meta?.kind === 'monthly') {
+      const d = pt.__meta?.daysInMonth ?? 30;
+      return Math.round(base * d);
     }
-
-    return `${finalDate.getDate()}`;
-  }
-
-  getValue(data: IntakeData, field: keyof IntakeData): number {
-    const value = data[field];
-    return typeof value === 'number' ? value : 0;
-  }
-
-  getLinePath(data: IntakeData[], field: NumericField): string {
-    return data
-      .map((d, i) => {
-        const x = this.xPos(i);
-        const value = d[field];
-        const goal = this.goals[field];
-        const y = this.getYCoord(value, goal);
-        return `${i === 0 ? 'M' : 'L'} ${x} ${y}`;
-      })
-      .join(' ');
-  }
-
-  getYCoord(value: number, goal: number): number {
-    if (goal === 0) return this.svgHeight - this.MARGIN.bottom;
-    const percentage = Math.min(value / goal, 1);
-    const usable = 200; // altura útil
-    const base = this.svgHeight - this.MARGIN.bottom;
-    return base - percentage * usable;
-  }
-
-  get pointSpacing(): number {
-    const base = (() => {
-      switch (this.selectedPeriod) {
-        case '7 dias':      return 90;
-        case '1 mês':       return 28;
-        case '1 trimestre': return 14;
-        case '1 semestre':  return 8;
-        case '1 ano':       return 6;
-        default:            return 20;
-      }
-    })();
-
-    const n = Math.max(this.animatedData.length, 1);
-    if (n > 200) return Math.max(4, base * 0.8);
-    if (n > 120) return Math.max(5, base * 0.9);
+    if (pt.__meta?.kind === 'weekly') {
+      const d = pt.__meta?.daysInWeek ?? 7;
+      return Math.round(base * d);
+    }
     return base;
   }
 
-  // ===================
-  // selects mobile
-  // ===================
-  private isMobileDevice(): boolean {
-    return (
-      window.innerWidth <= 768 ||
-      /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
-    );
+  /** y a partir do % da meta */
+  public tickY(percent: number): number {
+    return 250 - percent * 2; // 0..100 -> 250..50
   }
 
+  getYCoord(value: number, goal: number): number {
+    if (goal <= 0) return 250;
+    const percentage = Math.min(value / goal, 1);
+    return 250 - percentage * 200;
+  }
+
+  /** x do ponto: não muda o SVG, só o espaçamento */
+  public getX(index: number, n: number): number {
+    return this.x0 + index * this.getPointSpacing(n);
+  }
+
+  /** x do rótulo (evita cortar o primeiro mensal) */
+  public getXLabel(index: number, n: number, item: ChartPoint): number {
+    const x = this.getX(index, n);
+    if (index === 0 && (item.__meta?.kind === 'monthly')) {
+      return x + 10; // leve offset no primeiro mensal
+    }
+    return x;
+  }
+
+  /** rótulo de semana: índice simples (1,2,3,...) */
+  public getWeekIndexLabel(index: number): string {
+    return String(index + 1);
+  }
+
+  /** largura do SVG para rolagem */
+  public getSvgPixelWidth(): number {
+    const n = Math.max(1, this.animatedData.length);
+    const spacing = this.getPointSpacing(n);
+    const needed = this.x0 + (n - 1) * spacing + 20;
+    return Math.max(700, needed);
+  }
+
+  getPointSpacing(n: number): number {
+    const xMin = this.x0;
+    const xMax = 680 - (60 - this.x0);
+    const usable = xMax - xMin;
+    if (n <= 1) return usable;
+
+    const base = Math.max(5, Math.floor(usable / (n - 1)));
+
+    let factor = 1;
+    if (this.selectedPeriod === '7 dias') {
+      factor = 0.40;
+    } else if (this.selectedPeriod === '1 trimestre') {
+      factor = 0.40;
+    } else if (this.selectedPeriod === '1 semestre') {
+      factor = 0.47;
+    } else if (this.selectedPeriod === '1 mês') {
+      factor = 0.40;
+    }
+
+    return Math.max(3, Math.floor(base * factor));
+  }
+
+  // ===== globais =====
   @HostListener('document:click', ['$event'])
   onClickOutside(event: MouseEvent) {
     const target = event.target as HTMLElement;
@@ -427,62 +608,7 @@ export class LineChartComponent implements OnInit, OnChanges {
     }
   }
 
-  toggleMetricOptions() {
-    if (this.isMobileDevice()) {
-      this.showMetricOptions = !this.showMetricOptions;
-      if (this.showMetricOptions) this.showPeriodOptions = false;
-    }
-  }
-
-  togglePeriodOptions() {
-    if (this.isMobileDevice()) {
-      this.showPeriodOptions = !this.showPeriodOptions;
-      if (this.showPeriodOptions) this.showMetricOptions = false;
-    }
-  }
-
-  selectMetric(field: NumericField) {
-    this.metric = field;
-    this.showMetricOptions = false;
-    this.animateData();
-  }
-
-  selectPeriod(period: string) {
-    this.selectedPeriod = period;
-    this.showPeriodOptions = false;
-    this.loadHistory();
-  }
-
-  formatGoalValue(percentage: number): string {
-    const goal = this.goals[this.metric];
-    const value = Math.round(goal * percentage);
-    return `${value} ${this.getUnit()}`;
-  }
-
-  getUnit(): string {
-    switch (this.metric) {
-      case 'calorias':
-        return 'kcal';
-      case 'proteinas':
-      case 'carbo':
-      case 'gordura':
-        return 'g';
-      default:
-        return '';
-    }
-  }
-
   capitalize(word: string): string {
     return word.charAt(0).toUpperCase() + word.slice(1);
-  }
-
-  getMetricLabel(field: NumericField): string {
-    const labels: Record<NumericField, string> = {
-      calorias: 'Calorias',
-      proteinas: 'Proteínas',
-      carbo: 'Carbo',
-      gordura: 'Gordura',
-    };
-    return labels[field];
   }
 }
