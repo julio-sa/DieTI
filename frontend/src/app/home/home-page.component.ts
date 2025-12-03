@@ -11,7 +11,7 @@ import {
   NgZone,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { environment } from '../../../environments/environment';
+import { environment } from '../../environments/environment';
 
 type NumericField = 'calorias' | 'proteinas' | 'carbo' | 'gordura';
 
