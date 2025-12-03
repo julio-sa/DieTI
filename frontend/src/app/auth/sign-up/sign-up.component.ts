@@ -44,9 +44,7 @@ export class SignUpComponent implements AfterViewInit {
     }, { validator: this.password_confirmation });
   }
 
-  ngAfterViewInit() {
-    this.nameInput.nativeElement.focus();
-  }
+  ngAfterViewInit() {}
 
   goBack(): void {
     this.router.navigate(['/sign-in']);
