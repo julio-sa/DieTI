@@ -147,7 +147,7 @@
 }
 
 .history-panel {
-  margin: 12px 0 0 60px; /* fica abaixo do gráfico */
+  margin: 12px 0 0 60px; /* fica abaixo do gráfico (tablet/mobile) */
   max-width: 640px;
 }
 
@@ -288,6 +288,48 @@
     align-items: flex-start;
   }
 }
+
+/* ===== Desktop (≥1025px): gráfico à esquerda + lista à direita) ===== */
+@media (min-width: 1025px) {
+  /* transforma o componente em grid de duas colunas sem alterar HTML */
+  :host {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 360px; /* gráfico | painel */
+    grid-auto-rows: auto;
+    column-gap: 24px;
+    align-items: start;
+  }
+
+  /* gráfico fica na coluna 1 (linha 1) */
+  .chart-container {
+    grid-column: 1;
+    grid-row: 1;
+    /* aproxima do eixo Y e reduz o “deslocamento” visto no print */
+    margin-left: 60px;
+    margin-top: -20px;
+  }
+
+  /* legenda do período abaixo do gráfico (coluna 1, linha 2) */
+  .month-label {
+    grid-column: 1;
+    grid-row: 2;
+    margin-left: 60px;
+  }
+
+  /* painel de alimentos vai para a coluna 2, ocupando a altura toda */
+  .history-panel {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    margin: 0;                 /* tira aquele recuo de 60px */
+    max-width: 360px;
+  }
+
+  /* deixa a lista mais confortável em desktop */
+  .food-list {
+    max-height: 420px;
+  }
+}
+
 /* Animação de fade-in para as opções */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(-10px); }
