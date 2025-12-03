@@ -1,146 +1,148 @@
-<!-- Controles -->
-<div class="controls">
-  <div class="custom-select" (click)="showMetricOptions = !showMetricOptions">
-    <span>{{ { calorias: 'Calorias', proteinas: 'Proteínas', carbo: 'Carbo', gordura: 'Gordura' }[metric] }}</span>
-    @if (showMetricOptions) {
-      <ul class="options">
-        @for (field of numericFields; track field) {
-          <li
-            (click)="onSelectMetric(field)"
-            (touchstart)="onSelectMetric(field)"
-            [class.active]="metric === field">
-            {{ { calorias: 'Calorias', proteinas: 'Proteínas', carbo: 'Carbo', gordura: 'Gordura' }[field] }}
-          </li>
-        }
-      </ul>
-    }
+<div class="page-container">
+  <div class="menu" (click)="openMenu()">⋮</div>
+ 
+  <div class="overlay" [class.active]="activeMenu" (click)="closeMenu()"></div>
+
+  <div class="side-menu" [class.active]="activeMenu">
+    <div class="menu-header">
+      <h1 i18n>Menu</h1>
+    </div>
+    <ul class="menu-items">
+      <li><button class="menu-item" [routerLink]="['/profile']" i18n>Perfil</button></li>
+      <li><button class="menu-item" [routerLink]="['/create-recipe']" i18n>Criar Prato</button></li>
+      <li><button class="menu-item" [routerLink]="['/saved-recipes']" i18n>Pratos Salvos</button></li>
+      <!-- <li><button class="menu-item" i18n>Configurações</button></li> -->
+      <li><button class="menu-item" [routerLink]="['/sign-in']" i18n>Sair</button></li>
+    </ul>
   </div>
 
-  <div class="custom-select" (click)="showPeriodOptions = !showPeriodOptions">
-    <span>{{ selectedPeriod }}</span>
-    @if (showPeriodOptions) {
-      <ul class="options">
-        @for (period of periodOptions; track period) {
-          <li
-            (click)="selectPeriod(period); showPeriodOptions = false; $event.stopPropagation()"
-            [class.active]="selectedPeriod === period">
-            {{ period }}
-          </li>
+  @if (showInstallPrompt) {
+  <div class="install-prompt">
+    <p i18n>Instalar DieTI no seu dispositivo?</p>
+    <button (click)="installApp()" class="btn-install" i18n>Instalar</button>
+    <button (click)="showInstallPrompt = false" class="btn-dismiss">×</button>
+  </div>
+  }
+
+  <img src="assets/images/logo.svg" alt="Dieti" class="logo-image" />
+
+  @if (!isOnline) {
+  <div class="offline-banner" i18n>
+    📴 Offline: Alimentos serão sincronizados depois
+  </div>
+  }
+
+  <div class="input-group">
+    <div class="input-food">
+      <input
+        #foodInput
+        i18n
+        name="food"
+        type="text"
+        [(ngModel)]="searchQuery"
+        (input)="onSearch()"
+        (blur)="onBlur()"
+        (focus)="showResults()"
+        (keydown)="onKeyDown($event)"
+        class="input-field"
+        placeholder="Pesquisar alimento..."
+      />
+
+      @if (searchResults.length > 0) {
+      <div class="search-results" #searchResultsContainer>
+        @for (food of searchResults; track food._id) {
+        <div
+          #searchItem
+          class="search-item"
+          (pointerdown)="onResultPointerDown($event)"
+          (click)="onResultClick(food, $event)"
+          [class.active]="$index === selectedItemIndex"
+        >
+          <div class="food-name">
+            {{ formatFoodDescription(food.description).mainName }}
+          </div>
+
+          @if (formatFoodDescription(food.description).details.length > 0) {
+          <div class="food-details">
+            @for (detail of formatFoodDescription(food.description).details; track $index) {
+            <span class="detail">{{ detail }}</span>
+            }
+          </div>
+          }
+
+          @if (food.type === 'recipe') {
+          <span class="tag" i18n>Prato</span>
+          }
+        </div>
         }
-      </ul>
+      </div>
+      }
+    </div>
+
+    <div class="dual-button">
+      <div class="slider" [style.left]="sliderPosition"></div>
+      <button class="button-left" tabindex="1" (click)="moveSlider('left')" #buttonLeft>
+        @if (isLeftActive) {
+        <img src="assets/images/chart_daily_active.svg" alt="daily_chart" class="chart" />
+        } @else {
+        <img src="assets/images/chart_daily.svg" alt="daily_chart" class="chart" />
+        }
+      </button>
+      <button class="button-right" tabindex="2" (click)="moveSlider('right')">
+        @if (isLeftActive) {
+        <img src="assets/images/chart_period.svg" alt="period_chart" class="chart" />
+        } @else {
+        <img src="assets/images/chart_period_active.svg" alt="period_chart" class="chart" />
+        }
+      </button>
+    </div>
+  </div>
+
+  @if (popupVisible) {
+  <div class="popup-overlay">
+    <div class="popup">
+      <h3>
+        @if (selectedFood) { {{ selectedFood.description }} } @else { {{ selectedRecipe?.name }} }
+      </h3>
+      <label i18n>
+        Gramas:
+        <input type="number" [(ngModel)]="grams" min="1" />
+      </label>
+      <div class="popup-actions">
+        <button (click)="addFood()" class="btn-primary" i18n>Adicionar</button>
+        <button (click)="closePopup()" class="btn-cancel" i18n>Cancelar</button>
+      </div>
+    </div>
+  </div>
+  }
+
+  <div class="progress-container">
+    <app-multi-ring-chart
+      class="multi-ring-chart"
+      [style.display]="isLeftActive ? 'block' : 'none'"
+      [calorias]="caloriasData"
+      [proteinas]="proteinasData"
+      [carb]="carbData"
+      [gordura]="gorduraData"
+    ></app-multi-ring-chart>
+
+    @if (favoriteRecipes && favoriteRecipes.length > 0) {
+    <div class="favorites-container" [style.display]="isLeftActive ? 'block' : 'none'">
+      <h4 [routerLink]="['/saved-recipes']" i18n>Favoritos</h4>
+      <div class="favorites-scroll">
+        @for (recipe of favoriteRecipes; track recipe._id) {
+        <div class="favorite-item" (click)="selectFavoriteRecipe(recipe); $event.stopPropagation()">
+          {{ recipe.name }}
+        </div>
+        }
+      </div>
+    </div>
     }
+
+    <app-line-chart
+      class="line-chart"
+      [goals]="goals"
+      [style.display]="!isLeftActive ? 'block' : 'none'"
+    ></app-line-chart>
   </div>
 </div>
-
-<!-- Container: eixo Y fixo + área rolável só do gráfico -->
-<div class="chart-container">
-  <!-- Eixo Y fixo -->
-  <div class="y-axis">
-    <svg class="y-axis-svg" width="60" height="300" viewBox="0 0 60 300" aria-hidden="true">
-      <line x1="50" y1="20" x2="50" y2="250" stroke="#ccc" />
-      @for (i of [0, 25, 50, 75, 100]; track i) {
-        <text
-          [attr.x]="45"
-          [attr.y]="tickY(i)"
-          text-anchor="end"
-          font-size="10"
-          fill="#666">
-          {{ i }}%
-        </text>
-        <!-- rótulo de valor + unidade para o tick -->
-        <text
-          [attr.x]="45"
-          [attr.y]="tickY(i) + 12"
-          text-anchor="end"
-          font-size="9"
-          fill="#999">
-          {{ getYAxisTickLabel(i) }}
-        </text>
-      }
-    </svg>
-  </div>
-
-  <!-- Só o gráfico rola lateralmente (sem linhas; apenas pontos) -->
-  <div class="chart-scroll" [style.maxWidth.px]="viewportWidth">
-    <svg
-      [style.width.px]="getSvgPixelWidth()"
-      height="300"
-      viewBox="0 0 700 300"
-      class="chart-svg"
-      (mouseleave)="hideTooltip()"
-    >
-      <!-- Labels do eixo X -->
-      @for (item of animatedData; track $index) {
-        <text
-          [attr.x]="getXLabel($index, animatedData.length, item)"
-          [attr.y]="270"
-          text-anchor="middle"
-          font-size="12"
-          fill="#333"
-          class="x-label"
-          (click)="onPointClick(item, $event)">
-          {{
-            item.__meta?.kind === 'weekly'
-              ? getWeekIndexLabel($index)
-              : (item.__meta?.kind === 'monthly' ? formatMonthLabel(item) : formatDate(item.date))
-          }}
-        </text>
-      }
-
-      <!-- Pontos -->
-      @for (item of animatedData; track $index) {
-        <circle
-          [attr.cx]="getX($index, animatedData.length)"
-          [attr.cy]="getYCoord(getRenderValue($index), getGoalForPoint(item))"
-          [attr.r]="item.__meta?.kind === 'monthly' ? 5 : 6"
-          [attr.fill]="colors[metric]"
-          class="has-tooltip"
-          (mouseenter)="onPointHover($event, item, $index)"
-          (mouseleave)="hideTooltip()"
-          (click)="onPointClick(item, $event)"
-          (touchstart)="onPointClick(item, $event)"
-        />
-      }
-    </svg>
-  </div>
-</div>
-
-<!-- Tooltip -->
-@if (showTooltip) {
-  <div class="chart-tooltip" #tooltip [style.left.px]="tooltipX" [style.top.px]="tooltipY">
-    {{ tooltipText }}
-  </div>
-}
-
-<!-- Legendas abaixo (período / mês / semana) -->
-@if (getPeriodCaption()) {
-  <div class="month-label">{{ getPeriodCaption() }}</div>
-}
-@if (viewMode === 'monthDetail' && getSelectedMonthLabel()) {
-  <div class="month-label">Mês: {{ getSelectedMonthLabel() }}</div>
-}
-@if (selectedPeriod === '1 mês' && getMonthWindowCaption() && viewMode !== 'weekDetail') {
-  <div class="month-label">{{ getMonthWindowCaption() }}</div>
-}
-@if (getWeekCaption()) {
-  <div class="month-label">{{ getWeekCaption() }}</div>
-}
-
-<!-- Painel de alimentos do dia (desktop: ao lado; mobile/tablet: abaixo) -->
-@if (showHistoricalPopup) {
-  <div class="history-panel">
-    <h3>Alimentos {{ formatDateBRDash(historicalDate) }}</h3>
-
-    @if (hasHistoricalFoods) {
-      <ul class="food-list">
-        @for (food of historicalFoods; track $index) {
-          <li>
-            {{ food.description }} — {{ food.grams }} g
-          </li>
-        }
-      </ul>
-    } @else {
-      <p class="no-foods">Nenhum alimento registrado nesse dia.</p>
-    }
-  </div>
-}
