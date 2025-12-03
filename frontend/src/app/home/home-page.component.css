@@ -528,6 +528,36 @@ h4 {
   display: inline-block;
 }
 
+/* =========================
+   Desktop: painel ao lado do gráfico de linhas
+   (não altera mobile/tablet)
+   ========================= */
+@media (min-width: 1025px) {
+  /* Dentro do componente <app-line-chart>, coloca o gráfico e o painel lado a lado */
+  app-line-chart ::ng-deep .chart-container {
+    display: inline-block;
+    vertical-align: top;
+    width: calc(100% - 380px); /* 360 do painel + 20 de respiro */
+    margin-left: 60px;         /* mantém alinhamento com eixo Y do gráfico */
+    margin-right: 20px;        /* espaço entre gráfico e painel */
+  }
+
+  app-line-chart ::ng-deep .history-panel {
+    display: inline-block;
+    vertical-align: top;
+    width: 360px;              /* largura do painel */
+    margin: 0;                 /* sobe para o lado do gráfico */
+  }
+
+  app-line-chart ::ng-deep .month-label {
+    margin: 10px 0 8px 60px;   /* acompanha o deslocamento do gráfico */
+  }
+
+  app-line-chart ::ng-deep .food-list {
+    max-height: 300px;
+  }
+}
+
 /*Responsividade*/
 /*Tablet*/
 @media (max-width: 768px) {
