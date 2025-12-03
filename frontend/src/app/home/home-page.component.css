@@ -1592,3 +1592,58 @@ h4 {
     display: inline-block;
   }
 }
+
+/* =========================
+   Desktop: gráfico + painel de alimentos lado a lado
+   (sem alterar tablet/mobile)
+   ========================= */
+@media (min-width: 1025px) {
+  /* deixa o host do componente ocupar a largura toda */
+  app-line-chart.line-chart {
+    display: block;
+    width: 100%;
+    /* aproxima o gráfico do eixo Y e evita o deslocamento enorme visto no print */
+    margin-left: 60px !important;
+    margin-top: -40px;              /* ajuste fino opcional, pode remover se não precisar */
+    width: calc(100% - 60px) !important;
+    height: auto !important;
+  }
+
+  /* distribui conteúdo interno do app-line-chart em duas colunas usando apenas CSS */
+  app-line-chart ::ng-deep {
+    /* garante que os filhos respeitem box sizing */
+    box-sizing: border-box;
+    --panel-w: 360px;              /* largura do painel de alimentos */
+    --gap-w: 20px;                 /* espaço entre gráfico e painel */
+  }
+
+  /* assumindo que o wrapper/gráfico é o primeiro filho do componente */
+  app-line-chart ::ng-deep > :first-child {
+    display: inline-block;
+    vertical-align: top;
+    width: calc(100% - var(--panel-w) - var(--gap-w));
+    margin-right: var(--gap-w);
+  }
+
+  /* assumindo que o painel de alimentos é o último filho do componente */
+  app-line-chart ::ng-deep > :last-child {
+    display: inline-block;
+    vertical-align: top;
+    width: var(--panel-w);
+    margin: 0;
+  }
+
+  /* limites de altura confortáveis para a lista */
+  app-line-chart ::ng-deep .food-list,
+  app-line-chart ::ng-deep [data-role="food-list"] {
+    max-height: 360px;
+    overflow: auto;
+  }
+
+  /* título "Alimentos DD-MM-AAAA" alinhado ao topo do painel */
+  app-line-chart ::ng-deep .panel-title,
+  app-line-chart ::ng-deep h4,
+  app-line-chart ::ng-deep .history-title {
+    margin: 0 0 10px 0;
+  }
+}
