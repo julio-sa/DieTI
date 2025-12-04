@@ -86,7 +86,7 @@
 /* ===== gráfico ===== */
 .chart-container {
   position: relative;
-  display: flex;          /* corrigido: antes havia 'flex-direction: inline-block' (inválido) */
+  display: flex;
   align-items: flex-start;
   margin-top: -40px;
   margin-left: 80px;
@@ -138,7 +138,7 @@
 .has-tooltip { cursor: pointer; transition: r 0.2s ease; }
 .has-tooltip:hover { r: 8 !important; }
 
-/* ===== labels/paineis abaixo (padrão) ===== */
+/* ===== labels/paineis ===== */
 .month-label {
   margin: 10px 0 0 60px; /* alinha visualmente com o início do gráfico */
   font-size: 14px;
@@ -147,7 +147,7 @@
 }
 
 .history-panel {
-  margin: 12px 0 0 60px; /* tablet/mobile: fica abaixo do gráfico */
+  margin: 12px 0 0 60px; /* tablet/mobile: abaixo do gráfico */
   max-width: 640px;
 }
 
@@ -188,45 +188,34 @@
   color: #666;
 }
 
-/* ===== Desktop (>=1025px): painel à direita do gráfico) ===== */
+/* ===== Desktop (≥1025px): painel à direita do gráfico) ===== */
 @media (min-width: 1025px) {
-  /* o host do componente reserva espaço à direita para o painel */
+  /* usa grid só no desktop para colocar o painel na direita */
   :host {
-    position: relative;
-    display: block;
-    padding-right: 380px;   /* largura reservada para o painel (360px + folga) */
+    display: grid;
+    grid-template-columns: 1fr 360px; /* gráfico | painel */
+    grid-auto-rows: auto;
+    column-gap: 16px;
+    align-items: start;
   }
 
-  /* painel à direita, alinhado ao topo do gráfico */
+  .controls { grid-column: 1 / -1; }         /* ocupa largura toda */
+  .chart-container { grid-column: 1; }
+
   .history-panel {
-    position: absolute;
-    top: -20px;
-    right: 0;
-    width: 360px;
+    grid-column: 2;          /* vai para a coluna da direita */
+    margin: 0;               /* remove margem que empurra pra baixo */
     max-width: 360px;
-    margin: 0;
-    max-height: 520px;
-    overflow: hidden;
+    position: sticky;        /* acompanha o scroll vertical */
+    top: 0;
+    align-self: start;
   }
 
-  .food-list {
-    max-height: 460px;      /* cabe dentro dos 520px do painel */
-    overflow-y: auto;
-  }
-
-  /* leve ajuste no container do gráfico para não colar demais */
-  .chart-container {
-    margin-right: 16px;
-  }
-
-  /* legendas continuam abaixo do gráfico, respeitando o padding-right do host */
-  .month-label {
-    margin-left: 60px;
-  }
+  /* legendas abaixo ocupam toda a largura */
+  .month-label { grid-column: 1 / -1; }
 }
 
-/* ===== responsividade ===== */
-/* Tablet */
+/* ===== Tablet ===== */
 @media (max-width: 768px) {
   .controls {
     position: relative;
@@ -252,7 +241,7 @@
   .history-panel { margin-left: 60px; max-width: 480px; position: static; }
 }
 
-/* Mobile */
+/* ===== Mobile ===== */
 @media (max-width: 425px) {
   .controls {
     position: static;
