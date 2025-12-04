@@ -147,7 +147,7 @@
 }
 
 .history-panel {
-  margin: 12px 0 0 60px; /* fica abaixo do gráfico */
+  margin: 30px 0 0 60px; /* fica abaixo do gráfico */
   max-width: 640px;
 }
 
