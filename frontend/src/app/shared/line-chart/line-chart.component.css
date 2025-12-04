@@ -86,7 +86,7 @@
 /* ===== gráfico ===== */
 .chart-container {
   position: relative;
-  display: flex;            /* mantém o eixo Y fixo + área rolável */
+  display: flex;
   align-items: flex-start;
   margin-top: -40px;
   margin-left: 80px;
@@ -140,15 +140,15 @@
 
 /* ===== labels/paineis ===== */
 .month-label {
-  margin: 10px 0 0 60px;   /* alinha visualmente com o início do gráfico */
+  margin: 10px 0 0 60px; /* alinha com início do gráfico */
   font-size: 14px;
   color: #333;
   font-weight: 600;
-  white-space: nowrap;      /* evita quebrar em várias linhas */
+  white-space: nowrap;     /* evita quebrar uma palavra por linha */
 }
 
 .history-panel {
-  margin: 12px 0 0 60px;    /* tablet/mobile: abaixo do gráfico */
+  margin: 12px 0 0 60px;  /* padrão: abaixo do gráfico (tablet/mobile) */
   max-width: 640px;
 }
 
@@ -189,23 +189,26 @@
   color: #666;
 }
 
-/* ===== Desktop (≥1025px): painel à direita do gráfico) ===== */
+/* ===== Desktop (≥1025px): painel à direita do gráfico sem mexer no HTML) ===== */
 @media (min-width: 1025px) {
-  /* coloca os irmãos lado a lado sem mexer no HTML */
-  .chart-container {
-    display: inline-block;
-    vertical-align: top;
-    width: calc(100% - 420px); /* reserva espaço pro painel */
-  }
-
+  /* Faz o painel flutuar à direita e reserva espaço no gráfico */
   .history-panel {
-    display: inline-block;
-    vertical-align: top;
+    float: right;
     width: 360px;
     max-width: 360px;
-    margin: -40px 0 0 16px;  /* alinha pelo topo do gráfico */
-    position: sticky;
-    top: 0;
+    margin: -40px 80px 0 16px; /* alinha pelo topo do gráfico; 80px = mesmo recuo do gráfico */
+    position: relative;
+  }
+
+  .chart-container {
+    display: block;             /* bloco normal */
+    margin-right: 420px;        /* 360 + espaçamento para não ficar por baixo do painel */
+    width: auto;
+  }
+
+  /* Garante que os subtítulos fiquem abaixo do conjunto gráfico+painel */
+  .month-label {
+    clear: both;
   }
 }
 
@@ -232,7 +235,14 @@
   .chart-svg { position: relative; height: 270px; width: 480px; }
 
   .month-label { margin-left: 60px; }
-  .history-panel { margin-left: 60px; max-width: 480px; position: static; display: block; width: auto; }
+  .history-panel {
+    margin-left: 60px;
+    max-width: 480px;
+    position: static;
+    display: block;
+    width: auto;
+    float: none;
+  }
 }
 
 /* ===== Mobile ===== */
@@ -298,7 +308,14 @@
   }
 
   .month-label { margin-left: 16px; }
-  .history-panel { margin-left: 16px; max-width: 320px; position: static; display: block; width: auto; }
+  .history-panel {
+    margin-left: 16px;
+    max-width: 320px;
+    position: static;
+    display: block;
+    width: auto;
+    float: none;
+  }
 
   .food-list { max-height: 200px; margin: 8px 0; font-size: 10px; }
   .food-list li {
